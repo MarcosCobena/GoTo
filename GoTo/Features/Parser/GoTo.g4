@@ -7,19 +7,19 @@ program :
 
 line : 
     instruction |
-    '[' label ']' instruction ;
+    '[' LABEL ']' instruction ;
 
 instruction : 
-    var EQUAL expression |
-    'IF' var '!=' '0' 'GOTO' label ;
+    VAR EQUAL expression |
+    'IF' VAR '!=' '0' 'GOTO' LABEL ;
 
 expression : 
-    var ('+' | '-')  '1' |
-    var;
+    VAR ('+' | '-')  '1' |
+    VAR;
 
-label : LABELID DIGIT* ;
+LABEL : LABELID DIGIT* ;
 
-var : VARID DIGIT* ;
+VAR : VARID DIGIT* ;
 
 LABELID : [A-E] ;
 

@@ -49,7 +49,10 @@ namespace Tests
             var inputStream = CharStreams.fromstring(program);
             var lexer = new GoToLexer(inputStream);
             var tokenStream = new CommonTokenStream(lexer);
-            var parser = new GoToParser(tokenStream);
+            var parser = new GoToParser(tokenStream)
+            {
+                BuildParseTree = false
+            };
             parser.program();
 
             var countWithEOF = count + 1;

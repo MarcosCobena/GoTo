@@ -82,30 +82,6 @@ public partial class GoToBaseListener : IGoToListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitExpression([NotNull] GoToParser.ExpressionContext context) { }
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="GoToParser.label"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterLabel([NotNull] GoToParser.LabelContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="GoToParser.label"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitLabel([NotNull] GoToParser.LabelContext context) { }
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="GoToParser.var"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterVar([NotNull] GoToParser.VarContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="GoToParser.var"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitVar([NotNull] GoToParser.VarContext context) { }
 
 	/// <inheritdoc/>
 	/// <remarks>The default implementation does nothing.</remarks>

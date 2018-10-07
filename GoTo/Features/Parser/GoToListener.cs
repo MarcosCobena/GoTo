@@ -70,24 +70,4 @@ public interface IGoToListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitExpression([NotNull] GoToParser.ExpressionContext context);
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="GoToParser.label"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterLabel([NotNull] GoToParser.LabelContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="GoToParser.label"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitLabel([NotNull] GoToParser.LabelContext context);
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="GoToParser.var"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterVar([NotNull] GoToParser.VarContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="GoToParser.var"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitVar([NotNull] GoToParser.VarContext context);
 }
