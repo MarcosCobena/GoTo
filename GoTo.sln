@@ -1,0 +1,28 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoTo", "GoTo\GoTo.csproj", "{0A9F15C9-AA30-48F9-ABCE-FA5225E8578C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BF92A394-8EAD-4E2A-A2A5-DCF4013F595A}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{4378FC77-5ADA-49F3-B3EE-779C7A5DB7B9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0A9F15C9-AA30-48F9-ABCE-FA5225E8578C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A9F15C9-AA30-48F9-ABCE-FA5225E8578C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A9F15C9-AA30-48F9-ABCE-FA5225E8578C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A9F15C9-AA30-48F9-ABCE-FA5225E8578C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4378FC77-5ADA-49F3-B3EE-779C7A5DB7B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4378FC77-5ADA-49F3-B3EE-779C7A5DB7B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4378FC77-5ADA-49F3-B3EE-779C7A5DB7B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4378FC77-5ADA-49F3-B3EE-779C7A5DB7B9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

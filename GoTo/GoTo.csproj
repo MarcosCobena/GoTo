@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <CustomCommands>
+      <CustomCommands>
+        <Command>
+          <type>BeforeBuild</type>
+          <command>java -jar antlr-4.7.1-complete.jar -Dlanguage=CSharp GoTo.g4</command>
+          <workingdir>${ProjectDir}/Features/Parser</workingdir>
+        </Command>
+      </CustomCommands>
+    </CustomCommands>
+  </PropertyGroup>
+    
+  <ItemGroup>
+    <PackageReference Include="Antlr4.Runtime.Standard" Version="4.7.1.1" />
+  </ItemGroup>
+    
+  <ItemGroup>
+    <Folder Include="Features\" />
+    <Folder Include="Features\Parser\" />
+  </ItemGroup>
+    
+</Project>
