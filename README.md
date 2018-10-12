@@ -14,11 +14,11 @@ Exactly! It "copies" the input value in X right into Y, that simple.
 
 ### Vars
 
-Input: `X` (or `X1`), `X2`, `X3`, ...; provided at startup
+Input: `X` (or `X1`), `X2`, `X3`, ..., `X8`; provided at startup
 
 Output: `Y`, by default set to 0
 
-Aux.: `Z` (or `Z1`), `Z2`, `Z3`, ...
+Aux.: `Z` (or `Z1`), `Z2`, `Z3`, ..., `Z8`
 
 ### Labels
 
