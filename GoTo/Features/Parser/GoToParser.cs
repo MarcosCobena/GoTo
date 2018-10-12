@@ -280,19 +280,39 @@ public partial class GoToParser : Parser {
 	}
 
 	public partial class ExpressionContext : ParserRuleContext {
-		public ITerminalNode VAR() { return GetToken(GoToParser.VAR, 0); }
 		public ExpressionContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
 		public override int RuleIndex { get { return RULE_expression; } }
+	 
+		public ExpressionContext() { }
+		public virtual void CopyFrom(ExpressionContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class BinaryExpressionContext : ExpressionContext {
+		public ITerminalNode VAR() { return GetToken(GoToParser.VAR, 0); }
+		public BinaryExpressionContext(ExpressionContext context) { CopyFrom(context); }
 		public override void EnterRule(IParseTreeListener listener) {
 			IGoToListener typedListener = listener as IGoToListener;
-			if (typedListener != null) typedListener.EnterExpression(this);
+			if (typedListener != null) typedListener.EnterBinaryExpression(this);
 		}
 		public override void ExitRule(IParseTreeListener listener) {
 			IGoToListener typedListener = listener as IGoToListener;
-			if (typedListener != null) typedListener.ExitExpression(this);
+			if (typedListener != null) typedListener.ExitBinaryExpression(this);
+		}
+	}
+	public partial class UnaryExpressionContext : ExpressionContext {
+		public ITerminalNode VAR() { return GetToken(GoToParser.VAR, 0); }
+		public UnaryExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		public override void EnterRule(IParseTreeListener listener) {
+			IGoToListener typedListener = listener as IGoToListener;
+			if (typedListener != null) typedListener.EnterUnaryExpression(this);
+		}
+		public override void ExitRule(IParseTreeListener listener) {
+			IGoToListener typedListener = listener as IGoToListener;
+			if (typedListener != null) typedListener.ExitUnaryExpression(this);
 		}
 	}
 
@@ -306,6 +326,7 @@ public partial class GoToParser : Parser {
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,4,Context) ) {
 			case 1:
+				_localctx = new BinaryExpressionContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
 				State = 37; Match(VAR);
@@ -322,6 +343,7 @@ public partial class GoToParser : Parser {
 				}
 				break;
 			case 2:
+				_localctx = new UnaryExpressionContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
 				State = 40; Match(VAR);

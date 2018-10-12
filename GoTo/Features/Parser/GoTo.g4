@@ -1,21 +1,21 @@
 grammar GoTo;
 
 // rules must begin with lowercase, specially the first one
-program : 
-    line |
-    (line NEWLINE)* ;
+program : line
+	| (line NEWLINE)*
+	;
 
-line : 
-    instruction |
-    '[' LABEL ']' instruction ;
+line : instruction
+	| '[' LABEL ']' instruction
+	;
 
-instruction : 
-    VAR EQUAL expression |
-    'IF' VAR '!=' '0' 'GOTO' LABEL ;
+instruction : VAR EQUAL expression
+	| 'IF' VAR '!=' '0' 'GOTO' LABEL
+	;
 
-expression : 
-    VAR ('+' | '-')  '1' |
-    VAR;
+expression : VAR ('+' | '-')  '1' # BinaryExpression
+	| VAR # UnaryExpression
+	;
 
 LABEL : LABELID DIGIT* ;
 

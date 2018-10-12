@@ -61,13 +61,27 @@ public interface IGoToListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitInstruction([NotNull] GoToParser.InstructionContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="GoToParser.expression"/>.
+	/// Enter a parse tree produced by the <c>BinaryExpression</c>
+	/// labeled alternative in <see cref="GoToParser.expression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterExpression([NotNull] GoToParser.ExpressionContext context);
+	void EnterBinaryExpression([NotNull] GoToParser.BinaryExpressionContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="GoToParser.expression"/>.
+	/// Exit a parse tree produced by the <c>BinaryExpression</c>
+	/// labeled alternative in <see cref="GoToParser.expression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitExpression([NotNull] GoToParser.ExpressionContext context);
+	void ExitBinaryExpression([NotNull] GoToParser.BinaryExpressionContext context);
+	/// <summary>
+	/// Enter a parse tree produced by the <c>UnaryExpression</c>
+	/// labeled alternative in <see cref="GoToParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterUnaryExpression([NotNull] GoToParser.UnaryExpressionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>UnaryExpression</c>
+	/// labeled alternative in <see cref="GoToParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitUnaryExpression([NotNull] GoToParser.UnaryExpressionContext context);
 }

@@ -71,17 +71,33 @@ public partial class GoToBaseListener : IGoToListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitInstruction([NotNull] GoToParser.InstructionContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="GoToParser.expression"/>.
+	/// Enter a parse tree produced by the <c>BinaryExpression</c>
+	/// labeled alternative in <see cref="GoToParser.expression"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterExpression([NotNull] GoToParser.ExpressionContext context) { }
+	public virtual void EnterBinaryExpression([NotNull] GoToParser.BinaryExpressionContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="GoToParser.expression"/>.
+	/// Exit a parse tree produced by the <c>BinaryExpression</c>
+	/// labeled alternative in <see cref="GoToParser.expression"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitExpression([NotNull] GoToParser.ExpressionContext context) { }
+	public virtual void ExitBinaryExpression([NotNull] GoToParser.BinaryExpressionContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>UnaryExpression</c>
+	/// labeled alternative in <see cref="GoToParser.expression"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterUnaryExpression([NotNull] GoToParser.UnaryExpressionContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>UnaryExpression</c>
+	/// labeled alternative in <see cref="GoToParser.expression"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitUnaryExpression([NotNull] GoToParser.UnaryExpressionContext context) { }
 
 	/// <inheritdoc/>
 	/// <remarks>The default implementation does nothing.</remarks>
