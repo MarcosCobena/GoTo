@@ -6,27 +6,23 @@ program : line
 	;
 
 line : instruction #UnlabeledLine
-	| '[' LABEL ']' instruction #LabeledLine
+	| '[' ID ']' instruction #LabeledLine
 	;
 
-instruction : VAR EQUAL expression #ExpressionInstruction
-	| 'IF' VAR '!=' '0' 'GOTO' LABEL #ConditionalInstruction
+instruction : ID '=' expression #ExpressionInstruction
+	| 'IF' ID '!=' '0' 'GOTO' ID #ConditionalInstruction
 	;
 
-expression : VAR ('+' | '-')  '1' # BinaryExpression
-	| VAR # UnaryExpression
+expression : ID ('+' | '-')  '1' # BinaryExpression
+	| ID # UnaryExpression
 	;
 
-LABEL : LABELID DIGIT* ;
+ID : LETTER DIGIT* ;
 
-VAR : VARID DIGIT* ;
-
-LABELID : [A-E] ;
-
-VARID : [XYZ] ;
+LETTER : [A-Z] ;
 
 DIGIT : [0-9] ;
 
-NEWLINE : [\r\n]+ ;
+NEWLINE : [\r\n]+ -> skip ;
 
-EQUAL : '=' ;
+WHITESPACE : [ \t]+ -> skip ;

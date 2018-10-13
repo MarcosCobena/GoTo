@@ -37,7 +37,7 @@ public partial class GoToParser : Parser {
 	protected static PredictionContextCache sharedContextCache = new PredictionContextCache();
 	public const int
 		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, 
-		LABEL=10, VAR=11, LABELID=12, VARID=13, DIGIT=14, NEWLINE=15, EQUAL=16;
+		T__9=10, ID=11, LETTER=12, DIGIT=13, NEWLINE=14, WHITESPACE=15;
 	public const int
 		RULE_program = 0, RULE_line = 1, RULE_instruction = 2, RULE_expression = 3;
 	public static readonly string[] ruleNames = {
@@ -45,12 +45,12 @@ public partial class GoToParser : Parser {
 	};
 
 	private static readonly string[] _LiteralNames = {
-		null, "'['", "']'", "'IF'", "'!='", "'0'", "'GOTO'", "'+'", "'-'", "'1'", 
-		null, null, null, null, null, null, "'='"
+		null, "'['", "']'", "'='", "'IF'", "'!='", "'0'", "'GOTO'", "'+'", "'-'", 
+		"'1'"
 	};
 	private static readonly string[] _SymbolicNames = {
-		null, null, null, null, null, null, null, null, null, null, "LABEL", "VAR", 
-		"LABELID", "VARID", "DIGIT", "NEWLINE", "EQUAL"
+		null, null, null, null, null, null, null, null, null, null, null, "ID", 
+		"LETTER", "DIGIT", "NEWLINE", "WHITESPACE"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 
@@ -130,7 +130,7 @@ public partial class GoToParser : Parser {
 				State = 14;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__2) | (1L << VAR))) != 0)) {
+				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__3) | (1L << ID))) != 0)) {
 					{
 					{
 					State = 9; line();
@@ -183,7 +183,7 @@ public partial class GoToParser : Parser {
 		}
 	}
 	public partial class LabeledLineContext : LineContext {
-		public ITerminalNode LABEL() { return GetToken(GoToParser.LABEL, 0); }
+		public ITerminalNode ID() { return GetToken(GoToParser.ID, 0); }
 		public InstructionContext instruction() {
 			return GetRuleContext<InstructionContext>(0);
 		}
@@ -206,8 +206,8 @@ public partial class GoToParser : Parser {
 			State = 24;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
-			case T__2:
-			case VAR:
+			case T__3:
+			case ID:
 				_localctx = new UnlabeledLineContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
@@ -219,7 +219,7 @@ public partial class GoToParser : Parser {
 				EnterOuterAlt(_localctx, 2);
 				{
 				State = 20; Match(T__0);
-				State = 21; Match(LABEL);
+				State = 21; Match(ID);
 				State = 22; Match(T__1);
 				State = 23; instruction();
 				}
@@ -252,8 +252,7 @@ public partial class GoToParser : Parser {
 		}
 	}
 	public partial class ExpressionInstructionContext : InstructionContext {
-		public ITerminalNode VAR() { return GetToken(GoToParser.VAR, 0); }
-		public ITerminalNode EQUAL() { return GetToken(GoToParser.EQUAL, 0); }
+		public ITerminalNode ID() { return GetToken(GoToParser.ID, 0); }
 		public ExpressionContext expression() {
 			return GetRuleContext<ExpressionContext>(0);
 		}
@@ -268,8 +267,10 @@ public partial class GoToParser : Parser {
 		}
 	}
 	public partial class ConditionalInstructionContext : InstructionContext {
-		public ITerminalNode VAR() { return GetToken(GoToParser.VAR, 0); }
-		public ITerminalNode LABEL() { return GetToken(GoToParser.LABEL, 0); }
+		public ITerminalNode[] ID() { return GetTokens(GoToParser.ID); }
+		public ITerminalNode ID(int i) {
+			return GetToken(GoToParser.ID, i);
+		}
 		public ConditionalInstructionContext(InstructionContext context) { CopyFrom(context); }
 		public override void EnterRule(IParseTreeListener listener) {
 			IGoToListener typedListener = listener as IGoToListener;
@@ -289,25 +290,25 @@ public partial class GoToParser : Parser {
 			State = 35;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
-			case VAR:
+			case ID:
 				_localctx = new ExpressionInstructionContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 26; Match(VAR);
-				State = 27; Match(EQUAL);
+				State = 26; Match(ID);
+				State = 27; Match(T__2);
 				State = 28; expression();
 				}
 				break;
-			case T__2:
+			case T__3:
 				_localctx = new ConditionalInstructionContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 29; Match(T__2);
-				State = 30; Match(VAR);
-				State = 31; Match(T__3);
-				State = 32; Match(T__4);
-				State = 33; Match(T__5);
-				State = 34; Match(LABEL);
+				State = 29; Match(T__3);
+				State = 30; Match(ID);
+				State = 31; Match(T__4);
+				State = 32; Match(T__5);
+				State = 33; Match(T__6);
+				State = 34; Match(ID);
 				}
 				break;
 			default:
@@ -338,7 +339,7 @@ public partial class GoToParser : Parser {
 		}
 	}
 	public partial class BinaryExpressionContext : ExpressionContext {
-		public ITerminalNode VAR() { return GetToken(GoToParser.VAR, 0); }
+		public ITerminalNode ID() { return GetToken(GoToParser.ID, 0); }
 		public BinaryExpressionContext(ExpressionContext context) { CopyFrom(context); }
 		public override void EnterRule(IParseTreeListener listener) {
 			IGoToListener typedListener = listener as IGoToListener;
@@ -350,7 +351,7 @@ public partial class GoToParser : Parser {
 		}
 	}
 	public partial class UnaryExpressionContext : ExpressionContext {
-		public ITerminalNode VAR() { return GetToken(GoToParser.VAR, 0); }
+		public ITerminalNode ID() { return GetToken(GoToParser.ID, 0); }
 		public UnaryExpressionContext(ExpressionContext context) { CopyFrom(context); }
 		public override void EnterRule(IParseTreeListener listener) {
 			IGoToListener typedListener = listener as IGoToListener;
@@ -375,24 +376,24 @@ public partial class GoToParser : Parser {
 				_localctx = new BinaryExpressionContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 37; Match(VAR);
+				State = 37; Match(ID);
 				State = 38;
 				_la = TokenStream.LA(1);
-				if ( !(_la==T__6 || _la==T__7) ) {
+				if ( !(_la==T__7 || _la==T__8) ) {
 				ErrorHandler.RecoverInline(this);
 				}
 				else {
 					ErrorHandler.ReportMatch(this);
 				    Consume();
 				}
-				State = 39; Match(T__8);
+				State = 39; Match(T__9);
 				}
 				break;
 			case 2:
 				_localctx = new UnaryExpressionContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 40; Match(VAR);
+				State = 40; Match(ID);
 				}
 				break;
 			}
@@ -410,7 +411,7 @@ public partial class GoToParser : Parser {
 
 	private static char[] _serializedATN = {
 		'\x3', '\x608B', '\xA72A', '\x8133', '\xB9ED', '\x417C', '\x3BE7', '\x7786', 
-		'\x5964', '\x3', '\x12', '.', '\x4', '\x2', '\t', '\x2', '\x4', '\x3', 
+		'\x5964', '\x3', '\x11', '.', '\x4', '\x2', '\t', '\x2', '\x4', '\x3', 
 		'\t', '\x3', '\x4', '\x4', '\t', '\x4', '\x4', '\x5', '\t', '\x5', '\x3', 
 		'\x2', '\x3', '\x2', '\x3', '\x2', '\x3', '\x2', '\a', '\x2', '\xF', '\n', 
 		'\x2', '\f', '\x2', '\xE', '\x2', '\x12', '\v', '\x2', '\x5', '\x2', '\x14', 
@@ -420,32 +421,32 @@ public partial class GoToParser : Parser {
 		'\x3', '\x4', '\x3', '\x4', '\x5', '\x4', '&', '\n', '\x4', '\x3', '\x5', 
 		'\x3', '\x5', '\x3', '\x5', '\x3', '\x5', '\x5', '\x5', ',', '\n', '\x5', 
 		'\x3', '\x5', '\x2', '\x2', '\x6', '\x2', '\x4', '\x6', '\b', '\x2', '\x3', 
-		'\x3', '\x2', '\t', '\n', '\x2', '.', '\x2', '\x13', '\x3', '\x2', '\x2', 
+		'\x3', '\x2', '\n', '\v', '\x2', '.', '\x2', '\x13', '\x3', '\x2', '\x2', 
 		'\x2', '\x4', '\x1A', '\x3', '\x2', '\x2', '\x2', '\x6', '%', '\x3', '\x2', 
 		'\x2', '\x2', '\b', '+', '\x3', '\x2', '\x2', '\x2', '\n', '\x14', '\x5', 
 		'\x4', '\x3', '\x2', '\v', '\f', '\x5', '\x4', '\x3', '\x2', '\f', '\r', 
-		'\a', '\x11', '\x2', '\x2', '\r', '\xF', '\x3', '\x2', '\x2', '\x2', '\xE', 
+		'\a', '\x10', '\x2', '\x2', '\r', '\xF', '\x3', '\x2', '\x2', '\x2', '\xE', 
 		'\v', '\x3', '\x2', '\x2', '\x2', '\xF', '\x12', '\x3', '\x2', '\x2', 
 		'\x2', '\x10', '\xE', '\x3', '\x2', '\x2', '\x2', '\x10', '\x11', '\x3', 
 		'\x2', '\x2', '\x2', '\x11', '\x14', '\x3', '\x2', '\x2', '\x2', '\x12', 
 		'\x10', '\x3', '\x2', '\x2', '\x2', '\x13', '\n', '\x3', '\x2', '\x2', 
 		'\x2', '\x13', '\x10', '\x3', '\x2', '\x2', '\x2', '\x14', '\x3', '\x3', 
 		'\x2', '\x2', '\x2', '\x15', '\x1B', '\x5', '\x6', '\x4', '\x2', '\x16', 
-		'\x17', '\a', '\x3', '\x2', '\x2', '\x17', '\x18', '\a', '\f', '\x2', 
+		'\x17', '\a', '\x3', '\x2', '\x2', '\x17', '\x18', '\a', '\r', '\x2', 
 		'\x2', '\x18', '\x19', '\a', '\x4', '\x2', '\x2', '\x19', '\x1B', '\x5', 
 		'\x6', '\x4', '\x2', '\x1A', '\x15', '\x3', '\x2', '\x2', '\x2', '\x1A', 
 		'\x16', '\x3', '\x2', '\x2', '\x2', '\x1B', '\x5', '\x3', '\x2', '\x2', 
 		'\x2', '\x1C', '\x1D', '\a', '\r', '\x2', '\x2', '\x1D', '\x1E', '\a', 
-		'\x12', '\x2', '\x2', '\x1E', '&', '\x5', '\b', '\x5', '\x2', '\x1F', 
-		' ', '\a', '\x5', '\x2', '\x2', ' ', '!', '\a', '\r', '\x2', '\x2', '!', 
-		'\"', '\a', '\x6', '\x2', '\x2', '\"', '#', '\a', '\a', '\x2', '\x2', 
-		'#', '$', '\a', '\b', '\x2', '\x2', '$', '&', '\a', '\f', '\x2', '\x2', 
-		'%', '\x1C', '\x3', '\x2', '\x2', '\x2', '%', '\x1F', '\x3', '\x2', '\x2', 
-		'\x2', '&', '\a', '\x3', '\x2', '\x2', '\x2', '\'', '(', '\a', '\r', '\x2', 
-		'\x2', '(', ')', '\t', '\x2', '\x2', '\x2', ')', ',', '\a', '\v', '\x2', 
-		'\x2', '*', ',', '\a', '\r', '\x2', '\x2', '+', '\'', '\x3', '\x2', '\x2', 
-		'\x2', '+', '*', '\x3', '\x2', '\x2', '\x2', ',', '\t', '\x3', '\x2', 
-		'\x2', '\x2', '\a', '\x10', '\x13', '\x1A', '%', '+',
+		'\x5', '\x2', '\x2', '\x1E', '&', '\x5', '\b', '\x5', '\x2', '\x1F', ' ', 
+		'\a', '\x6', '\x2', '\x2', ' ', '!', '\a', '\r', '\x2', '\x2', '!', '\"', 
+		'\a', '\a', '\x2', '\x2', '\"', '#', '\a', '\b', '\x2', '\x2', '#', '$', 
+		'\a', '\t', '\x2', '\x2', '$', '&', '\a', '\r', '\x2', '\x2', '%', '\x1C', 
+		'\x3', '\x2', '\x2', '\x2', '%', '\x1F', '\x3', '\x2', '\x2', '\x2', '&', 
+		'\a', '\x3', '\x2', '\x2', '\x2', '\'', '(', '\a', '\r', '\x2', '\x2', 
+		'(', ')', '\t', '\x2', '\x2', '\x2', ')', ',', '\a', '\f', '\x2', '\x2', 
+		'*', ',', '\a', '\r', '\x2', '\x2', '+', '\'', '\x3', '\x2', '\x2', '\x2', 
+		'+', '*', '\x3', '\x2', '\x2', '\x2', ',', '\t', '\x3', '\x2', '\x2', 
+		'\x2', '\a', '\x10', '\x13', '\x1A', '%', '+',
 	};
 
 	public static readonly ATN _ATN =

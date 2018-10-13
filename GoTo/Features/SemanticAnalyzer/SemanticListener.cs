@@ -1,6 +1,7 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
 using System.Collections.Generic;
+using System.Linq;
 using static GoToParser;
 
 namespace GoTo.Features.SemanticAnalyzer
@@ -28,7 +29,7 @@ namespace GoTo.Features.SemanticAnalyzer
             base.ExitUnaryExpression(context);
 
             var leftSideToken = (context.Parent as InstructionContext).Start;
-            var rightSideToken = context.VAR().Symbol;
+            var rightSideToken = context.ID().Symbol;
 
             CheckValidVar(leftSideToken);
             CheckValidVar(rightSideToken);
@@ -41,7 +42,7 @@ namespace GoTo.Features.SemanticAnalyzer
             base.ExitBinaryExpression(context);
 
             var leftSideToken = (context.Parent as InstructionContext).Start;
-            var rightSideToken = context.VAR().Symbol;
+            var rightSideToken = context.ID().Symbol;
 
             CheckValidVar(leftSideToken);
             CheckValidVar(rightSideToken);
@@ -56,14 +57,14 @@ namespace GoTo.Features.SemanticAnalyzer
         {
             base.ExitConditionalInstruction(context);
 
-            CheckValidVar(context.VAR().Symbol);
+            CheckValidVar(context.ID().First().Symbol);
         }
 
         public override void ExitLabeledLine([NotNull] LabeledLineContext context)
         {
             base.ExitLabeledLine(context);
 
-            CheckValidLabel(context.LABEL().Symbol);
+            CheckValidLabel(context.ID().Symbol);
         }
 
         void CheckValidLabel(IToken token)
