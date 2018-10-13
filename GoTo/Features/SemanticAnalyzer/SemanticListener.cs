@@ -7,11 +7,12 @@ namespace GoTo.Features.SemanticAnalyzer
 {
     public class SemanticListener : GoToBaseListener
     {
+        const string Labels = "ABCDE";
         const char InputVar = 'X';
         const char OutputVar = 'Y';
         const char AuxVar = 'Z';
-        const int MaxVarIndex = 8;
-        const int MinVarIndex = 1;
+        const int MinVarLabelIndex = 1;
+        const int MaxVarLabelIndex = 8;
 
         readonly IList<Message> _messages;
 
@@ -51,6 +52,51 @@ namespace GoTo.Features.SemanticAnalyzer
                 "Increment and decrement instructions must have the same var at both sides.");
         }
 
+        public override void ExitConditionalInstruction([NotNull] ConditionalInstructionContext context)
+        {
+            base.ExitConditionalInstruction(context);
+
+            CheckValidVar(context.VAR().Symbol);
+        }
+
+        public override void ExitLabeledLine([NotNull] LabeledLineContext context)
+        {
+            base.ExitLabeledLine(context);
+
+            CheckValidLabel(context.LABEL().Symbol);
+        }
+
+        void CheckValidLabel(IToken token)
+        {
+            var text = token.Text;
+            var letter = text[0];
+            var rawIndex = text.Substring(1);
+
+            if (!Labels.Contains(letter.ToString()))
+            {
+                var message = new Message(
+                    SeverityEnum.Error,
+                    $"Labels must be one of the following: {Labels}.",
+                    token.Line,
+                    token.Column);
+                _messages.Add(message);
+            }
+            else if (rawIndex.Length > 0)
+            {
+                var index = int.Parse(rawIndex);
+
+                if (index < MinVarLabelIndex || index > MaxVarLabelIndex)
+                {
+                    var message = new Message(
+                        SeverityEnum.Error,
+                        $"Labels' indexes must go from {MinVarLabelIndex} to {MaxVarLabelIndex}, both included.",
+                        token.Line,
+                        token.Column);
+                    _messages.Add(message);
+                }
+            }
+        }
+
         void CheckValidVar(IToken token)
         {
             var text = token.Text;
@@ -63,11 +109,12 @@ namespace GoTo.Features.SemanticAnalyzer
                 {
                     var index = int.Parse(rawIndex);
 
-                    if (index < MinVarIndex || index > MaxVarIndex)
+                    if (index < MinVarLabelIndex || index > MaxVarLabelIndex)
                     {
                         var message = new Message(
                             SeverityEnum.Error,
-                            $"Input and aux vars' indexes must go from {MinVarIndex} to {MaxVarIndex}, both included.",
+                            $"Input and aux vars' indexes must go from {MinVarLabelIndex} to {MaxVarLabelIndex}, " +
+                            "both included.",
                             token.Line,
                             token.Column);
                         _messages.Add(message);

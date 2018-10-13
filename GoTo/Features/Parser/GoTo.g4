@@ -5,12 +5,12 @@ program : line
 	| (line NEWLINE)*
 	;
 
-line : instruction
-	| '[' LABEL ']' instruction
+line : instruction #UnlabeledLine
+	| '[' LABEL ']' instruction #LabeledLine
 	;
 
-instruction : VAR EQUAL expression
-	| 'IF' VAR '!=' '0' 'GOTO' LABEL
+instruction : VAR EQUAL expression #ExpressionInstruction
+	| 'IF' VAR '!=' '0' 'GOTO' LABEL #ConditionalInstruction
 	;
 
 expression : VAR ('+' | '-')  '1' # BinaryExpression

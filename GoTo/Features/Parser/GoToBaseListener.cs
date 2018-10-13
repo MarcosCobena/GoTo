@@ -47,29 +47,61 @@ public partial class GoToBaseListener : IGoToListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitProgram([NotNull] GoToParser.ProgramContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="GoToParser.line"/>.
+	/// Enter a parse tree produced by the <c>UnlabeledLine</c>
+	/// labeled alternative in <see cref="GoToParser.line"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterLine([NotNull] GoToParser.LineContext context) { }
+	public virtual void EnterUnlabeledLine([NotNull] GoToParser.UnlabeledLineContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="GoToParser.line"/>.
+	/// Exit a parse tree produced by the <c>UnlabeledLine</c>
+	/// labeled alternative in <see cref="GoToParser.line"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitLine([NotNull] GoToParser.LineContext context) { }
+	public virtual void ExitUnlabeledLine([NotNull] GoToParser.UnlabeledLineContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="GoToParser.instruction"/>.
+	/// Enter a parse tree produced by the <c>LabeledLine</c>
+	/// labeled alternative in <see cref="GoToParser.line"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterInstruction([NotNull] GoToParser.InstructionContext context) { }
+	public virtual void EnterLabeledLine([NotNull] GoToParser.LabeledLineContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="GoToParser.instruction"/>.
+	/// Exit a parse tree produced by the <c>LabeledLine</c>
+	/// labeled alternative in <see cref="GoToParser.line"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitInstruction([NotNull] GoToParser.InstructionContext context) { }
+	public virtual void ExitLabeledLine([NotNull] GoToParser.LabeledLineContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>ExpressionInstruction</c>
+	/// labeled alternative in <see cref="GoToParser.instruction"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterExpressionInstruction([NotNull] GoToParser.ExpressionInstructionContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>ExpressionInstruction</c>
+	/// labeled alternative in <see cref="GoToParser.instruction"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitExpressionInstruction([NotNull] GoToParser.ExpressionInstructionContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>ConditionalInstruction</c>
+	/// labeled alternative in <see cref="GoToParser.instruction"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterConditionalInstruction([NotNull] GoToParser.ConditionalInstructionContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>ConditionalInstruction</c>
+	/// labeled alternative in <see cref="GoToParser.instruction"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitConditionalInstruction([NotNull] GoToParser.ConditionalInstructionContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by the <c>BinaryExpression</c>
 	/// labeled alternative in <see cref="GoToParser.expression"/>.

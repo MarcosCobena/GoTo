@@ -22,7 +22,7 @@ Aux.: `Z` (or `Z1`), `Z2`, `Z3`, ..., `Z8`
 
 ### Labels
 
-`A1` (or `A`), `B1` (or `B`), `C1` (or `C`), `D1` (or `D`), `E1` (or `E`), `A2`, `B2`, `C2`, `D2`, `E2`, ...
+`A1` (or `A`), `B1` (or `B`), `C1` (or `C`), `D1` (or `D`), `E1` (or `E`), `A2`, `B2`, `C2`, `D2`, `E2`, ..., `A8`, `B8`, `C8`, `D8`, `E8`
 
 `E` (or `E1`) is a special one, as it's used for exiting.
 
@@ -33,7 +33,6 @@ For each var *V* and label *L*:
 - Increment: `V = V + 1`
 - Decrement: `V = V - 1`
 - Conditional: `IF V != 0 GOTO L`
-
 - Skip: `V = V`
 - `[K] Instruction`
   - being *K* a label different from `E`, and

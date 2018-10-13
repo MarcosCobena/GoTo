@@ -157,22 +157,44 @@ public partial class GoToParser : Parser {
 	}
 
 	public partial class LineContext : ParserRuleContext {
-		public InstructionContext instruction() {
-			return GetRuleContext<InstructionContext>(0);
-		}
-		public ITerminalNode LABEL() { return GetToken(GoToParser.LABEL, 0); }
 		public LineContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
 		public override int RuleIndex { get { return RULE_line; } }
+	 
+		public LineContext() { }
+		public virtual void CopyFrom(LineContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class UnlabeledLineContext : LineContext {
+		public InstructionContext instruction() {
+			return GetRuleContext<InstructionContext>(0);
+		}
+		public UnlabeledLineContext(LineContext context) { CopyFrom(context); }
 		public override void EnterRule(IParseTreeListener listener) {
 			IGoToListener typedListener = listener as IGoToListener;
-			if (typedListener != null) typedListener.EnterLine(this);
+			if (typedListener != null) typedListener.EnterUnlabeledLine(this);
 		}
 		public override void ExitRule(IParseTreeListener listener) {
 			IGoToListener typedListener = listener as IGoToListener;
-			if (typedListener != null) typedListener.ExitLine(this);
+			if (typedListener != null) typedListener.ExitUnlabeledLine(this);
+		}
+	}
+	public partial class LabeledLineContext : LineContext {
+		public ITerminalNode LABEL() { return GetToken(GoToParser.LABEL, 0); }
+		public InstructionContext instruction() {
+			return GetRuleContext<InstructionContext>(0);
+		}
+		public LabeledLineContext(LineContext context) { CopyFrom(context); }
+		public override void EnterRule(IParseTreeListener listener) {
+			IGoToListener typedListener = listener as IGoToListener;
+			if (typedListener != null) typedListener.EnterLabeledLine(this);
+		}
+		public override void ExitRule(IParseTreeListener listener) {
+			IGoToListener typedListener = listener as IGoToListener;
+			if (typedListener != null) typedListener.ExitLabeledLine(this);
 		}
 	}
 
@@ -186,12 +208,14 @@ public partial class GoToParser : Parser {
 			switch (TokenStream.LA(1)) {
 			case T__2:
 			case VAR:
+				_localctx = new UnlabeledLineContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
 				State = 19; instruction();
 				}
 				break;
 			case T__0:
+				_localctx = new LabeledLineContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
 				State = 20; Match(T__0);
@@ -216,24 +240,44 @@ public partial class GoToParser : Parser {
 	}
 
 	public partial class InstructionContext : ParserRuleContext {
-		public ITerminalNode VAR() { return GetToken(GoToParser.VAR, 0); }
-		public ITerminalNode EQUAL() { return GetToken(GoToParser.EQUAL, 0); }
-		public ExpressionContext expression() {
-			return GetRuleContext<ExpressionContext>(0);
-		}
-		public ITerminalNode LABEL() { return GetToken(GoToParser.LABEL, 0); }
 		public InstructionContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
 		public override int RuleIndex { get { return RULE_instruction; } }
+	 
+		public InstructionContext() { }
+		public virtual void CopyFrom(InstructionContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class ExpressionInstructionContext : InstructionContext {
+		public ITerminalNode VAR() { return GetToken(GoToParser.VAR, 0); }
+		public ITerminalNode EQUAL() { return GetToken(GoToParser.EQUAL, 0); }
+		public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		public ExpressionInstructionContext(InstructionContext context) { CopyFrom(context); }
 		public override void EnterRule(IParseTreeListener listener) {
 			IGoToListener typedListener = listener as IGoToListener;
-			if (typedListener != null) typedListener.EnterInstruction(this);
+			if (typedListener != null) typedListener.EnterExpressionInstruction(this);
 		}
 		public override void ExitRule(IParseTreeListener listener) {
 			IGoToListener typedListener = listener as IGoToListener;
-			if (typedListener != null) typedListener.ExitInstruction(this);
+			if (typedListener != null) typedListener.ExitExpressionInstruction(this);
+		}
+	}
+	public partial class ConditionalInstructionContext : InstructionContext {
+		public ITerminalNode VAR() { return GetToken(GoToParser.VAR, 0); }
+		public ITerminalNode LABEL() { return GetToken(GoToParser.LABEL, 0); }
+		public ConditionalInstructionContext(InstructionContext context) { CopyFrom(context); }
+		public override void EnterRule(IParseTreeListener listener) {
+			IGoToListener typedListener = listener as IGoToListener;
+			if (typedListener != null) typedListener.EnterConditionalInstruction(this);
+		}
+		public override void ExitRule(IParseTreeListener listener) {
+			IGoToListener typedListener = listener as IGoToListener;
+			if (typedListener != null) typedListener.ExitConditionalInstruction(this);
 		}
 	}
 
@@ -246,6 +290,7 @@ public partial class GoToParser : Parser {
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case VAR:
+				_localctx = new ExpressionInstructionContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
 				State = 26; Match(VAR);
@@ -254,6 +299,7 @@ public partial class GoToParser : Parser {
 				}
 				break;
 			case T__2:
+				_localctx = new ConditionalInstructionContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
 				State = 29; Match(T__2);

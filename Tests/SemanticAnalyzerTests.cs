@@ -8,13 +8,13 @@ namespace Tests
     public class SemanticAnalyzerTests
     {
         [Fact]
-        public void SkipWithDifferentVars()
+        public void SkipDifferentVars()
         {
             CheckDifferentVars("X = X2", "Skip");
         }
 
         [Fact]
-        public void SkipWithEqualVars()
+        public void SkipEqualVars()
         {
             var messages = Compiler.Run("X = X");
 
@@ -24,7 +24,7 @@ namespace Tests
         [Theory]
         [InlineData("+")]
         [InlineData("-")]
-        public void IncrementOrDecrementWithDifferentVars(string @operator)
+        public void IncrementOrDecrementDifferentVars(string @operator)
         {
             CheckDifferentVars($"X = X2 {@operator} 1", "Increment", "Decrement");
         }
@@ -32,81 +32,82 @@ namespace Tests
         [Theory]
         [InlineData("+")]
         [InlineData("-")]
-        public void IncrementOrDecrementWithEqualVars(string @operator)
+        public void IncrementOrDecrementEqualVars(string @operator)
         {
             var messages = Compiler.Run($"X = X {@operator} 1");
 
             Assert.Empty(messages);
         }
 
-        [Fact]
-        public void SkipWithInputVarIndexUpperLimit()
+        [Theory]
+        [InlineData('X', 0)]
+        [InlineData('X', 9)]
+        [InlineData('Z', 0)]
+        [InlineData('Z', 9)]
+        public void SkipInputAuxVarIndex(char var, int index)
         {
-            CheckInputVarIndex("X9 = X9");
+            CheckErrorsContainKeyword($"{var}{index} = {var}{index}", "index");
+        }
+
+        [Theory]
+        [InlineData('X', 0, "+")]
+        [InlineData('X', 0, "-")]
+        [InlineData('X', 9, "+")]
+        [InlineData('X', 9, "-")]
+        [InlineData('Z', 0, "+")]
+        [InlineData('Z', 0, "-")]
+        [InlineData('Z', 9, "+")]
+        [InlineData('Z', 9, "-")]
+        public void IncrementOrDecrementInputAuxVarIndex(char var, int index, string @operator)
+        {
+            CheckErrorsContainKeyword($"{var}{index} = {var}{index} {@operator} 1", "index");
         }
 
         [Fact]
-        public void SkipWithInputVarLowerLimit()
+        public void SkipOutputVarIndex()
         {
-            CheckInputVarIndex("X0 = X0");
+            CheckErrorsContainKeyword("Y1 = Y1", "index");
         }
 
         [Theory]
         [InlineData("+")]
         [InlineData("-")]
-        public void IncrementOrDecrementInputVarIndexUpperLimit(string @operator)
+        public void IncrementOrDecrementOutputVarIndex(string @operator)
         {
-            CheckInputVarIndex($"X9 = X9 {@operator} 1");
+            CheckErrorsContainKeyword($"Y1 = Y1 {@operator} 1", "index");
         }
 
         [Theory]
-        [InlineData("+")]
-        [InlineData("-")]
-        public void IncrementOrDecrementInputVarLowerLimit(string @operator)
+        [InlineData('X', 0)]
+        [InlineData('X', 9)]
+        [InlineData('Z', 0)]
+        [InlineData('Z', 9)]
+        public void ConditionalInputAuxVarIndex(char var, int index)
         {
-            CheckInputVarIndex($"X0 = X0 {@operator} 1");
+            CheckErrorsContainKeyword($"IF {var}{index} != 0 GOTO A", "index", 1);
         }
 
         [Fact]
-        public void SkipWithAuxVarIndexUpperLimit()
+        public void ConditionalOutputVarIndex()
         {
-            CheckInputVarIndex("Z9 = Z9");
-        }
-
-        [Fact]
-        public void SkipWithAuxVarLowerLimit()
-        {
-            CheckInputVarIndex("Z0 = Z0");
+            CheckErrorsContainKeyword($"IF Y1 != 0 GOTO A", "index", 1);
         }
 
         [Theory]
-        [InlineData("+")]
-        [InlineData("-")]
-        public void IncrementOrDecrementAuxVarIndexUpperLimit(string @operator)
+        [InlineData('A', 0)]
+        [InlineData('A', 9)]
+        [InlineData('B', 0)]
+        [InlineData('B', 9)]
+        [InlineData('C', 0)]
+        [InlineData('C', 9)]
+        [InlineData('D', 0)]
+        [InlineData('D', 9)]
+        [InlineData('E', 0)]
+        [InlineData('E', 9)]
+        [InlineData('F', 1)]
+        public void LabeledLine(char label, int index)
         {
-            CheckInputVarIndex($"Z9 = Z9 {@operator} 1");
-        }
-
-        [Theory]
-        [InlineData("+")]
-        [InlineData("-")]
-        public void IncrementOrDecrementAuxVarLowerLimit(string @operator)
-        {
-            CheckInputVarIndex($"Z0 = Z0 {@operator} 1");
-        }
-
-        [Fact]
-        public void SkipWithOutputVarIndexUpperLimit()
-        {
-            CheckInputVarIndex("Y1 = Y1");
-        }
-
-        [Theory]
-        [InlineData("+")]
-        [InlineData("-")]
-        public void IncrementOrDecrementOutputVarIndexUpperLimit(string @operator)
-        {
-            CheckInputVarIndex($"Y1 = Y1 {@operator} 1");
+            CheckErrorsContainKeyword($"[{label}{index}] X = X", "label", 1);
         }
 
         static void CheckDifferentVars(string input, params string[] errorKeywords)
@@ -123,17 +124,17 @@ namespace Tests
                 Assert.Contains(item, firstError.Description, StringComparison.InvariantCultureIgnoreCase);
             }
         }
-
-        static void CheckInputVarIndex(string input)
+        
+        static void CheckErrorsContainKeyword(string input, string keyword, int expectedErrorsCount = 2)
         {
             var messages = Compiler.Run(input);
 
             var errorMessages = messages.Where(message => message.Severity == SeverityEnum.Error);
 
-            Assert.Equal(2, errorMessages.Count());
+            Assert.Equal(expectedErrorsCount, errorMessages.Count());
             Assert.All(
                 errorMessages,
-                message => message.Description.Contains("index", StringComparison.InvariantCultureIgnoreCase));
+                message => message.Description.Contains(keyword, StringComparison.InvariantCultureIgnoreCase));
         }
     }
 }

@@ -41,25 +41,53 @@ public interface IGoToListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitProgram([NotNull] GoToParser.ProgramContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="GoToParser.line"/>.
+	/// Enter a parse tree produced by the <c>UnlabeledLine</c>
+	/// labeled alternative in <see cref="GoToParser.line"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterLine([NotNull] GoToParser.LineContext context);
+	void EnterUnlabeledLine([NotNull] GoToParser.UnlabeledLineContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="GoToParser.line"/>.
+	/// Exit a parse tree produced by the <c>UnlabeledLine</c>
+	/// labeled alternative in <see cref="GoToParser.line"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitLine([NotNull] GoToParser.LineContext context);
+	void ExitUnlabeledLine([NotNull] GoToParser.UnlabeledLineContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="GoToParser.instruction"/>.
+	/// Enter a parse tree produced by the <c>LabeledLine</c>
+	/// labeled alternative in <see cref="GoToParser.line"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterInstruction([NotNull] GoToParser.InstructionContext context);
+	void EnterLabeledLine([NotNull] GoToParser.LabeledLineContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="GoToParser.instruction"/>.
+	/// Exit a parse tree produced by the <c>LabeledLine</c>
+	/// labeled alternative in <see cref="GoToParser.line"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitInstruction([NotNull] GoToParser.InstructionContext context);
+	void ExitLabeledLine([NotNull] GoToParser.LabeledLineContext context);
+	/// <summary>
+	/// Enter a parse tree produced by the <c>ExpressionInstruction</c>
+	/// labeled alternative in <see cref="GoToParser.instruction"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterExpressionInstruction([NotNull] GoToParser.ExpressionInstructionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>ExpressionInstruction</c>
+	/// labeled alternative in <see cref="GoToParser.instruction"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitExpressionInstruction([NotNull] GoToParser.ExpressionInstructionContext context);
+	/// <summary>
+	/// Enter a parse tree produced by the <c>ConditionalInstruction</c>
+	/// labeled alternative in <see cref="GoToParser.instruction"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterConditionalInstruction([NotNull] GoToParser.ConditionalInstructionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>ConditionalInstruction</c>
+	/// labeled alternative in <see cref="GoToParser.instruction"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitConditionalInstruction([NotNull] GoToParser.ConditionalInstructionContext context);
 	/// <summary>
 	/// Enter a parse tree produced by the <c>BinaryExpression</c>
 	/// labeled alternative in <see cref="GoToParser.expression"/>.
