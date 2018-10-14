@@ -84,13 +84,40 @@ namespace Tests
         [InlineData('Z', 9)]
         public void ConditionalInputAuxVarIndex(char var, int index)
         {
-            CheckErrorsContainKeyword($"IF {var}{index} != 0 GOTO A", "index", 1);
+            CheckErrorsContainKeyword($"IF {var}{index} != 0 GOTO A", "index", expectedErrorsCount: 1);
         }
 
         [Fact]
         public void ConditionalOutputVarIndex()
         {
-            CheckErrorsContainKeyword($"IF Y1 != 0 GOTO A", "index", 1);
+            CheckErrorsContainKeyword($"IF Y1 != 0 GOTO A", "index", expectedErrorsCount: 1);
+        }
+
+        [Theory]
+        [InlineData('A', 0)]
+        [InlineData('A', 9)]
+        [InlineData('B', 0)]
+        [InlineData('B', 9)]
+        [InlineData('C', 0)]
+        [InlineData('C', 9)]
+        [InlineData('D', 0)]
+        [InlineData('D', 9)]
+        [InlineData('F', 1)]
+        public void LabeledLine(char label, int index)
+        {
+            CheckErrorsContainKeyword($"[{label}{index}] X = X", "label", expectedErrorsCount: 1);
+        }
+
+        [Theory]
+        [InlineData('E')]
+        [InlineData('E', 1)]
+        public void ExitLabeledLine(char label, int? index = null)
+        {
+            var actualIndex = index.HasValue ? 
+                index.Value.ToString() : 
+                string.Empty;
+
+            CheckErrorsContainKeyword($"[{label}{actualIndex}] X = X", "exit", expectedErrorsCount: 1);
         }
 
         [Theory]
@@ -105,9 +132,45 @@ namespace Tests
         [InlineData('E', 0)]
         [InlineData('E', 9)]
         [InlineData('F', 1)]
-        public void LabeledLine(char label, int index)
+        public void ConditionalLabel(char label, int index)
         {
-            CheckErrorsContainKeyword($"[{label}{index}] X = X", "label", 1);
+            CheckErrorsContainKeyword($"IF X != 0 GOTO {label}{index}", "label", expectedErrorsCount: 1);
+        }
+
+        [Fact]
+        public void LastSkipOutputVar()
+        {
+            CheckErrorsContainKeyword(
+                $"X = X + 1\n" +
+                "Y = Y", 
+                "skip", 
+                1);
+        }
+
+        [Fact]
+        public void LowercaseSkipVars()
+        {
+            CheckErrorsContainKeyword("x = x", "lowercase");
+        }
+
+        [Theory]
+        [InlineData("+")]
+        [InlineData("-")]
+        public void LowercaseIncrementOrDecrementVars(string @operator)
+        {
+            CheckErrorsContainKeyword($"x = x {@operator} 1", "lowercase");
+        }
+
+        [Fact]
+        public void LowercaseLabel()
+        {
+            CheckErrorsContainKeyword("[a] X = X", "lowercase", expectedErrorsCount: 1);
+        }
+
+        [Fact]
+        public void LowercaseConditionalLabel()
+        {
+            CheckErrorsContainKeyword("IF X != 0 GOTO a", "lowercase", expectedErrorsCount: 1);
         }
 
         static void CheckDifferentVars(string input, params string[] errorKeywords)
@@ -134,7 +197,7 @@ namespace Tests
             Assert.Equal(expectedErrorsCount, errorMessages.Count());
             Assert.All(
                 errorMessages,
-                message => message.Description.Contains(keyword, StringComparison.InvariantCultureIgnoreCase));
+                message => Assert.Contains(keyword, message.Description, StringComparison.InvariantCultureIgnoreCase));
         }
     }
 }

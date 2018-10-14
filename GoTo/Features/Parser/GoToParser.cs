@@ -107,6 +107,11 @@ public partial class GoToParser : Parser {
 			IGoToListener typedListener = listener as IGoToListener;
 			if (typedListener != null) typedListener.ExitProgram(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IGoToVisitor<TResult> typedVisitor = visitor as IGoToVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitProgram(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -181,6 +186,11 @@ public partial class GoToParser : Parser {
 			IGoToListener typedListener = listener as IGoToListener;
 			if (typedListener != null) typedListener.ExitUnlabeledLine(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IGoToVisitor<TResult> typedVisitor = visitor as IGoToVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitUnlabeledLine(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 	public partial class LabeledLineContext : LineContext {
 		public ITerminalNode ID() { return GetToken(GoToParser.ID, 0); }
@@ -195,6 +205,11 @@ public partial class GoToParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IGoToListener typedListener = listener as IGoToListener;
 			if (typedListener != null) typedListener.ExitLabeledLine(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IGoToVisitor<TResult> typedVisitor = visitor as IGoToVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitLabeledLine(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -265,6 +280,11 @@ public partial class GoToParser : Parser {
 			IGoToListener typedListener = listener as IGoToListener;
 			if (typedListener != null) typedListener.ExitExpressionInstruction(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IGoToVisitor<TResult> typedVisitor = visitor as IGoToVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpressionInstruction(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 	public partial class ConditionalInstructionContext : InstructionContext {
 		public ITerminalNode[] ID() { return GetTokens(GoToParser.ID); }
@@ -279,6 +299,11 @@ public partial class GoToParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IGoToListener typedListener = listener as IGoToListener;
 			if (typedListener != null) typedListener.ExitConditionalInstruction(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IGoToVisitor<TResult> typedVisitor = visitor as IGoToVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitConditionalInstruction(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -349,6 +374,11 @@ public partial class GoToParser : Parser {
 			IGoToListener typedListener = listener as IGoToListener;
 			if (typedListener != null) typedListener.ExitBinaryExpression(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IGoToVisitor<TResult> typedVisitor = visitor as IGoToVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitBinaryExpression(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 	public partial class UnaryExpressionContext : ExpressionContext {
 		public ITerminalNode ID() { return GetToken(GoToParser.ID, 0); }
@@ -360,6 +390,11 @@ public partial class GoToParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IGoToListener typedListener = listener as IGoToListener;
 			if (typedListener != null) typedListener.ExitUnaryExpression(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IGoToVisitor<TResult> typedVisitor = visitor as IGoToVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitUnaryExpression(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 

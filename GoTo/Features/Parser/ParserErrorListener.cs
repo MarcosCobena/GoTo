@@ -1,10 +1,20 @@
 ﻿using Antlr4.Runtime;
+using System.Collections.Generic;
 using System.IO;
 
 namespace GoTo.Features.Parser
 {
     class ParserErrorListener : IAntlrErrorListener<IToken>
     {
+        List<Message> _messages;
+
+        public ParserErrorListener()
+        {
+            _messages = new List<Message>();
+        }
+
+        public IEnumerable<Message> Messages => _messages;
+
         public void SyntaxError(
             TextWriter output, 
             IRecognizer recognizer, 
@@ -14,7 +24,8 @@ namespace GoTo.Features.Parser
             string msg, 
             RecognitionException e)
         {
-            throw new System.NotImplementedException();
+            var message = new Message(SeverityEnum.Error, msg, line, charPositionInLine);
+            _messages.Add(message);
         }
     }
 }

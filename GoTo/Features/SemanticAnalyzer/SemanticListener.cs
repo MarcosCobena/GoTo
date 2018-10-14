@@ -1,7 +1,6 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
 using System.Collections.Generic;
-using System.Linq;
 using static GoToParser;
 
 namespace GoTo.Features.SemanticAnalyzer
@@ -9,6 +8,7 @@ namespace GoTo.Features.SemanticAnalyzer
     public class SemanticListener : GoToBaseListener
     {
         const string Labels = "ABCDE";
+        const char ExitLabel = 'E';
         const char InputVar = 'X';
         const char OutputVar = 'Y';
         const char AuxVar = 'Z';
@@ -24,7 +24,7 @@ namespace GoTo.Features.SemanticAnalyzer
 
         public IEnumerable<Message> Messages => _messages;
 
-        public override void ExitUnaryExpression([NotNull] GoToParser.UnaryExpressionContext context)
+        public override void ExitUnaryExpression([NotNull] UnaryExpressionContext context)
         {
             base.ExitUnaryExpression(context);
 
@@ -37,7 +37,7 @@ namespace GoTo.Features.SemanticAnalyzer
             CheckVarsAreEqual(leftSideToken, rightSideToken, "Skip instruction must have the same var at both sides.");
         }
 
-        public override void ExitBinaryExpression([NotNull] GoToParser.BinaryExpressionContext context)
+        public override void ExitBinaryExpression([NotNull] BinaryExpressionContext context)
         {
             base.ExitBinaryExpression(context);
 
@@ -57,21 +57,50 @@ namespace GoTo.Features.SemanticAnalyzer
         {
             base.ExitConditionalInstruction(context);
 
-            CheckValidVar(context.ID().First().Symbol);
+            var ids = context.ID();
+            CheckValidVar(ids[0].Symbol);
+            CheckValidLabel(ids[1].Symbol);
         }
 
         public override void ExitLabeledLine([NotNull] LabeledLineContext context)
         {
             base.ExitLabeledLine(context);
 
-            CheckValidLabel(context.ID().Symbol);
+            CheckValidLabel(context.ID().Symbol, isIdentifyingLine: true);
         }
 
-        void CheckValidLabel(IToken token)
+        public override void ExitProgram([NotNull] ProgramContext context)
+        {
+            base.ExitProgram(context);
+        }
+
+        void CheckValidLabel(IToken token, bool isIdentifyingLine = false)
         {
             var text = token.Text;
             var letter = text[0];
+
+            if (char.IsLower(letter))
+            {
+                var message = new Message(
+                    SeverityEnum.Error,
+                    $"Labels cannot be lowercase.",
+                    token.Line,
+                    token.Column);
+                _messages.Add(message);
+                return;
+            }
+
             var rawIndex = text.Substring(1);
+
+            if (isIdentifyingLine && letter == ExitLabel)
+            {
+                var message = new Message(
+                    SeverityEnum.Error,
+                    $"The special exit label '{ExitLabel}' cannot be used to identify a line.",
+                    token.Line,
+                    token.Column);
+                _messages.Add(message);
+            }
 
             if (!Labels.Contains(letter.ToString()))
             {
@@ -102,6 +131,18 @@ namespace GoTo.Features.SemanticAnalyzer
         {
             var text = token.Text;
             var letter = text[0];
+
+            if (char.IsLower(letter))
+            {
+                var message = new Message(
+                    SeverityEnum.Error,
+                    $"Vars cannot be lowercase.",
+                    token.Line,
+                    token.Column);
+                _messages.Add(message);
+                return;
+            }
+
             var rawIndex = text.Substring(1);
 
             if (letter == InputVar || letter == AuxVar)

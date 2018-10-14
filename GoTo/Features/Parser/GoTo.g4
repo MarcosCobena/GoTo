@@ -19,7 +19,7 @@ expression : ID ('+' | '-')  '1' # BinaryExpression
 
 ID : LETTER DIGIT* ;
 
-LETTER : [A-Z] ;
+LETTER : [a-zA-Z] ;
 
 DIGIT : [0-9] ;
 

@@ -9,7 +9,7 @@
       <CustomCommands>
         <Command>
           <type>BeforeBuild</type>
-          <command>java -jar antlr-4.7.1-complete.jar -Dlanguage=CSharp GoTo.g4</command>
+          <command>java -jar antlr-4.7.1-complete.jar -Dlanguage=CSharp -visitor GoTo.g4</command>
           <workingdir>${ProjectDir}/Features/Parser</workingdir>
         </Command>
       </CustomCommands>
@@ -21,13 +21,12 @@
   </ItemGroup>
     
   <ItemGroup>
-    <Folder Include="Features\" />
     <Folder Include="Features\Parser\" />
     <Folder Include="Features\SemanticAnalyzer\" />
   </ItemGroup>
     
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="cd $(ProjectDir)Features\Parser&#xD;&#xA;java -jar antlr-4.7.1-complete.jar -Dlanguage=CSharp GoTo.g4" />
+    <Exec Command="cd $(ProjectDir)Features\Parser&#xD;&#xA;java -jar antlr-4.7.1-complete.jar -Dlanguage=CSharp -visitor GoTo.g4" />
   </Target>
     
 </Project>
