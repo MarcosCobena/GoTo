@@ -7,7 +7,10 @@ namespace GoTo.Features.AbstractSyntaxTree
 
     class ProgramNode : GoToNode
     {
-        public IEnumerable<(string label, InstructionNode instruction)> Instructions { get; set; }
+        readonly IList<(string label, InstructionNode instruction)> _instructions = 
+            new List<(string label, InstructionNode instruction)>();
+
+        public IList<(string label, InstructionNode instruction)> Instructions => _instructions;
     }
 
     abstract class InstructionNode : GoToNode

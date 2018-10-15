@@ -10,7 +10,7 @@ namespace Tests
         {
             AssertEmptyMessages(
                 "X = X\n" +
-                "X = X");
+                "X2 = X2");
         }
 
         [Fact]

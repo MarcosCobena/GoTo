@@ -1,9 +1,7 @@
 grammar GoTo;
 
 // rules must begin with lowercase, specially the first one
-program : line
-	| (line NEWLINE)*
-	;
+program : line* EOF ;
 
 line : instruction #UnlabeledLine
 	| '[' ID ']' instruction #LabeledLine
