@@ -22,7 +22,6 @@
     
   <ItemGroup>
     <Folder Include="Features\Parser\" />
-    <Folder Include="Features\SemanticAnalyzer\" />
   </ItemGroup>
     
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">

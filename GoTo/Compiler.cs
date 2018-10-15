@@ -33,11 +33,15 @@ namespace GoTo
 
             var areThereErrors = messages.Where(message => message.Severity == SeverityEnum.Error).Any();
 
-            if (!areThereErrors)
+            if (areThereErrors)
             {
-                var abstractSyntaxTreeGenerator = new AbstractSyntaxTreeGenerator();
-                var program = abstractSyntaxTreeGenerator.VisitProgram(contextSyntaxTree);
+                return messages;
             }
+
+            var abstractSyntaxTreeGenerator = new AbstractSyntaxTreeGenerator();
+            var program = abstractSyntaxTreeGenerator.VisitProgram(contextSyntaxTree) as ProgramNode;
+
+            SemanticAnalyzer.CheckLastLineSkip(program, ref messages);
 
             return messages;
         }

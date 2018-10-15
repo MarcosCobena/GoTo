@@ -13,7 +13,7 @@ namespace GoTo.Features.AbstractSyntaxTree
             foreach (var item in lines)
             {
                 var instruction = Visit(item) as InstructionNode;
-                programNode.Instructions.Add((null, instruction));
+                programNode.Instructions.Add(instruction);
             }
 
             return programNode;
@@ -22,14 +22,25 @@ namespace GoTo.Features.AbstractSyntaxTree
         public override GoToNode VisitUnlabeledLine([NotNull] GoToParser.UnlabeledLineContext context) =>
             Visit(context.instruction());
 
+        public override GoToNode VisitLabeledLine([NotNull] GoToParser.LabeledLineContext context)
+        {
+            var instruction = Visit(context.instruction()) as InstructionNode;
+            instruction.Label = context.label.Text;
+
+            return instruction;
+        }
+
         public override GoToNode VisitExpressionInstruction([NotNull] GoToParser.ExpressionInstructionContext context)
             => Visit(context.expression());
 
-        public override GoToNode VisitBinaryExpression([NotNull] GoToParser.BinaryExpressionContext context)
-        {
-            var instructionNode = new BinaryExpressionInstructionNode();
+        public override GoToNode VisitConditionalInstruction(
+            [NotNull] GoToParser.ConditionalInstructionContext context) => 
+            new ConditionalInstructionNode(context.var.Text, context.label.Text);
 
-            return instructionNode;
-        }
+        public override GoToNode VisitBinaryExpression([NotNull] GoToParser.BinaryExpressionContext context) => 
+            new BinaryExpressionInstructionNode(context.var.Text, context.@operator.Text);
+
+        public override GoToNode VisitUnaryExpression([NotNull] GoToParser.UnaryExpressionContext context) => 
+            new UnaryExpressionInstructionNode(context.var.Text);
     }
 }

@@ -10,10 +10,11 @@ namespace GoTo.Features.SemanticAnalyzer
         const string Labels = "ABCDE";
         const char ExitLabel = 'E';
         const char InputVar = 'X';
-        const char OutputVar = 'Y';
         const char AuxVar = 'Z';
         const int MinVarLabelIndex = 1;
         const int MaxVarLabelIndex = 8;
+
+        public const char OutputVar = 'Y';
 
         readonly IList<Message> _messages;
 

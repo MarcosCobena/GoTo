@@ -4,15 +4,15 @@ grammar GoTo;
 program : line* EOF ;
 
 line : instruction #UnlabeledLine
-	| '[' ID ']' instruction #LabeledLine
+	| '[' label=ID ']' instruction #LabeledLine
 	;
 
 instruction : ID '=' expression #ExpressionInstruction
-	| 'IF' ID '!=' '0' 'GOTO' ID #ConditionalInstruction
+	| 'IF' var=ID '!=' '0' 'GOTO' label=ID #ConditionalInstruction
 	;
 
-expression : ID ('+' | '-')  '1' # BinaryExpression
-	| ID # UnaryExpression
+expression : var=ID operator=('+' | '-')  '1' # BinaryExpression
+	| var=ID # UnaryExpression
 	;
 
 ID : LETTER DIGIT* ;

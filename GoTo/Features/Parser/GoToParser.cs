@@ -178,10 +178,11 @@ public partial class GoToParser : Parser {
 		}
 	}
 	public partial class LabeledLineContext : LineContext {
-		public ITerminalNode ID() { return GetToken(GoToParser.ID, 0); }
+		public IToken label;
 		public InstructionContext instruction() {
 			return GetRuleContext<InstructionContext>(0);
 		}
+		public ITerminalNode ID() { return GetToken(GoToParser.ID, 0); }
 		public LabeledLineContext(LineContext context) { CopyFrom(context); }
 		public override void EnterRule(IParseTreeListener listener) {
 			IGoToListener typedListener = listener as IGoToListener;
@@ -219,7 +220,7 @@ public partial class GoToParser : Parser {
 				EnterOuterAlt(_localctx, 2);
 				{
 				State = 17; Match(T__0);
-				State = 18; Match(ID);
+				State = 18; ((LabeledLineContext)_localctx).label = Match(ID);
 				State = 19; Match(T__1);
 				State = 20; instruction();
 				}
@@ -272,6 +273,8 @@ public partial class GoToParser : Parser {
 		}
 	}
 	public partial class ConditionalInstructionContext : InstructionContext {
+		public IToken var;
+		public IToken label;
 		public ITerminalNode[] ID() { return GetTokens(GoToParser.ID); }
 		public ITerminalNode ID(int i) {
 			return GetToken(GoToParser.ID, i);
@@ -314,11 +317,11 @@ public partial class GoToParser : Parser {
 				EnterOuterAlt(_localctx, 2);
 				{
 				State = 26; Match(T__3);
-				State = 27; Match(ID);
+				State = 27; ((ConditionalInstructionContext)_localctx).var = Match(ID);
 				State = 28; Match(T__4);
 				State = 29; Match(T__5);
 				State = 30; Match(T__6);
-				State = 31; Match(ID);
+				State = 31; ((ConditionalInstructionContext)_localctx).label = Match(ID);
 				}
 				break;
 			default:
@@ -349,6 +352,8 @@ public partial class GoToParser : Parser {
 		}
 	}
 	public partial class BinaryExpressionContext : ExpressionContext {
+		public IToken var;
+		public IToken @operator;
 		public ITerminalNode ID() { return GetToken(GoToParser.ID, 0); }
 		public BinaryExpressionContext(ExpressionContext context) { CopyFrom(context); }
 		public override void EnterRule(IParseTreeListener listener) {
@@ -366,6 +371,7 @@ public partial class GoToParser : Parser {
 		}
 	}
 	public partial class UnaryExpressionContext : ExpressionContext {
+		public IToken var;
 		public ITerminalNode ID() { return GetToken(GoToParser.ID, 0); }
 		public UnaryExpressionContext(ExpressionContext context) { CopyFrom(context); }
 		public override void EnterRule(IParseTreeListener listener) {
@@ -396,11 +402,12 @@ public partial class GoToParser : Parser {
 				_localctx = new BinaryExpressionContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 34; Match(ID);
+				State = 34; ((BinaryExpressionContext)_localctx).var = Match(ID);
 				State = 35;
+				((BinaryExpressionContext)_localctx).@operator = TokenStream.LT(1);
 				_la = TokenStream.LA(1);
 				if ( !(_la==T__7 || _la==T__8) ) {
-				ErrorHandler.RecoverInline(this);
+					((BinaryExpressionContext)_localctx).@operator = ErrorHandler.RecoverInline(this);
 				}
 				else {
 					ErrorHandler.ReportMatch(this);
@@ -413,7 +420,7 @@ public partial class GoToParser : Parser {
 				_localctx = new UnaryExpressionContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 37; Match(ID);
+				State = 37; ((UnaryExpressionContext)_localctx).var = Match(ID);
 				}
 				break;
 			}

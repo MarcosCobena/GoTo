@@ -6,9 +6,12 @@ namespace Tests
     public class AbstractSyntaxTreeTests
     {
         [Fact]
-        public void SkipDifferentVars()
+        public void DeleteMe()
         {
-            Compiler.Run("Y = Y + 1\nY = Y + 1");
+            Compiler.Run(
+                "[A] X = X - 1\n" +
+                "Y = Y + 1\n" +
+                "IF X != 0 GOTO A");
         }
     }
 }
