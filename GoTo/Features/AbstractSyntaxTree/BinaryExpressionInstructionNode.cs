@@ -8,5 +8,7 @@
         {
             _operator = @operator;
         }
+
+        public string Operator => _operator;
     }
 }

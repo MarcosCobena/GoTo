@@ -18,14 +18,13 @@
     
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.7.1.1" />
-  </ItemGroup>
-    
-  <ItemGroup>
-    <Folder Include="Features\Parser\" />
+    <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
   </ItemGroup>
     
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="cd $(ProjectDir)Features\Parser&#xD;&#xA;java -jar antlr-4.7.1-complete.jar -Dlanguage=CSharp -visitor GoTo.g4" />
   </Target>
+    
+  <Import Project="..\GoTo.Shared\GoTo.Shared.projitems" Label="Shared" />
     
 </Project>
