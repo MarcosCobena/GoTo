@@ -7,36 +7,18 @@ namespace Tests
 {
     public class SemanticAnalyzerTests
     {
-        [Fact]
-        public void SkipDifferentVars()
-        {
-            CheckDifferentVars("X = X2", "Skip");
-        }
+        #region Skip
 
         [Fact]
-        public void SkipEqualVars()
+        public void DifferentVarsSkip()
         {
-            var messages = Compiler.Run("X = X");
-
-            Assert.Empty(messages);
+            AssertSingleErrorContainingKeywords("X = X2", "skip");
         }
 
-        [Theory]
-        [InlineData("+")]
-        [InlineData("-")]
-        public void IncrementOrDecrementDifferentVars(string @operator)
+        [Fact]
+        public void EqualVarsSkip()
         {
-            CheckDifferentVars($"X = X2 {@operator} 1", "Increment", "Decrement");
-        }
-
-        [Theory]
-        [InlineData("+")]
-        [InlineData("-")]
-        public void IncrementOrDecrementEqualVars(string @operator)
-        {
-            var messages = Compiler.Run($"X = X {@operator} 1");
-
-            Assert.Empty(messages);
+            AssertExtensions.RunWithEmptyMessages("X = X");
         }
 
         [Theory]
@@ -44,9 +26,51 @@ namespace Tests
         [InlineData('X', 9)]
         [InlineData('Z', 0)]
         [InlineData('Z', 9)]
-        public void SkipInputAuxVarIndex(char var, int index)
+        public void InputAuxVarIndexSkip(char var, int index)
         {
-            CheckErrorsContainKeyword($"{var}{index} = {var}{index}", "index");
+            AssertEqualErrorsCountContainingKeyword($"{var}{index} = {var}{index}", "index");
+        }
+
+        [Fact]
+        public void OutputVarIndexSkip()
+        {
+            AssertEqualErrorsCountContainingKeyword("Y1 = Y1", "index");
+        }
+
+        [Fact]
+        public void OutputVarLastSkip()
+        {
+            AssertEqualErrorsCountContainingKeyword(
+                "X = X + 1\n" +
+                "Y = Y",
+                "skip",
+                1);
+        }
+
+        [Fact]
+        public void LowercaseSkip()
+        {
+            AssertEqualErrorsCountContainingKeyword("x = x", "lowercase");
+        }
+
+        #endregion Skip
+
+        #region IncrementOrDecrement
+
+        [Theory]
+        [InlineData("+")]
+        [InlineData("-")]
+        public void DifferentVarsIncrementOrDecrement(string @operator)
+        {
+            AssertSingleErrorContainingKeywords($"X = X2 {@operator} 1", "increment", "decrement");
+        }
+
+        [Theory]
+        [InlineData("+")]
+        [InlineData("-")]
+        public void EqualVarsIncrementOrDecrement(string @operator)
+        {
+            AssertExtensions.RunWithEmptyMessages($"X = X {@operator} 1");
         }
 
         [Theory]
@@ -58,40 +82,50 @@ namespace Tests
         [InlineData('Z', 0, "-")]
         [InlineData('Z', 9, "+")]
         [InlineData('Z', 9, "-")]
-        public void IncrementOrDecrementInputAuxVarIndex(char var, int index, string @operator)
+        public void InputAuxVarIndexIncrementOrDecrement(char var, int index, string @operator)
         {
-            CheckErrorsContainKeyword($"{var}{index} = {var}{index} {@operator} 1", "index");
-        }
-
-        [Fact]
-        public void SkipOutputVarIndex()
-        {
-            CheckErrorsContainKeyword("Y1 = Y1", "index");
+            AssertEqualErrorsCountContainingKeyword($"{var}{index} = {var}{index} {@operator} 1", "index");
         }
 
         [Theory]
         [InlineData("+")]
         [InlineData("-")]
-        public void IncrementOrDecrementOutputVarIndex(string @operator)
+        public void OutputVarIndexIncrementOrDecrement(string @operator)
         {
-            CheckErrorsContainKeyword($"Y1 = Y1 {@operator} 1", "index");
+            AssertEqualErrorsCountContainingKeyword($"Y1 = Y1 {@operator} 1", "index");
         }
+
+        [Theory]
+        [InlineData("+")]
+        [InlineData("-")]
+        public void LowercaseIncrementOrDecrement(string @operator)
+        {
+            AssertEqualErrorsCountContainingKeyword($"x = x {@operator} 1", "lowercase");
+        }
+
+        #endregion IncrementOrDecrement
+
+        #region Conditional
 
         [Theory]
         [InlineData('X', 0)]
         [InlineData('X', 9)]
         [InlineData('Z', 0)]
         [InlineData('Z', 9)]
-        public void ConditionalInputAuxVarIndex(char var, int index)
+        public void InputAuxVarIndexConditional(char var, int index)
         {
-            CheckErrorsContainKeyword($"IF {var}{index} != 0 GOTO A", "index", expectedErrorsCount: 1);
+            AssertEqualErrorsCountContainingKeyword($"IF {var}{index} != 0 GOTO A", "index", expectedErrorsCount: 1);
         }
 
         [Fact]
-        public void ConditionalOutputVarIndex()
+        public void OutputVarIndexConditional()
         {
-            CheckErrorsContainKeyword($"IF Y1 != 0 GOTO A", "index", expectedErrorsCount: 1);
+            AssertEqualErrorsCountContainingKeyword($"IF Y1 != 0 GOTO A", "index", expectedErrorsCount: 1);
         }
+
+        #endregion Conditional
+
+        #region Labels
 
         [Theory]
         [InlineData('A', 0)]
@@ -105,7 +139,7 @@ namespace Tests
         [InlineData('F', 1)]
         public void LabeledLine(char label, int index)
         {
-            CheckErrorsContainKeyword($"[{label}{index}] X = X", "label", expectedErrorsCount: 1);
+            AssertEqualErrorsCountContainingKeyword($"[{label}{index}] X = X", "label", expectedErrorsCount: 1);
         }
 
         [Theory]
@@ -117,7 +151,7 @@ namespace Tests
                 index.Value.ToString() : 
                 string.Empty;
 
-            CheckErrorsContainKeyword($"[{label}{actualIndex}] X = X", "exit", expectedErrorsCount: 1);
+            AssertEqualErrorsCountContainingKeyword($"[{label}{actualIndex}] X = X", "exit", expectedErrorsCount: 1);
         }
 
         [Theory]
@@ -134,53 +168,32 @@ namespace Tests
         [InlineData('F', 1)]
         public void ConditionalLabel(char label, int index)
         {
-            CheckErrorsContainKeyword($"IF X != 0 GOTO {label}{index}", "label", expectedErrorsCount: 1);
-        }
-
-        [Fact]
-        public void LastSkipOutputVar()
-        {
-            CheckErrorsContainKeyword(
-                $"X = X + 1\n" +
-                "Y = Y", 
-                "skip", 
-                1);
-        }
-
-        [Fact]
-        public void LowercaseSkipVars()
-        {
-            CheckErrorsContainKeyword("x = x", "lowercase");
-        }
-
-        [Theory]
-        [InlineData("+")]
-        [InlineData("-")]
-        public void LowercaseIncrementOrDecrementVars(string @operator)
-        {
-            CheckErrorsContainKeyword($"x = x {@operator} 1", "lowercase");
+            AssertEqualErrorsCountContainingKeyword($"IF X != 0 GOTO {label}{index}", "label", expectedErrorsCount: 1);
         }
 
         [Fact]
         public void LowercaseLabel()
         {
-            CheckErrorsContainKeyword("[a] X = X", "lowercase", expectedErrorsCount: 1);
+            AssertEqualErrorsCountContainingKeyword("[a] X = X", "lowercase", expectedErrorsCount: 1);
         }
 
         [Fact]
         public void LowercaseConditionalLabel()
         {
-            CheckErrorsContainKeyword("IF X != 0 GOTO a", "lowercase", expectedErrorsCount: 1);
+            AssertEqualErrorsCountContainingKeyword("IF X != 0 GOTO a", "lowercase", expectedErrorsCount: 1);
         }
 
-        static void CheckDifferentVars(string input, params string[] errorKeywords)
+        #endregion Labels
+
+        static void AssertSingleErrorContainingKeywords(string input, params string[] errorKeywords)
         {
-            var messages = Compiler.Run(input);
+            var (_, messages) = Compiler.Run(input);
 
             var errorMessages = messages.Where(message => message.Severity == SeverityEnum.Error);
-            var firstError = errorMessages.First();
 
             Assert.Single(errorMessages);
+
+            var firstError = errorMessages.First();
 
             foreach (var item in errorKeywords)
             {
@@ -188,9 +201,9 @@ namespace Tests
             }
         }
         
-        static void CheckErrorsContainKeyword(string input, string keyword, int expectedErrorsCount = 2)
+        static void AssertEqualErrorsCountContainingKeyword(string input, string keyword, int expectedErrorsCount = 2)
         {
-            var messages = Compiler.Run(input);
+            var (_, messages) = Compiler.Run(input);
 
             var errorMessages = messages.Where(message => message.Severity == SeverityEnum.Error);
 

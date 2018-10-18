@@ -4,7 +4,6 @@ using GoTo.Features.AbstractSyntaxTree;
 using GoTo.Features.CodeGenerator;
 using GoTo.Features.Parser;
 using GoTo.Features.SemanticAnalyzer;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,27 +11,10 @@ namespace GoTo
 {
     public static class Compiler
     {
-        public static IEnumerable<Message> Run(string input)
-        {
-            Analyze(input, out List<Message> messages, out GoToParser.ProgramContext contextSyntaxTree);
+        const int ErrorResult = 0;
 
-            var areThereErrors = messages.Where(message => message.Severity == SeverityEnum.Error).Any();
-
-            if (areThereErrors)
-            {
-                return messages;
-            }
-
-            var abstractSyntaxTreeGenerator = new AbstractSyntaxTreeGenerator();
-            var program = abstractSyntaxTreeGenerator.VisitProgram(contextSyntaxTree) as ProgramNode;
-
-            SemanticAnalyzer.CheckLastLineSkip(program, ref messages);
-
-            return messages;
-        }
-
-        public static int Run(
-            string input, 
+        public static (int result, IEnumerable<Message> messages) Run(
+            string input,
             int x1 = 0, 
             int x2 = 0, 
             int x3 = 0, 
@@ -43,30 +25,30 @@ namespace GoTo
             int x8 = 0)
         {
             Analyze(input, out List<Message> messages, out GoToParser.ProgramContext contextSyntaxTree);
-            CheckErrors(input, messages);
+
+            if (AreThereErrors(messages))
+            {
+                return (ErrorResult, messages);
+            }
 
             var abstractSyntaxTreeGenerator = new AbstractSyntaxTreeGenerator();
             var program = abstractSyntaxTreeGenerator.VisitProgram(contextSyntaxTree) as ProgramNode;
 
             SemanticAnalyzer.CheckLastLineSkip(program, ref messages);
-            CheckErrors(input, messages);
+
+            if (AreThereErrors(messages))
+            {
+                return (ErrorResult, messages);
+            }
 
             var type = CodeGenerator.CreateType(program, "Program");
             var result = (int)type.GetMethod("Run").Invoke(null, new object[] { x1, x2, x3, x4, x5, x6, x7, x8 });
 
-            return result;
+            return (result, messages);
         }
 
-        static void CheckErrors(string input, IEnumerable<Message> messages)
-        {
-            var areThereErrors = messages.Where(message => message.Severity == SeverityEnum.Error).Any();
-
-            if (areThereErrors)
-            {
-                // TODO leverage messages too
-                throw new ArgumentException("The program contains errors.", nameof(input));
-            }
-        }
+        static bool AreThereErrors(IEnumerable<Message> messages) => 
+            messages.Where(message => message.Severity == SeverityEnum.Error).Any();
 
         static void Analyze(string input, out List<Message> messages, out GoToParser.ProgramContext contextSyntaxTree)
         {

@@ -5,7 +5,7 @@ using static GoToParser;
 
 namespace GoTo.Features.SemanticAnalyzer
 {
-    public class SemanticListener : GoToBaseListener
+    class SemanticListener : GoToBaseListener
     {
         const string Labels = "ABCDE";
         const char ExitLabel = 'E';

@@ -5,20 +5,29 @@ namespace Tests
 {
     public class CompilerTests
     {
-        const string OutputPath = "Foo.dll";
-        const string OutputType = "Foo";
+        [Fact]
+        public void EmptyProgram()
+        {
+            AssertResultWhenNoInput(string.Empty, 0);
+        }
 
         [Fact]
-        public void DeleteMe()
+        public void OutputVarIncrement()
         {
-            var result = Compiler.Run(
-                //"[A] X = X - 1\n" +
-                //"Y = Y + 1\n" +
-                //"IF X != 0 GOTO A",
-                "Y = Y + 1",
-                1);
+            AssertResultWhenNoInput("Y = Y + 1", 1);
+        }
 
-            Assert.Equal(1, result);
+        [Fact]
+        public void OutputVarDecrement()
+        {
+            AssertResultWhenNoInput("Y = Y - 1", 0);
+        }
+
+        static void AssertResultWhenNoInput(string input, int expectedResult)
+        {
+            var (result, _) = Compiler.Run(input);
+
+            Assert.Equal(expectedResult, result);
         }
     }
 }
