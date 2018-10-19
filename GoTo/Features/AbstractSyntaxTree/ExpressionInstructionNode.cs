@@ -2,13 +2,8 @@
 {
     abstract class ExpressionInstructionNode : InstructionNode
     {
-        readonly string _var;
-
-        public ExpressionInstructionNode(string var)
+        public ExpressionInstructionNode(string var) : base(var)
         {
-            _var = var;
         }
-
-        public string Var => _var;
     }
 }

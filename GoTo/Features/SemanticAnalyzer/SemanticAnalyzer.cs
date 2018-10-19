@@ -12,7 +12,7 @@ namespace GoTo.Features.SemanticAnalyzer
             var outputVar = SemanticListener.OutputVar.ToString();
 
             if (lastInstruction is UnaryExpressionInstructionNode skipInstruction &&
-                skipInstruction.Var == outputVar)
+                skipInstruction.VarType == ExpressionInstructionNode.VarTypeEnum.Output)
             {
                 // TODO
                 var message = new Message(

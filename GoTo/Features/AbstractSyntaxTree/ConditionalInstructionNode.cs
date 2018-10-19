@@ -2,13 +2,11 @@
 {
     class ConditionalInstructionNode : InstructionNode
     {
-        string _var;
-        string _label;
-
-        public ConditionalInstructionNode(string var, string label)
+        public ConditionalInstructionNode(string var, string label) : base(var)
         {
-            _var = var;
-            _label = label;
+            TargetLabel = label;
         }
+
+        public string TargetLabel { get; }
     }
 }

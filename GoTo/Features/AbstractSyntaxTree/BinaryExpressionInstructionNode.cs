@@ -2,13 +2,21 @@
 {
     class BinaryExpressionInstructionNode : ExpressionInstructionNode
     {
-        readonly string _operator;
+        readonly OperatorEnum _operator;
+
+        public enum OperatorEnum
+        {
+            Increment,
+            Decrement
+        }
 
         public BinaryExpressionInstructionNode(string var, string @operator) : base(var)
         {
-            _operator = @operator;
+            _operator = @operator == "+" ? 
+                OperatorEnum.Increment :
+                OperatorEnum.Decrement;
         }
 
-        public string Operator => _operator;
+        public OperatorEnum Operator => _operator;
     }
 }
