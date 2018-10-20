@@ -8,6 +8,7 @@ namespace GoTo.Features.CodeGenerator
 {
     class CodeGenerator
     {
+        const int InputAndAuxVarsLength = 8;
         const string Namespace = "GoTo";
         const string MethodName = "Run";
 
@@ -49,6 +50,16 @@ namespace GoTo.Features.CodeGenerator
                 MethodAttributes.Public | MethodAttributes.Static,
                 typeof(int),
                 new Type[] { inputType, inputType, inputType, inputType, inputType, inputType, inputType, inputType });
+
+            for (int parameterIndex = 1; parameterIndex <= InputAndAuxVarsLength; parameterIndex++)
+            {
+                var parameterBuilder = methodBuilder.DefineParameter(
+                    parameterIndex,
+                    ParameterAttributes.Optional | ParameterAttributes.HasDefault,
+                    $"x{parameterIndex}");
+                parameterBuilder.SetConstant(0);
+            }
+
             var il = methodBuilder.GetILGenerator();
 
             TranslateInto(program, il);
@@ -105,7 +116,7 @@ namespace GoTo.Features.CodeGenerator
 
         static void TranslateInstruction(
             ILGenerator il, 
-            (LocalBuilder y, LocalBuilder z) vars, 
+            (LocalBuilder x, LocalBuilder y, LocalBuilder z) vars, 
             ConditionalInstructionNode node)
         {
             PushVar(il, node, vars);
@@ -126,7 +137,8 @@ namespace GoTo.Features.CodeGenerator
             il.Emit(OpCodes.Bne_Un, label);
         }
 
-        static void PushVar(ILGenerator il, InstructionNode node, (LocalBuilder y, LocalBuilder z) vars)
+        static void PushVar(
+            ILGenerator il, InstructionNode node, (LocalBuilder x, LocalBuilder y, LocalBuilder z) vars)
         {
             var relativeVarIndex = node.VarIndex - 1;
 
@@ -134,7 +146,10 @@ namespace GoTo.Features.CodeGenerator
             {
                 case InstructionNode.VarTypeEnum.Input:
                     {
-                        il.Emit(OpCodes.Ldarg_S, relativeVarIndex);
+                        // x[index - 1]
+                        il.Emit(OpCodes.Ldloc, vars.x);
+                        il.Emit(OpCodes.Ldc_I4, relativeVarIndex);
+                        il.Emit(OpCodes.Ldelem_I4);
                         break;
                     }
                 case InstructionNode.VarTypeEnum.Output:
@@ -147,7 +162,7 @@ namespace GoTo.Features.CodeGenerator
                         // z[index - 1]
                         il.Emit(OpCodes.Ldloc, vars.z);
                         il.Emit(OpCodes.Ldc_I4, relativeVarIndex);
-                        il.Emit(OpCodes.Ldelem);
+                        il.Emit(OpCodes.Ldelem_I4);
                         break;
                     }
                 default:
@@ -157,7 +172,7 @@ namespace GoTo.Features.CodeGenerator
 
         static void TranslateInstruction(
             ILGenerator il, 
-            (LocalBuilder y, LocalBuilder z) vars, 
+            (LocalBuilder x, LocalBuilder y, LocalBuilder z) vars, 
             BinaryExpressionInstructionNode node)
         {
             var relativeVarIndex = node.VarIndex - 1;
@@ -174,7 +189,13 @@ namespace GoTo.Features.CodeGenerator
                             OpCodes.Sub;
 
                         il.Emit(operation);
-                        il.Emit(OpCodes.Starg, relativeVarIndex);
+                        var tempVar = il.DeclareLocal(typeof(int));
+                        il.Emit(OpCodes.Stloc, tempVar);
+
+                        il.Emit(OpCodes.Ldloc, vars.x);
+                        il.Emit(OpCodes.Ldc_I4, relativeVarIndex);
+                        il.Emit(OpCodes.Ldloc, tempVar);
+                        il.Emit(OpCodes.Stelem_I4);
 
                         break;
                     }
@@ -194,26 +215,20 @@ namespace GoTo.Features.CodeGenerator
                     }
                 case InstructionNode.VarTypeEnum.Aux:
                     {
-                        // z
+                        // FIXME make the same as with x above
                         il.Emit(OpCodes.Ldloc, vars.z);
+                        il.Emit(OpCodes.Ldc_I4, relativeVarIndex);
 
-                        // z[index - 1]
                         PushVar(il, node, vars);
-
-                        // 1
                         il.Emit(OpCodes.Ldc_I4_1);
 
                         var operation = node.Operator == BinaryExpressionInstructionNode.OperatorEnum.Increment ?
                             OpCodes.Add :
                             OpCodes.Sub;
 
-                        // +/-
                         il.Emit(operation);
 
-                        // z[index - 1] = ...
-                        il.Emit(OpCodes.Ldloc, vars.z);
-                        il.Emit(OpCodes.Ldc_I4, relativeVarIndex);
-                        il.Emit(OpCodes.Stloc, vars.z);
+                        il.Emit(OpCodes.Stelem_I4);
 
                         break;
                     }
@@ -222,22 +237,34 @@ namespace GoTo.Features.CodeGenerator
             }
         }
 
-        static (LocalBuilder y, LocalBuilder z) InitializeVars(ILGenerator il)
+        static (LocalBuilder x, LocalBuilder y, LocalBuilder z) InitializeVars(ILGenerator il)
         {
-            var dictionary = new Dictionary<string, LocalBuilder>();
+            var arrayType = typeof(int[]);
+            var arrayElementType = typeof(int);
 
-            var yOutputVar = il.DeclareLocal(typeof(int));
+            var xInputVars = il.DeclareLocal(arrayType);
+            il.Emit(OpCodes.Ldc_I4, InputAndAuxVarsLength);
+            il.Emit(OpCodes.Newarr, arrayElementType);
+            il.Emit(OpCodes.Stloc, xInputVars);
+
+            for (var i = 0; i < InputAndAuxVarsLength; i++)
+            {
+                il.Emit(OpCodes.Ldloc, xInputVars);
+                il.Emit(OpCodes.Ldc_I4, i);
+                il.Emit(OpCodes.Ldarg, i);
+                il.Emit(OpCodes.Stelem_I4);
+            }
+
+            var yOutputVar = il.DeclareLocal(arrayElementType);
             il.Emit(OpCodes.Ldc_I4_0);
             il.Emit(OpCodes.Stloc, yOutputVar);
 
-            var arrayType = typeof(int[]);
             var zAuxVars = il.DeclareLocal(arrayType);
-            il.Emit(OpCodes.Ldc_I4, 8);
-            var constructor = arrayType.GetConstructor(new Type[] { typeof(int) });
-            il.Emit(OpCodes.Newobj, constructor);
+            il.Emit(OpCodes.Ldc_I4, InputAndAuxVarsLength);
+            il.Emit(OpCodes.Newarr, arrayElementType);
             il.Emit(OpCodes.Stloc, zAuxVars);
 
-            return (yOutputVar, zAuxVars);
+            return (xInputVars, yOutputVar, zAuxVars);
         }
     }
 }

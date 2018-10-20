@@ -12,6 +12,12 @@ namespace Tests
         }
 
         [Fact]
+        public void Skip()
+        {
+            AssertResultWhenNoInput("X = X", 0);
+        }
+
+        [Fact]
         public void InputVarIncrement()
         {
             AssertResultWhenNoInput("X = X + 1", 0);
@@ -62,6 +68,7 @@ namespace Tests
 
         [Theory]
         [InlineData(2, 2)]
+        [InlineData(int.MaxValue, int.MaxValue)]
         public void CopyXIntoY(int x, int expectedY)
         {
             AssertResultWhenInput(
@@ -74,7 +81,7 @@ namespace Tests
 
         static void AssertResultWhenInput(string input, int x1, int expectedResult)
         {
-            var (result, _) = Compiler.Run(input);
+            var (result, _) = Compiler.Run(input, x1);
 
             Assert.Equal(expectedResult, result);
         }
