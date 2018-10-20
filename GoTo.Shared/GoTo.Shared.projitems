@@ -10,5 +10,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Features\CodeGenerator\CodeGenerator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Features\CodeGenerator\ILGeneratorExtensions.cs" />
   </ItemGroup>
 </Project>

@@ -3,19 +3,19 @@ using Xunit;
 
 namespace Tests
 {
-    public class CompilerTests
+    public class CodeGeneratorTests
     {
-        [Fact]
-        public void EmptyProgram()
-        {
-            AssertResultWhenNoInput(string.Empty, 0);
-        }
+        #region Skip
 
         [Fact]
         public void Skip()
         {
             AssertResultWhenNoInput("X = X", 0);
         }
+
+        #endregion Skip
+
+        #region In/decrement
 
         [Fact]
         public void InputVarIncrement()
@@ -36,23 +36,9 @@ namespace Tests
             AssertResultWhenNoInput("Y = Y - 1", 0);
         }
 
-        [Fact]
-        public void SenselessLabel()
-        {
-            AssertResultWhenNoInput("[A] X = X + 1", 0);
-        }
+        #endregion In/decrement
 
-        [Fact]
-        public void MissingLabel()
-        {
-            AssertResultWhenNoInput("IF X != 0 GOTO A", 0);
-        }
-
-        [Fact]
-        public void InfiniteLoop()
-        {
-            AssertResultWhenNoInput("[A] IF X != 0 GOTO A", 0);
-        }
+        #region Conditional
 
         [Fact]
         public void Conditional()
@@ -64,6 +50,46 @@ namespace Tests
                 "[A] X = X",
                 0,
                 1);
+        }
+
+        #endregion Conditional
+
+        #region Labels
+
+        [Fact]
+        public void SenselessLabel()
+        {
+            AssertResultWhenNoInput("[A] X = X + 1", 0);
+        }
+
+        [Fact]
+        public void MissingLabel()
+        {
+            // I think this should be detected during semantic analysis stage, or simply go to the following 
+            // instruction
+            AssertResultWhenNoInput("IF X != 0 GOTO A", 0);
+        }
+
+        [Fact]
+        public void ExitLabel()
+        {
+            AssertResultWhenNoInput("IF X != 0 GOTO E", 0);
+        }
+
+        #endregion Labels
+
+        #region Others
+
+        [Fact]
+        public void Empty()
+        {
+            AssertResultWhenNoInput(string.Empty, 0);
+        }
+
+        [Fact]
+        public void InfiniteLoop()
+        {
+            AssertResultWhenNoInput("[A] IF X != 0 GOTO A", 0);
         }
 
         [Theory]
@@ -78,6 +104,8 @@ namespace Tests
                 x,
                 expectedY);
         }
+
+        #endregion Others
 
         static void AssertResultWhenInput(string input, int x1, int expectedResult)
         {
