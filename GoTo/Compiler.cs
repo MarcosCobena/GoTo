@@ -4,7 +4,9 @@ using GoTo.Features.AbstractSyntaxTree;
 using GoTo.Features.CodeGenerator;
 using GoTo.Features.Parser;
 using GoTo.Features.SemanticAnalyzer;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace GoTo
@@ -24,31 +26,27 @@ namespace GoTo
             int x7 = 0, 
             int x8 = 0)
         {
-            Analyze(input, out List<Message> messages, out GoToParser.ProgramContext contextSyntaxTree);
+            var output = Compile(input);
 
-            if (AreThereErrors(messages))
+            if (AreThereErrors(output.messages))
             {
-                return (ErrorResult, messages);
+                return (0, output.messages);
             }
 
-            var abstractSyntaxTreeGenerator = new AbstractSyntaxTreeGenerator();
-            var program = abstractSyntaxTreeGenerator.VisitProgram(contextSyntaxTree) as ProgramNode;
+            var result = (int)output.result
+                .GetMethod("Run")
+                .Invoke(null, new object[] { x1, x2, x3, x4, x5, x6, x7, x8 });
 
-            SemanticAnalyzer.CheckLastLineSkip(program, ref messages);
-
-            if (AreThereErrors(messages))
-            {
-                return (ErrorResult, messages);
-            }
-
-            var type = CodeGenerator.CreateType(program, "Program");
-            var result = (int)type.GetMethod("Run").Invoke(null, new object[] { x1, x2, x3, x4, x5, x6, x7, x8 });
-
-            return (result, messages);
+            return (result, output.messages);
         }
 
-        static bool AreThereErrors(IEnumerable<Message> messages) => 
-            messages.Where(message => message.Severity == SeverityEnum.Error).Any();
+        public static IEnumerable<Message> Build(StreamReader inputStream, string programName, string outputPath)
+        {
+            var input = inputStream.ReadToEnd();
+            var result = Compile(input, programName, outputPath);
+
+            return result.messages;
+        }
 
         static void Analyze(string input, out List<Message> messages, out GoToParser.ProgramContext contextSyntaxTree)
         {
@@ -70,6 +68,43 @@ namespace GoTo
             var listener = new SemanticListener();
             ParseTreeWalker.Default.Walk(listener, contextSyntaxTree);
             messages.AddRange(listener.Messages);
+        }
+
+        static bool AreThereErrors(IEnumerable<Message> messages) => 
+            messages.Where(message => message.Severity == SeverityEnum.Error).Any();
+
+        static (Type result, IEnumerable<Message> messages) Compile(
+            string input, string programName = "Program", string outputPath = null)
+        {
+            Analyze(input, out List<Message> messages, out GoToParser.ProgramContext contextSyntaxTree);
+
+            if (AreThereErrors(messages))
+            {
+                return (null, messages);
+            }
+
+            var abstractSyntaxTreeGenerator = new AbstractSyntaxTreeGenerator();
+            var program = abstractSyntaxTreeGenerator.VisitProgram(contextSyntaxTree) as ProgramNode;
+
+            SemanticAnalyzer.CheckLastLineSkip(program, ref messages);
+
+            if (AreThereErrors(messages))
+            {
+                return (null, messages);
+            }
+
+            if (outputPath == null)
+            {
+                var type = CodeGenerator.CreateType(program, programName);
+
+                return (type, messages);
+            }
+            else
+            {
+                CodeGenerator.CreateAssembly(program, programName, outputPath);
+
+                return (null, messages);
+            }
         }
     }
 }

@@ -11,12 +11,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{4378FC77-5ADA-49F3-B3EE-779C7A5DB7B9}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "GoTo.Shared", "GoTo.Shared\GoTo.Shared.shproj", "{A61F6F68-34FC-4554-93D8-C35DA4943DB3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoTo.CLI", "GoTo.CLI\GoTo.CLI.csproj", "{045E7FE0-12BE-4A09-87A5-D06D0919E85E}"
 EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		GoTo.Shared\GoTo.Shared.projitems*{a61f6f68-34fc-4554-93d8-c35da4943db3}*SharedItemsImports = 13
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -30,6 +27,10 @@ Global
 		{4378FC77-5ADA-49F3-B3EE-779C7A5DB7B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4378FC77-5ADA-49F3-B3EE-779C7A5DB7B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4378FC77-5ADA-49F3-B3EE-779C7A5DB7B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{045E7FE0-12BE-4A09-87A5-D06D0919E85E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{045E7FE0-12BE-4A09-87A5-D06D0919E85E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{045E7FE0-12BE-4A09-87A5-D06D0919E85E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{045E7FE0-12BE-4A09-87A5-D06D0919E85E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

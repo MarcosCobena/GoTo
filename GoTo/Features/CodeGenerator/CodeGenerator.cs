@@ -19,34 +19,24 @@ namespace GoTo.Features.CodeGenerator
 
         static IDictionary<string, Label> _labels = new Dictionary<string, Label>();
 
-        public static Assembly CreateAssembly(ProgramNode program, string outputType)
+        public static void CreateAssembly(ProgramNode program, string outputType, string outputPath)
         {
             ActualCreateAssembly(program, outputType, out AssemblyBuilder assemblyBuilder);
-
-#if !NETSTANDARD
-            //assemblyBuilder.Save("Hello.exe");
-#endif
-
-            throw new NotImplementedException();
+            assemblyBuilder.Save(outputPath);
         }
 
         public static Type CreateType(ProgramNode program, string outputType) => 
-            ActualCreateAssembly(program, outputType, out AssemblyBuilder assemblyBuilder);
+            ActualCreateAssembly(program, outputType, out AssemblyBuilder assemblyBuilder, isTransient: true);
 
-        static Type ActualCreateAssembly(ProgramNode program, string outputType, out AssemblyBuilder assemblyBuilder)
+        static Type ActualCreateAssembly(
+            ProgramNode program, string outputType, out AssemblyBuilder assemblyBuilder, bool isTransient = false)
         {
             var assemblyName = new AssemblyName(outputType);
             var appDomain = AppDomain.CurrentDomain;
-            assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(assemblyName,
-#if NETSTANDARD
-                AssemblyBuilderAccess.Run
-#endif
-                );
-            var moduleBuilder = assemblyBuilder.DefineDynamicModule(assemblyName.Name
-#if !NETSTANDARD
-                , "TODO.exe"
-#endif
-                );
+            assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(
+                assemblyName,
+                isTransient ? AssemblyBuilderAccess.Run : AssemblyBuilderAccess.Save);
+            var moduleBuilder = assemblyBuilder.DefineDynamicModule(assemblyName.Name);
             var typeBuilder = moduleBuilder.DefineType(
                 $"{Namespace}.{outputType}", TypeAttributes.Public | TypeAttributes.Class);
             var inputType = typeof(int);

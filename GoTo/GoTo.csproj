@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net461</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -19,12 +19,11 @@
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.7.1.1" />
     <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
     
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="cd $(ProjectDir)Features\Parser&#xD;&#xA;java -jar antlr-4.7.1-complete.jar -Dlanguage=CSharp -visitor GoTo.g4" />
   </Target>
-    
-  <Import Project="..\GoTo.Shared\GoTo.Shared.projitems" Label="Shared" />
     
 </Project>
