@@ -22,14 +22,15 @@ namespace GoTo.CLI
             }
 
             option = args[0];
+            var restOfArgs = args.Skip(1).ToArray();
 
             switch (option)
             {
                 case BuildOption:
-                    Build(args.Skip(1).ToArray());
+                    Build(restOfArgs);
                     break;
                 case RunOption:
-                    Run(args.Skip(1).ToArray());
+                    Run(restOfArgs);
                     break;
                 default:
                     PrintOutterUsage();
@@ -62,7 +63,7 @@ namespace GoTo.CLI
             programName = args[1];
             var outputPath = $"{programName}.dll";
 
-            var messages = Compiler.Build(inputStream, programName, outputPath);
+            var messages = GoTo.Compiler.Build(inputStream, programName, outputPath);
 
             Print(messages);
 
