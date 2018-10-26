@@ -2,12 +2,42 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace GoTo.CLI
 {
     static class Program
     {
+        const string BuildOption = "build";
+        const string RunOption = "run";
+
         static void Main(string[] args)
+        {
+            string option;
+
+            if (args.Length < 1)
+            {
+                PrintOutterUsage();
+                return;
+            }
+
+            option = args[0];
+
+            switch (option)
+            {
+                case BuildOption:
+                    Build(args.Skip(1).ToArray());
+                    break;
+                case RunOption:
+                    Run(args.Skip(1).ToArray());
+                    break;
+                default:
+                    PrintOutterUsage();
+                    break;
+            }
+        }
+
+        static void Build(string[] args)
         {
             string inputFile, programName;
 
@@ -42,6 +72,30 @@ namespace GoTo.CLI
             }
         }
 
+        static void Run(string[] args)
+        {
+            string assemblyFilename, programName, x1;
+
+            if (args.Length < 2)
+            {
+                Print(
+                    $"Usage: GoTo.CLI.exe {nameof(RunOption)} " +
+                    $"{nameof(assemblyFilename)} {nameof(programName)} {nameof(x1)}");
+                return;
+            }
+
+            assemblyFilename = args[0];
+            var assembly = Assembly.LoadFile(assemblyFilename);
+            programName = args[1];
+            var type = assembly.GetType($"GoTo.{programName}");
+            x1 = args[2];
+            var actualX1 = Int32.Parse(x1);
+            var result = (int)type
+                .GetMethod("Run")
+                .Invoke(null, new object[] { actualX1, 0, 0, 0, 0, 0, 0, 0 });
+            Print($"Result: {result}");
+        }
+
         static void Print(string message)
         {
             Console.WriteLine(message);
@@ -53,6 +107,12 @@ namespace GoTo.CLI
             {
                 Print($"{item.Severity} at line {item.Line}, column {item.Column}: {item.Description}");
             }
+        }
+
+        static void PrintOutterUsage(string option = null)
+        {
+            Print($"Usage: GoTo.CLI.exe {nameof(option)} ...");
+            Print($"{nameof(option)}: {BuildOption}, {RunOption}");
         }
     }
 }
