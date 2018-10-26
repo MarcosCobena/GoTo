@@ -36,7 +36,9 @@ namespace GoTo.Features.CodeGenerator
             assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(
                 assemblyName,
                 isTransient ? AssemblyBuilderAccess.Run : AssemblyBuilderAccess.Save);
-            var moduleBuilder = assemblyBuilder.DefineDynamicModule(assemblyName.Name);
+            var moduleBuilder = isTransient ? 
+                assemblyBuilder.DefineDynamicModule(assemblyName.Name) :
+                assemblyBuilder.DefineDynamicModule(assemblyName.Name, $"{outputType}.dll");
             var typeBuilder = moduleBuilder.DefineType(
                 $"{Namespace}.{outputType}", TypeAttributes.Public | TypeAttributes.Class);
             var inputType = typeof(int);
@@ -59,7 +61,7 @@ namespace GoTo.Features.CodeGenerator
 
             TranslateInto(program, il);
 
-            Type resultingType = typeBuilder.CreateTypeInfo();
+            var resultingType = typeBuilder.CreateType();
 
             return resultingType;
         }
