@@ -8,11 +8,14 @@ namespace GoTo.CLI
 {
     static class Program
     {
+        const string Selfname = "gotor.exe";
         const string BuildOption = "build";
         const string RunOption = "run";
 
         static void Main(string[] args)
         {
+            PrintHeader();
+
             string option;
 
             if (args.Length < 1)
@@ -24,80 +27,100 @@ namespace GoTo.CLI
             option = args[0];
             var restOfArgs = args.Skip(1).ToArray();
 
-            switch (option)
+            try
             {
-                case BuildOption:
-                    Build(restOfArgs);
-                    break;
-                case RunOption:
-                    Run(restOfArgs);
-                    break;
-                default:
-                    PrintOutterUsage();
-                    break;
+                switch (option)
+                {
+                    case BuildOption:
+                        Build(restOfArgs);
+                        break;
+                    case RunOption:
+                        Run(restOfArgs);
+                        break;
+                    default:
+                        PrintOutterUsage();
+                        break;
+                }
+            }
+            catch (Exception exception)
+            {
+                Print($"Error: {exception}");
             }
         }
 
         static void Build(string[] args)
         {
-            string inputFile, programName;
+            string inputFilename = null;
 
-            if (args.Length < 2)
+            if (args.Length < 1)
             {
-                Print($"Usage: GoTo.CLI.exe {nameof(inputFile)} {nameof(programName)}");
-                Print($"{nameof(inputFile)}: a GOTO file —something like HelloWorld.goto, for instance");
-                Print(
-                    $"{nameof(programName)}: a valid name for the resulting program —something like CopyInput. " +
-                    "It will be used too as the output assembly filename —i.e. CopyInput.dll");
+                PrintBuildUsage(inputFilename);
                 return;
             }
 
-            inputFile = args[0];
+            inputFilename = args[0];
+            CheckFileExists(inputFilename);
+            var programName = Path.GetFileNameWithoutExtension(inputFilename);
+            var outputFilename = $"{programName}.dll";
 
-            if (!File.Exists(inputFile))
+            using (var inputStream = File.OpenText(inputFilename))
             {
-                Print($"{inputFile} doesn't exist, please double-check");
-            }
+                var messages = Compiler.Build(inputStream, programName, outputFilename);
 
-            var inputStream = File.OpenText(inputFile);
-            programName = args[1];
-            var outputPath = $"{programName}.dll";
+                Print(messages);
 
-            var messages = GoTo.Compiler.Build(inputStream, programName, outputPath);
-
-            Print(messages);
-
-            if (!messages.Any(item => item.Severity == SeverityEnum.Error))
-            {
-                Print("Success!");
+                if (!messages.Any(item => item.Severity == SeverityEnum.Error))
+                {
+                    Print($"Success! {outputFilename}");
+                }
             }
         }
 
         static void Run(string[] args)
         {
-            string assemblyFilename, programName, x1;
+            string assemblyFilename = null;
+            string x1 = null;
 
-            if (args.Length < 2)
+            if (args.Length < 1)
             {
-                Print(
-                    $"Usage: GoTo.CLI.exe {nameof(RunOption)} " +
-                    $"{nameof(assemblyFilename)} {nameof(programName)} {nameof(x1)}");
+                PrintRunUsage(assemblyFilename, x1);
                 return;
             }
 
             assemblyFilename = args[0];
-            var assembly = Assembly.LoadFile(assemblyFilename);
-            programName = args[1];
+            CheckFileExists(assemblyFilename);
+            var fullPath = Path.GetFullPath(assemblyFilename);
+            // Microsoft's implementation barks for the full path; however, Mono loads it just fine
+            var assembly = Assembly.LoadFile(fullPath);
+
+            var programName = Path.GetFileNameWithoutExtension(assemblyFilename);
             var type = assembly.GetType($"GoTo.{programName}");
-            x1 = args[2];
-            var actualX1 = Int32.Parse(x1);
+
+            x1 = args[1];
+            var actualX1 = int.Parse(x1);
+
             var result = (int)type
                 .GetMethod("Run")
                 .Invoke(null, new object[] { actualX1, 0, 0, 0, 0, 0, 0, 0 });
-            Print($"Result: {result}");
+            Print(result.ToString());
         }
 
-        static void Print(string message)
+        static void CheckFileExists(string inputFile)
+        {
+            if (!File.Exists(inputFile))
+            {
+                throw new ArgumentException($"The file {inputFile} doesn't exist", nameof(inputFile));
+            }
+        }
+
+        private static void PrintRunUsage(string assemblyFilename, string x1)
+        {
+            Print(
+                $"Usage: {Selfname} {RunOption} " +
+                $"{nameof(assemblyFilename)} {nameof(x1)}");
+        }
+
+        static void Print(string message = "")
         {
             Console.WriteLine(message);
         }
@@ -110,10 +133,22 @@ namespace GoTo.CLI
             }
         }
 
+        static void PrintBuildUsage(string inputFile)
+        {
+            Print($"Usage: {Selfname} {BuildOption} {nameof(inputFile)}");
+            Print($"- {nameof(inputFile)}: a GOTO file —something like HelloWorld.goto, for instance");
+        }
+
+        static void PrintHeader()
+        {
+            Print($"GOTO Runtime");
+            Print();
+        }
+
         static void PrintOutterUsage(string option = null)
         {
-            Print($"Usage: GoTo.CLI.exe {nameof(option)} ...");
-            Print($"{nameof(option)}: {BuildOption}, {RunOption}");
+            Print($"Usage: {Selfname} {nameof(option)} ...");
+            Print($"- {nameof(option)}: {BuildOption}, {RunOption}");
         }
     }
 }

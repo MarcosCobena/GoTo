@@ -18,7 +18,6 @@
     
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.7.1.1" />
-    <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
     
