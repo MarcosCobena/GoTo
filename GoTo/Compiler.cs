@@ -15,6 +15,9 @@ namespace GoTo
     {
         const int ErrorResult = 0;
 
+        public const string OutputMethodName = "Run";
+        public const string OutputNamespace = "GoTo";
+
         public static (int result, IEnumerable<Message> messages) Run(
             string input,
             int x1 = 0, 
@@ -34,7 +37,7 @@ namespace GoTo
             }
 
             var result = (int)output.result
-                .GetMethod("Run")
+                .GetMethod(OutputMethodName)
                 .Invoke(null, new object[] { x1, x2, x3, x4, x5, x6, x7, x8 });
 
             return (result, output.messages);

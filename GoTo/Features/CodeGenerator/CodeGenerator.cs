@@ -9,8 +9,6 @@ namespace GoTo.Features.CodeGenerator
 {
     class CodeGenerator
     {
-        const string Namespace = "GoTo";
-        const string MethodName = "Run";
         const string ExitLabel = "E";
         const int InputAndAuxVarsLength = 8;
 
@@ -40,10 +38,10 @@ namespace GoTo.Features.CodeGenerator
                 assemblyBuilder.DefineDynamicModule(assemblyName.Name) :
                 assemblyBuilder.DefineDynamicModule(assemblyName.Name, $"{outputType}.dll");
             var typeBuilder = moduleBuilder.DefineType(
-                $"{Namespace}.{outputType}", TypeAttributes.Public | TypeAttributes.Class);
+                $"{Compiler.OutputNamespace}.{outputType}", TypeAttributes.Public | TypeAttributes.Class);
             var inputType = typeof(int);
             var methodBuilder = typeBuilder.DefineMethod(
-                MethodName,
+                Compiler.OutputMethodName,
                 MethodAttributes.Public | MethodAttributes.Static,
                 typeof(int),
                 new Type[] { inputType, inputType, inputType, inputType, inputType, inputType, inputType, inputType });

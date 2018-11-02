@@ -11,7 +11,7 @@
 
     <StartupObject />
 
-    <AssemblyName>gotor</AssemblyName>
+    <AssemblyName>gotool</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
