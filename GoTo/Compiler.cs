@@ -90,6 +90,7 @@ namespace GoTo
             var program = abstractSyntaxTreeGenerator.VisitProgram(contextSyntaxTree) as ProgramNode;
 
             SemanticAnalyzer.CheckLastLineSkip(program, ref messages);
+            SemanticAnalyzer.CheckMissingLabel(program, ref messages);
 
             if (AreThereErrors(messages))
             {

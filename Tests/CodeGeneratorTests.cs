@@ -63,14 +63,6 @@ namespace Tests
         }
 
         [Fact]
-        public void MissingLabel()
-        {
-            // I think this should be detected during semantic analysis stage, or simply go to the following 
-            // instruction
-            AssertResultWhenNoInput("IF X != 0 GOTO A", 0);
-        }
-
-        [Fact]
         public void ExitLabel()
         {
             AssertResultWhenNoInput("IF X != 0 GOTO E", 0);

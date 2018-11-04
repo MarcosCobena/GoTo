@@ -4,6 +4,9 @@ namespace GoTo.Features.AbstractSyntaxTree
 {
     abstract class InstructionNode : GoToNode
     {
+        readonly int _line;
+        readonly int _column;
+
         public enum VarTypeEnum
         {
             Input,
@@ -11,7 +14,7 @@ namespace GoTo.Features.AbstractSyntaxTree
             Aux
         }
 
-        protected InstructionNode(string var)
+        protected InstructionNode(string var, int line, int column = -1)
         {
             var letter = var[0];
 
@@ -38,7 +41,14 @@ namespace GoTo.Features.AbstractSyntaxTree
             {
                 VarIndex = 1;
             }
+
+            _line = line;
+            _column = column;
         }
+
+        public int Line => _line;
+
+        public int Column => _column;
 
         public string Label { get; internal set; }
 

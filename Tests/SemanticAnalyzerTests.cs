@@ -183,6 +183,12 @@ namespace Tests
             AssertEqualErrorsCountContainingKeyword("IF X != 0 GOTO a", "lowercase", expectedErrorsCount: 1);
         }
 
+        [Fact]
+        public void MissingLabel()
+        {
+            AssertEqualErrorsCountContainingKeyword("IF X != 0 GOTO A", "label", expectedErrorsCount: 1);
+        }
+
         #endregion Labels
 
         static void AssertSingleErrorContainingKeywords(string input, params string[] errorKeywords)

@@ -14,13 +14,35 @@ namespace GoTo.Features.SemanticAnalyzer
             if (lastInstruction is UnaryExpressionInstructionNode skipInstruction &&
                 skipInstruction.VarType == ExpressionInstructionNode.VarTypeEnum.Output)
             {
-                // TODO
                 var message = new Message(
                     SeverityEnum.Error,
                     $"The last line cannot be a skip instruction with {outputVar} output var.",
-                    -1,
-                    -1);
+                    lastInstruction.Line,
+                    lastInstruction.Column);
                 messages.Add(message);
+            }
+        }
+
+        public static void CheckMissingLabel(ProgramNode program, ref List<Message> messages)
+        {
+            var conditionals = program.Instructions
+                .Where(item => item is ConditionalInstructionNode)
+                .Cast<ConditionalInstructionNode>();
+            var labels = program.Instructions
+                .Cast<InstructionNode>()
+                .Select(item => item.Label);
+
+            foreach (var item in conditionals)
+            {
+                if (!labels.Contains(item.TargetLabel))
+                {
+                    var message = new Message(
+                        SeverityEnum.Error,
+                        $"The conditional instruction cannot target missing label {item.TargetLabel}.",
+                        item.Line,
+                        item.Column);
+                    messages.Add(message);
+                }
             }
         }
     }

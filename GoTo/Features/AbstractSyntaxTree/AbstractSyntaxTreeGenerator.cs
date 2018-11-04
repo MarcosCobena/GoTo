@@ -35,12 +35,18 @@ namespace GoTo.Features.AbstractSyntaxTree
 
         public override GoToNode VisitConditionalInstruction(
             [NotNull] GoToParser.ConditionalInstructionContext context) => 
-            new ConditionalInstructionNode(context.var.Text, context.label.Text);
+            new ConditionalInstructionNode(
+                context.var.Text, 
+                context.label.Text, 
+                context.label.Line, 
+                // The target label's choosen because's the one maybe needed during sematic analysis
+                context.label.Column);
 
         public override GoToNode VisitBinaryExpression([NotNull] GoToParser.BinaryExpressionContext context) => 
             new BinaryExpressionInstructionNode(context.var.Text, context.@operator.Text);
 
-        public override GoToNode VisitUnaryExpression([NotNull] GoToParser.UnaryExpressionContext context) => 
-            new UnaryExpressionInstructionNode(context.var.Text);
+        public override GoToNode VisitUnaryExpression([NotNull] GoToParser.UnaryExpressionContext context) =>
+            // The var's choosen for line & column because's the one maybe needed during sematic analysis
+            new UnaryExpressionInstructionNode(context.var.Text, context.var.Line, context.var.Column);
     }
 }
