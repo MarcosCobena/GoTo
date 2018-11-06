@@ -38,6 +38,36 @@ public interface IGoToVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitProgram([NotNull] GoToParser.ProgramContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="GoToParser.macrodefinition"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitMacrodefinition([NotNull] GoToParser.MacrodefinitionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="GoToParser.macrosignature"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitMacrosignature([NotNull] GoToParser.MacrosignatureContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="GoToParser.macro"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitMacro([NotNull] GoToParser.MacroContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="GoToParser.macroname"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitMacroname([NotNull] GoToParser.MacronameContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="GoToParser.macroend"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitMacroend([NotNull] GoToParser.MacroendContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>UnlabeledLine</c>
 	/// labeled alternative in <see cref="GoToParser.line"/>.
 	/// </summary>
@@ -65,6 +95,13 @@ public interface IGoToVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitConditionalInstruction([NotNull] GoToParser.ConditionalInstructionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>MacroInstruction</c>
+	/// labeled alternative in <see cref="GoToParser.instruction"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitMacroInstruction([NotNull] GoToParser.MacroInstructionContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>BinaryExpression</c>
 	/// labeled alternative in <see cref="GoToParser.expression"/>.

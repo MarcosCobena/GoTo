@@ -41,6 +41,56 @@ public interface IGoToListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitProgram([NotNull] GoToParser.ProgramContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="GoToParser.macrodefinition"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterMacrodefinition([NotNull] GoToParser.MacrodefinitionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="GoToParser.macrodefinition"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitMacrodefinition([NotNull] GoToParser.MacrodefinitionContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="GoToParser.macrosignature"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterMacrosignature([NotNull] GoToParser.MacrosignatureContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="GoToParser.macrosignature"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitMacrosignature([NotNull] GoToParser.MacrosignatureContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="GoToParser.macro"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterMacro([NotNull] GoToParser.MacroContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="GoToParser.macro"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitMacro([NotNull] GoToParser.MacroContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="GoToParser.macroname"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterMacroname([NotNull] GoToParser.MacronameContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="GoToParser.macroname"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitMacroname([NotNull] GoToParser.MacronameContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="GoToParser.macroend"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterMacroend([NotNull] GoToParser.MacroendContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="GoToParser.macroend"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitMacroend([NotNull] GoToParser.MacroendContext context);
+	/// <summary>
 	/// Enter a parse tree produced by the <c>UnlabeledLine</c>
 	/// labeled alternative in <see cref="GoToParser.line"/>.
 	/// </summary>
@@ -88,6 +138,18 @@ public interface IGoToListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitConditionalInstruction([NotNull] GoToParser.ConditionalInstructionContext context);
+	/// <summary>
+	/// Enter a parse tree produced by the <c>MacroInstruction</c>
+	/// labeled alternative in <see cref="GoToParser.instruction"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterMacroInstruction([NotNull] GoToParser.MacroInstructionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>MacroInstruction</c>
+	/// labeled alternative in <see cref="GoToParser.instruction"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitMacroInstruction([NotNull] GoToParser.MacroInstructionContext context);
 	/// <summary>
 	/// Enter a parse tree produced by the <c>BinaryExpression</c>
 	/// labeled alternative in <see cref="GoToParser.expression"/>.

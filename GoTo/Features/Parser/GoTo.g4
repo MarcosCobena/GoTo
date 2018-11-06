@@ -1,7 +1,23 @@
 grammar GoTo;
 
 // rules must begin with lowercase, specially the first one
-program : line* EOF ;
+program : macrodefinition* line* EOF ;
+
+macrodefinition : macrosignature line+ macroend
+	;
+
+macrosignature : 'MACRO' macro
+	;
+
+macro : macroname params=ID*
+	;
+
+macroname : WORD
+	| 'GOTO'
+	;
+
+macroend : 'END'
+	;
 
 line : instruction #UnlabeledLine
 	| '[' label=ID ']' instruction #LabeledLine
@@ -9,6 +25,7 @@ line : instruction #UnlabeledLine
 
 instruction : ID '=' expression #ExpressionInstruction
 	| 'IF' var=ID '!=' '0' 'GOTO' label=ID #ConditionalInstruction
+	| macro #MacroInstruction
 	;
 
 expression : var=ID operator=('+' | '-')  '1' # BinaryExpression
@@ -18,6 +35,8 @@ expression : var=ID operator=('+' | '-')  '1' # BinaryExpression
 ID : LETTER DIGIT* ;
 
 LETTER : [a-zA-Z] ;
+
+WORD : LETTER+ ;
 
 DIGIT : [0-9] ;
 

@@ -2,6 +2,7 @@
 using Antlr4.Runtime.Tree;
 using GoTo.Features.AbstractSyntaxTree;
 using GoTo.Features.CodeGenerator;
+using GoTo.Features.Macros;
 using GoTo.Features.Parser;
 using GoTo.Features.SemanticAnalyzer;
 using System;
@@ -51,7 +52,7 @@ namespace GoTo
             return result.messages;
         }
 
-        static void Analyze(string input, out List<Message> messages, out GoToParser.ProgramContext contextSyntaxTree)
+        static void Analyze(string input, List<Message> messages, out GoToParser.ProgramContext contextSyntaxTree)
         {
             var inputStream = CharStreams.fromstring(input);
 
@@ -79,7 +80,8 @@ namespace GoTo
         static (Type result, IEnumerable<Message> messages) Compile(
             string input, string programName = "Program", string outputPath = null)
         {
-            Analyze(input, out List<Message> messages, out GoToParser.ProgramContext contextSyntaxTree);
+            var expandedInput = ExpandMacros(input, out List<Message> messages);
+            Analyze(expandedInput, messages, out GoToParser.ProgramContext contextSyntaxTree);
 
             if (AreThereErrors(messages))
             {
@@ -109,6 +111,32 @@ namespace GoTo
 
                 return (null, messages);
             }
+        }
+
+        static string ExpandMacros(string input, out List<Message> messages)
+        {
+            var inputStream = CharStreams.fromstring(input);
+
+            var lexer = new GoToLexer(inputStream);
+            var lexerErrorListener = new LexerErrorListener();
+            lexer.AddErrorListener(lexerErrorListener);
+            messages = new List<Message>();
+            messages.AddRange(lexerErrorListener.Messages);
+
+            var tokenStream = new CommonTokenStream(lexer);
+            var parser = new GoToParser(tokenStream);
+            //var parserErrorListener = new ParserErrorListener();
+            //parser.AddErrorListener(parserErrorListener);
+            var contextSyntaxTree = parser.program();
+            //messages.AddRange(parserErrorListener.Messages);
+
+            var listener = new MacroExpansionListener();
+            ParseTreeWalker.Default.Walk(listener, contextSyntaxTree);
+            //messages.AddRange(listener.Messages);
+
+            var expandedInput = contextSyntaxTree.GetText();
+
+            return expandedInput;
         }
     }
 }
