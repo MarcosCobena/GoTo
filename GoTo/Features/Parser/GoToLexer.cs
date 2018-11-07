@@ -182,7 +182,7 @@ public partial class GoToLexer : Lexer {
 		'\x2', '\x64', '\x65', '\x3', '\x2', '\x2', '\x2', '\x65', '\x66', '\x3', 
 		'\x2', '\x2', '\x2', '\x66', 'g', '\b', '\x13', '\x2', '\x2', 'g', '&', 
 		'\x3', '\x2', '\x2', '\x2', '\a', '\x2', 'N', 'V', ']', '\x64', '\x3', 
-		'\b', '\x2', '\x2',
+		'\x2', '\x3', '\x2',
 	};
 
 	public static readonly ATN _ATN =

@@ -3,21 +3,17 @@ grammar GoTo;
 // rules must begin with lowercase, specially the first one
 program : macrodefinition* line* EOF ;
 
-macrodefinition : macrosignature line+ macroend
-	;
+macrodefinition : macrosignature macrobody=line+ macroend ;
 
-macrosignature : 'MACRO' macro
-	;
+macrosignature : 'MACRO' macro ;
 
-macro : macroname params=ID*
-	;
+macro : macroname params=ID* ;
 
 macroname : WORD
 	| 'GOTO'
 	;
 
-macroend : 'END'
-	;
+macroend : 'END' ;
 
 line : instruction #UnlabeledLine
 	| '[' label=ID ']' instruction #LabeledLine
@@ -40,6 +36,6 @@ WORD : LETTER+ ;
 
 DIGIT : [0-9] ;
 
-NEWLINE : [\r\n]+ -> skip ;
+NEWLINE : [\r\n]+ -> channel(HIDDEN) ;
 
-WHITESPACE : [ \t]+ -> skip ;
+WHITESPACE : [ \t]+ -> channel(HIDDEN) ;

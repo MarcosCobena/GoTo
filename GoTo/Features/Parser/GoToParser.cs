@@ -170,6 +170,7 @@ public partial class GoToParser : Parser {
 	}
 
 	public partial class MacrodefinitionContext : ParserRuleContext {
+		public LineContext macrobody;
 		public MacrosignatureContext macrosignature() {
 			return GetRuleContext<MacrosignatureContext>(0);
 		}
@@ -217,7 +218,7 @@ public partial class GoToParser : Parser {
 			do {
 				{
 				{
-				State = 33; line();
+				State = 33; _localctx.macrobody = line();
 				}
 				}
 				State = 36;
