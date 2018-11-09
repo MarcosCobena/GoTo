@@ -5,6 +5,12 @@ namespace Tests
     public class ParserTests
     {
         [Fact]
+        public void NoSpaces()
+        {
+            AssertExtensions.RunWithEmptyMessages("X=XX=X");
+        }
+
+        [Fact]
         public void Multiline()
         {
             AssertExtensions.RunWithEmptyMessages(
