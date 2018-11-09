@@ -1,5 +1,6 @@
-﻿using Antlr4.Runtime.Misc;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Antlr4.Runtime;
+using Antlr4.Runtime.Misc;
 
 namespace GoTo.Features.Macros
 {
@@ -7,6 +8,17 @@ namespace GoTo.Features.Macros
     {
         static readonly Dictionary<string, GoToParser.LineContext> _macros = 
             new Dictionary<string, GoToParser.LineContext>();
+        private readonly CommonTokenStream _tokenStream;
+
+        TokenStreamRewriter _rewrittenTokenStream;
+
+        public MacroExpansionListener(CommonTokenStream tokenStream)
+        {
+            _tokenStream = tokenStream;
+            _rewrittenTokenStream = new TokenStreamRewriter(tokenStream);
+        }
+
+        public TokenStreamRewriter RewrittenTokenStream => _rewrittenTokenStream;
 
         public override void ExitMacrodefinition([NotNull] GoToParser.MacrodefinitionContext context)
         {
@@ -17,7 +29,8 @@ namespace GoTo.Features.Macros
             var body = context.macrobody;
             _macros.Add(name, body);
 
-            context.children.Clear();
+            //context.children.Clear();
+            _rewrittenTokenStream.Delete(context.Start, context.Stop);
         }
 
         public override void ExitMacroInstruction([NotNull] GoToParser.MacroInstructionContext context)
@@ -28,9 +41,11 @@ namespace GoTo.Features.Macros
 
             if (_macros.TryGetValue(name, out GoToParser.LineContext body))
             {
-                context.RemoveLastChild();
+                //context.RemoveLastChild();
                 // I don't actually like this because lines, columns, etc. keep relevant to their original position
-                context.AddChild(body);
+                //context.AddChild(body);
+                var macro = _tokenStream.GetText(body.Start, body.Stop);
+                _rewrittenTokenStream.Replace(context.Start, context.Stop, macro);
             }
         }
 

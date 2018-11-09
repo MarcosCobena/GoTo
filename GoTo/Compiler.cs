@@ -1,4 +1,5 @@
 ﻿using Antlr4.Runtime;
+using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
 using GoTo.Features.AbstractSyntaxTree;
 using GoTo.Features.CodeGenerator;
@@ -130,13 +131,24 @@ namespace GoTo
             var contextSyntaxTree = parser.program();
             //messages.AddRange(parserErrorListener.Messages);
 
-            var listener = new MacroExpansionListener();
+            var listener = new MacroExpansionListener(tokenStream);
             ParseTreeWalker.Default.Walk(listener, contextSyntaxTree);
             //messages.AddRange(listener.Messages);
 
-            var expandedInput = contextSyntaxTree.GetText();
+            var expandedInput = listener.RewrittenTokenStream.GetText(); // contextSyntaxTree.GetText();
 
             return expandedInput;
         }
+
+        //static string GetFullText(ParserRuleContext context)
+        //{
+        //    if (context.Start == null || context.Stop == null ||
+        //        context.Start.StartIndex < 0 || context.Stop.StopIndex < 0)
+        //    {
+        //        return context.GetText(); // Fallback
+        //    }
+
+        //    return context.Start.InputStream.GetText(Interval.Of(context.Start.StartIndex, context.Stop.StopIndex));
+        //}
     }
 }
