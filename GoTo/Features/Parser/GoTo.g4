@@ -1,19 +1,19 @@
 grammar GoTo;
 
 // rules must begin with lowercase, specially the first one
-program : macrodefinition* line* EOF ;
+program : macroDefinition* line* EOF ;
 
-macrodefinition : macrosignature macrobody=line+ macroend ;
+macroDefinition : 'MACRO' macro macroBody 'END' ;
 
-macrosignature : 'MACRO' macro ;
+macro : macroName macroParams ;
 
-macro : macroname params=ID* ;
-
-macroname : WORD
+macroName : WORD
 	| 'GOTO'
 	;
 
-macroend : 'END' ;
+macroParams : ID* ;
+
+macroBody : line+ ;
 
 line : instruction #UnlabeledLine
 	| '[' label=ID ']' instruction #LabeledLine

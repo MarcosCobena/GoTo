@@ -6,9 +6,11 @@ namespace GoTo.Features.Macros
 {
     class MacroExpansionListener : GoToBaseListener
     {
-        static readonly Dictionary<string, GoToParser.LineContext> _macros = 
-            new Dictionary<string, GoToParser.LineContext>();
-        private readonly CommonTokenStream _tokenStream;
+        readonly Dictionary<string, GoToParser.MacroBodyContext> _macrosBodies = 
+            new Dictionary<string, GoToParser.MacroBodyContext>();
+        readonly Dictionary<string, GoToParser.MacroParamsContext> _macrosParams = 
+            new Dictionary<string, GoToParser.MacroParamsContext>();
+        readonly CommonTokenStream _tokenStream;
 
         TokenStreamRewriter _rewrittenTokenStream;
 
@@ -20,16 +22,17 @@ namespace GoTo.Features.Macros
 
         public TokenStreamRewriter RewrittenTokenStream => _rewrittenTokenStream;
 
-        public override void ExitMacrodefinition([NotNull] GoToParser.MacrodefinitionContext context)
+        public override void ExitMacroDefinition([NotNull] GoToParser.MacroDefinitionContext context)
         {
-            base.ExitMacrodefinition(context);
+            base.ExitMacroDefinition(context);
 
-            var name = context.macrosignature().macro().macroname().GetText();
-            var @params = context.macrosignature().macro().@params;
-            var body = context.macrobody;
-            _macros.Add(name, body);
+            var macro = context.macro();
+            var name = macro.macroName().GetText();
+            var @params = context.macro().macroParams();
+            _macrosParams.Add(name, @params);
+            var body = context.macroBody();
+            _macrosBodies.Add(name, body);
 
-            //context.children.Clear();
             _rewrittenTokenStream.Delete(context.Start, context.Stop);
         }
 
@@ -37,24 +40,24 @@ namespace GoTo.Features.Macros
         {
             base.ExitMacroInstruction(context);
 
-            var name = context.macro().macroname().GetText();
+            var macroContext = context.macro();
+            var name = macroContext.macroName().GetText();
+            var @params = macroContext.macroParams();
 
-            if (_macros.TryGetValue(name, out GoToParser.LineContext body))
+            if (_macrosBodies.TryGetValue(name, out GoToParser.MacroBodyContext body))
             {
-                //context.RemoveLastChild();
-                // I don't actually like this because lines, columns, etc. keep relevant to their original position
-                //context.AddChild(body);
-                var macro = _tokenStream.GetText(body.Start, body.Stop);
-                _rewrittenTokenStream.Replace(context.Start, context.Stop, macro);
+                var macroBody = _tokenStream.GetText(body.Start, body.Stop);
+                var macroParams = _macrosParams[name];
+                var macroReplaced = macroBody;
+
+                for (var i = 0; i < macroParams.ChildCount; i++)
+                {
+                    var sourceParam = macroParams.GetChild(i);
+                    var targetParam = @params.GetChild(i);
+                    macroReplaced = macroReplaced.Replace(sourceParam.GetText(), targetParam.GetText());
+                    _rewrittenTokenStream.Replace(context.Start, context.Stop, macroReplaced);
+                }
             }
-        }
-
-        public override void ExitProgram([NotNull] GoToParser.ProgramContext context)
-        {
-            base.ExitProgram(context);
-
-            // EOF
-            context.RemoveLastChild();
         }
     }
 }

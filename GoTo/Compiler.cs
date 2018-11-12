@@ -1,5 +1,4 @@
 ﻿using Antlr4.Runtime;
-using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
 using GoTo.Features.AbstractSyntaxTree;
 using GoTo.Features.CodeGenerator;
@@ -60,7 +59,6 @@ namespace GoTo
             var lexer = new GoToLexer(inputStream);
             var lexerErrorListener = new LexerErrorListener();
             lexer.AddErrorListener(lexerErrorListener);
-            messages = new List<Message>();
             messages.AddRange(lexerErrorListener.Messages);
 
             var tokenStream = new CommonTokenStream(lexer);
@@ -139,16 +137,5 @@ namespace GoTo
 
             return expandedInput;
         }
-
-        //static string GetFullText(ParserRuleContext context)
-        //{
-        //    if (context.Start == null || context.Stop == null ||
-        //        context.Start.StartIndex < 0 || context.Stop.StopIndex < 0)
-        //    {
-        //        return context.GetText(); // Fallback
-        //    }
-
-        //    return context.Start.InputStream.GetText(Interval.Of(context.Start.StartIndex, context.Stop.StopIndex));
-        //}
     }
 }

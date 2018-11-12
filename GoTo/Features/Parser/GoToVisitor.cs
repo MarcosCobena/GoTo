@@ -38,17 +38,11 @@ public interface IGoToVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitProgram([NotNull] GoToParser.ProgramContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="GoToParser.macrodefinition"/>.
+	/// Visit a parse tree produced by <see cref="GoToParser.macroDefinition"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitMacrodefinition([NotNull] GoToParser.MacrodefinitionContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="GoToParser.macrosignature"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitMacrosignature([NotNull] GoToParser.MacrosignatureContext context);
+	Result VisitMacroDefinition([NotNull] GoToParser.MacroDefinitionContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="GoToParser.macro"/>.
 	/// </summary>
@@ -56,17 +50,23 @@ public interface IGoToVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitMacro([NotNull] GoToParser.MacroContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="GoToParser.macroname"/>.
+	/// Visit a parse tree produced by <see cref="GoToParser.macroName"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitMacroname([NotNull] GoToParser.MacronameContext context);
+	Result VisitMacroName([NotNull] GoToParser.MacroNameContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="GoToParser.macroend"/>.
+	/// Visit a parse tree produced by <see cref="GoToParser.macroParams"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitMacroend([NotNull] GoToParser.MacroendContext context);
+	Result VisitMacroParams([NotNull] GoToParser.MacroParamsContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="GoToParser.macroBody"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitMacroBody([NotNull] GoToParser.MacroBodyContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>UnlabeledLine</c>
 	/// labeled alternative in <see cref="GoToParser.line"/>.

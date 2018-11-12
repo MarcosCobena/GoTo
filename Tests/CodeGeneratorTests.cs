@@ -70,6 +70,38 @@ namespace Tests
 
         #endregion Labels
 
+        #region Macros
+
+        [Fact]
+        public void GoToMacro()
+        {
+            AssertResultWhenNoInput(
+                "MACRO GOTO L\n" +
+                "Z = Z + 1\n" +
+                "IF Z != 0 GOTO L\n" +
+                "END\n" +
+                "Y = Y + 1\n" +
+                "GOTO E\n" +
+                "Y = Y + 1\n" +
+                "[E] Y = Y",
+                1);
+        }
+
+        [Fact]
+        public void ZeroMacro()
+        {
+            AssertResultWhenInput(
+                "MACRO ZERO K V\n" +
+                "[K] V = V - 1\n" +
+                "IF V != 0 GOTO K\n" +
+                "END\n" +
+                "ZERO A X",
+                int.MaxValue,
+                0);
+        }
+
+        #endregion Macros
+
         #region Others
 
         [Fact]

@@ -44,7 +44,7 @@ public partial class GoToBaseVisitor<Result> : AbstractParseTreeVisitor<Result>,
 	/// <return>The visitor result.</return>
 	public virtual Result VisitProgram([NotNull] GoToParser.ProgramContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="GoToParser.macrodefinition"/>.
+	/// Visit a parse tree produced by <see cref="GoToParser.macroDefinition"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -52,17 +52,7 @@ public partial class GoToBaseVisitor<Result> : AbstractParseTreeVisitor<Result>,
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitMacrodefinition([NotNull] GoToParser.MacrodefinitionContext context) { return VisitChildren(context); }
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="GoToParser.macrosignature"/>.
-	/// <para>
-	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-	/// on <paramref name="context"/>.
-	/// </para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	public virtual Result VisitMacrosignature([NotNull] GoToParser.MacrosignatureContext context) { return VisitChildren(context); }
+	public virtual Result VisitMacroDefinition([NotNull] GoToParser.MacroDefinitionContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="GoToParser.macro"/>.
 	/// <para>
@@ -74,7 +64,7 @@ public partial class GoToBaseVisitor<Result> : AbstractParseTreeVisitor<Result>,
 	/// <return>The visitor result.</return>
 	public virtual Result VisitMacro([NotNull] GoToParser.MacroContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="GoToParser.macroname"/>.
+	/// Visit a parse tree produced by <see cref="GoToParser.macroName"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -82,9 +72,9 @@ public partial class GoToBaseVisitor<Result> : AbstractParseTreeVisitor<Result>,
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitMacroname([NotNull] GoToParser.MacronameContext context) { return VisitChildren(context); }
+	public virtual Result VisitMacroName([NotNull] GoToParser.MacroNameContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="GoToParser.macroend"/>.
+	/// Visit a parse tree produced by <see cref="GoToParser.macroParams"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -92,7 +82,17 @@ public partial class GoToBaseVisitor<Result> : AbstractParseTreeVisitor<Result>,
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitMacroend([NotNull] GoToParser.MacroendContext context) { return VisitChildren(context); }
+	public virtual Result VisitMacroParams([NotNull] GoToParser.MacroParamsContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="GoToParser.macroBody"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitMacroBody([NotNull] GoToParser.MacroBodyContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by the <c>UnlabeledLine</c>
 	/// labeled alternative in <see cref="GoToParser.line"/>.

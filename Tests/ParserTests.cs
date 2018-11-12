@@ -7,7 +7,7 @@ namespace Tests
         [Fact]
         public void NoSpaces()
         {
-            AssertExtensions.RunWithEmptyMessages("X=XX=X");
+            AssertExtensions.RunWithAnyMessage("X=XX=X");
         }
 
         [Fact]
@@ -34,8 +34,8 @@ namespace Tests
         public void GoToMacro()
         {
             AssertExtensions.RunWithEmptyMessages(
-                "MACRO GOTO L\n" + // I want L to be understood as an input label
-                "Z = Z + 1\n" + // Ídem for Z as a free aux var
+                "MACRO GOTO L\n" +
+                "Z = Z + 1\n" +
                 "IF Z != 0 GOTO L\n" +
                 "END\n" +
                 "GOTO E");
@@ -45,10 +45,12 @@ namespace Tests
         public void ZeroMacro()
         {
             AssertExtensions.RunWithEmptyMessages(
-                "MACRO ZERO V\n" + // I want V to be understood as an input var
-                "[K] V = V - 1\n" + // Ídem for K as a free label
+                "MACRO ZERO K V\n" +
+                "[K] V = V - 1\n" +
                 "IF V != 0 GOTO K\n" +
-                "END");
+                "END\n" +
+                "X = X + 1\n" +
+                "ZERO A X");
         }
     }
 }

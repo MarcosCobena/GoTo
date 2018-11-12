@@ -47,29 +47,17 @@ public partial class GoToBaseListener : IGoToListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitProgram([NotNull] GoToParser.ProgramContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="GoToParser.macrodefinition"/>.
+	/// Enter a parse tree produced by <see cref="GoToParser.macroDefinition"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterMacrodefinition([NotNull] GoToParser.MacrodefinitionContext context) { }
+	public virtual void EnterMacroDefinition([NotNull] GoToParser.MacroDefinitionContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="GoToParser.macrodefinition"/>.
+	/// Exit a parse tree produced by <see cref="GoToParser.macroDefinition"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitMacrodefinition([NotNull] GoToParser.MacrodefinitionContext context) { }
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="GoToParser.macrosignature"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterMacrosignature([NotNull] GoToParser.MacrosignatureContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="GoToParser.macrosignature"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitMacrosignature([NotNull] GoToParser.MacrosignatureContext context) { }
+	public virtual void ExitMacroDefinition([NotNull] GoToParser.MacroDefinitionContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="GoToParser.macro"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -83,29 +71,41 @@ public partial class GoToBaseListener : IGoToListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitMacro([NotNull] GoToParser.MacroContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="GoToParser.macroname"/>.
+	/// Enter a parse tree produced by <see cref="GoToParser.macroName"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterMacroname([NotNull] GoToParser.MacronameContext context) { }
+	public virtual void EnterMacroName([NotNull] GoToParser.MacroNameContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="GoToParser.macroname"/>.
+	/// Exit a parse tree produced by <see cref="GoToParser.macroName"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitMacroname([NotNull] GoToParser.MacronameContext context) { }
+	public virtual void ExitMacroName([NotNull] GoToParser.MacroNameContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="GoToParser.macroend"/>.
+	/// Enter a parse tree produced by <see cref="GoToParser.macroParams"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterMacroend([NotNull] GoToParser.MacroendContext context) { }
+	public virtual void EnterMacroParams([NotNull] GoToParser.MacroParamsContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="GoToParser.macroend"/>.
+	/// Exit a parse tree produced by <see cref="GoToParser.macroParams"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitMacroend([NotNull] GoToParser.MacroendContext context) { }
+	public virtual void ExitMacroParams([NotNull] GoToParser.MacroParamsContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="GoToParser.macroBody"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterMacroBody([NotNull] GoToParser.MacroBodyContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="GoToParser.macroBody"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitMacroBody([NotNull] GoToParser.MacroBodyContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by the <c>UnlabeledLine</c>
 	/// labeled alternative in <see cref="GoToParser.line"/>.
