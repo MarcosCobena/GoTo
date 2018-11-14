@@ -40,7 +40,7 @@ namespace GoTo.CLI
             string assemblyFilename = null;
             string x1 = null;
 
-            if (args.Length < 1)
+            if (args.Length < 2)
             {
                 Printer.PrintRunUsage(assemblyFilename, x1);
                 return;
