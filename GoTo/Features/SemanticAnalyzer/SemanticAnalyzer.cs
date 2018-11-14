@@ -1,4 +1,5 @@
 ﻿using GoTo.Features.AbstractSyntaxTree;
+using GoTo.Features.Parser;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -26,7 +27,8 @@ namespace GoTo.Features.SemanticAnalyzer
         public static void CheckMissingLabel(ProgramNode program, ref List<Message> messages)
         {
             var conditionals = program.Instructions
-                .Where(item => item is ConditionalInstructionNode)
+                .Where(item => item is ConditionalInstructionNode node && 
+                    !node.TargetLabel.Equals(Settings.ExitLabel.ToString()))
                 .Cast<ConditionalInstructionNode>();
             var labels = program.Instructions
                 .Cast<InstructionNode>()

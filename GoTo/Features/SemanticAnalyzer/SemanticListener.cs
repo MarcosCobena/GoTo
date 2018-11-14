@@ -1,5 +1,6 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
+using GoTo.Features.Parser;
 using System.Collections.Generic;
 using static GoToParser;
 
@@ -8,7 +9,6 @@ namespace GoTo.Features.SemanticAnalyzer
     class SemanticListener : GoToBaseListener
     {
         const string Labels = "ABCDE";
-        const char ExitLabel = 'E';
         const char InputVar = 'X';
         const char AuxVar = 'Z';
         const int MinVarLabelIndex = 1;
@@ -93,11 +93,11 @@ namespace GoTo.Features.SemanticAnalyzer
 
             var rawIndex = text.Substring(1);
 
-            if (isIdentifyingLine && letter == ExitLabel)
+            if (isIdentifyingLine && letter == Settings.ExitLabel)
             {
                 var message = new Message(
                     SeverityEnum.Error,
-                    $"The special exit label '{ExitLabel}' cannot be used to identify a line.",
+                    $"The special exit label '{Settings.ExitLabel}' cannot be used to identify a line.",
                     token.Line,
                     token.Column);
                 _messages.Add(message);

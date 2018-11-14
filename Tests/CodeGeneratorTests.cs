@@ -32,8 +32,8 @@ namespace Tests
         [Fact]
         public void OutputVarDecrement()
         {
-            // I'm not 100% sure should stick to the original specs where vars belong to K
-            AssertResultWhenNoInput("Y = Y - 1", 0);
+            // I'm not 100% sure should stick to the original specs where think vars belong to K
+            AssertResultWhenNoInput("Y = Y - 1", -1);
         }
 
         #endregion In/decrement
@@ -82,8 +82,7 @@ namespace Tests
                 "END\n" +
                 "Y = Y + 1\n" +
                 "GOTO E\n" +
-                "Y = Y + 1\n" +
-                "[E] Y = Y",
+                "Y = Y + 1",
                 1);
         }
 

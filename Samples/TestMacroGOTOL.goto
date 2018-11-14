@@ -1,0 +1,8 @@
+MACRO GOTO L
+Z = Z + 1
+IF Z != 0 GOTO L
+END
+
+Y = Y + 1
+GOTO E
+Y = Y + 1
