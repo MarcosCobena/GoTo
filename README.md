@@ -1,6 +1,6 @@
 ![Build status](https://marcoscm.visualstudio.com/GoTo/_apis/build/status/GoTo-.NET%20Desktop-CI)
 
-# GOTO
+# GoTo
 
 This' a program written in GOTO, would you guess its goal?
 
