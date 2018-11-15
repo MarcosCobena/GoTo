@@ -124,16 +124,16 @@ namespace GoTo
 
             var tokenStream = new CommonTokenStream(lexer);
             var parser = new GoToParser(tokenStream);
-            //var parserErrorListener = new ParserErrorListener();
-            //parser.AddErrorListener(parserErrorListener);
+            var parserErrorListener = new ParserErrorListener();
+            parser.AddErrorListener(parserErrorListener);
             var contextSyntaxTree = parser.program();
-            //messages.AddRange(parserErrorListener.Messages);
+            messages.AddRange(parserErrorListener.Messages);
 
             var listener = new MacroExpansionListener(tokenStream);
             ParseTreeWalker.Default.Walk(listener, contextSyntaxTree);
-            //messages.AddRange(listener.Messages);
+            messages.AddRange(listener.Messages);
 
-            var expandedInput = listener.RewrittenTokenStream.GetText(); // contextSyntaxTree.GetText();
+            var expandedInput = listener.RewrittenTokenStream.GetText();
 
             return expandedInput;
         }

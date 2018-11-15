@@ -6,6 +6,7 @@ namespace GoTo.Features.Macros
 {
     class MacroExpansionListener : GoToBaseListener
     {
+        readonly IList<Message> _messages;
         readonly Dictionary<string, GoToParser.MacroBodyContext> _macrosBodies = 
             new Dictionary<string, GoToParser.MacroBodyContext>();
         readonly Dictionary<string, GoToParser.MacroParamsContext> _macrosParams = 
@@ -18,7 +19,10 @@ namespace GoTo.Features.Macros
         {
             _tokenStream = tokenStream;
             _rewrittenTokenStream = new TokenStreamRewriter(tokenStream);
+            _messages = new List<Message>();
         }
+
+        public IEnumerable<Message> Messages => _messages;
 
         public TokenStreamRewriter RewrittenTokenStream => _rewrittenTokenStream;
 
