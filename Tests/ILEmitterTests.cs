@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Tests
 {
-    public class CodeGeneratorTests
+    public class ILEmitterTests
     {
         #region Skip
 
@@ -132,7 +132,7 @@ namespace Tests
 
         static void AssertResultWhenInput(string input, int x1, int expectedResult)
         {
-            var (result, _) = Compiler.Run(input, x1);
+            var (result, _) = Language.Run(input, x1);
 
             Assert.Equal(expectedResult, result);
         }

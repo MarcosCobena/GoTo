@@ -2,7 +2,7 @@
 using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
 
-namespace GoTo.Features.Macros
+namespace GoTo.Parser
 {
     class MacroExpansionListener : GoToBaseListener
     {

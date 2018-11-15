@@ -1,4 +1,4 @@
-﻿namespace GoTo.Features.Parser
+﻿namespace GoTo.Parser
 {
     static class Settings
     {

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
@@ -10,7 +10,7 @@
         <Command>
           <type>BeforeBuild</type>
           <command>java -jar antlr-4.7.1-complete.jar -Dlanguage=CSharp -visitor GoTo.g4</command>
-          <workingdir>${ProjectDir}/Features/Parser</workingdir>
+          <workingdir>${ProjectDir}/Parser</workingdir>
         </Command>
       </CustomCommands>
     </CustomCommands>
@@ -22,7 +22,7 @@
   </ItemGroup>
     
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="cd $(ProjectDir)Features\Parser&#xD;&#xA;java -jar antlr-4.7.1-complete.jar -Dlanguage=CSharp -visitor GoTo.g4" />
+    <Exec Command="cd $(ProjectDir)Parser&#xD;&#xA;java -jar antlr-4.7.1-complete.jar -Dlanguage=CSharp -visitor GoTo.g4" />
   </Target>
     
 </Project>

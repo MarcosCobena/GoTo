@@ -1,4 +1,4 @@
-﻿namespace GoTo.Features.AbstractSyntaxTree
+﻿namespace GoTo.Parser.AbstractSyntaxTree
 {
     abstract class ExpressionInstructionNode : InstructionNode
     {

@@ -7,14 +7,14 @@ namespace Tests
     {
         internal static void RunWithAnyMessage(string input)
         {
-            var (_, messages) = Compiler.Run(input);
+            var (_, messages) = Language.Run(input);
 
             Assert.NotEmpty(messages);
         }
 
         internal static void RunWithEmptyMessages(string input)
         {
-            var (_, messages) = Compiler.Run(input);
+            var (_, messages) = Language.Run(input);
 
             Assert.Empty(messages);
         }

@@ -1,10 +1,8 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
-using GoTo.Features.AbstractSyntaxTree;
-using GoTo.Features.CodeGenerator;
-using GoTo.Features.Macros;
-using GoTo.Features.Parser;
-using GoTo.Features.SemanticAnalyzer;
+using GoTo.Emitter;
+using GoTo.Parser;
+using GoTo.Parser.AbstractSyntaxTree;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,12 +10,20 @@ using System.Linq;
 
 namespace GoTo
 {
-    public static class Compiler
+    public static class Language
     {
         const int ErrorResult = 0;
 
         public const string OutputMethodName = "Run";
         public const string OutputNamespace = "GoTo";
+
+        public static IEnumerable<Message> Build(StreamReader inputStream, string programName, string outputPath)
+        {
+            var input = inputStream.ReadToEnd();
+            var result = Compile(input, programName, outputPath);
+
+            return result.messages;
+        }
 
         public static (int result, IEnumerable<Message> messages) Run(
             string input,
@@ -42,14 +48,6 @@ namespace GoTo
                 .Invoke(null, new object[] { x1, x2, x3, x4, x5, x6, x7, x8 });
 
             return (result, output.messages);
-        }
-
-        public static IEnumerable<Message> Build(StreamReader inputStream, string programName, string outputPath)
-        {
-            var input = inputStream.ReadToEnd();
-            var result = Compile(input, programName, outputPath);
-
-            return result.messages;
         }
 
         static void Analyze(string input, List<Message> messages, out GoToParser.ProgramContext contextSyntaxTree)
@@ -100,13 +98,13 @@ namespace GoTo
 
             if (outputPath == null)
             {
-                var type = CodeGenerator.CreateType(program, programName);
+                var type = ILEmitter.CreateType(program, programName);
 
                 return (type, messages);
             }
             else
             {
-                CodeGenerator.CreateAssembly(program, programName, outputPath);
+                ILEmitter.CreateAssembly(program, programName, outputPath);
 
                 return (null, messages);
             }

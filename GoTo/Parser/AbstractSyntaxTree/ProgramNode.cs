@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace GoTo.Features.AbstractSyntaxTree
+namespace GoTo.Parser.AbstractSyntaxTree
 {
     class ProgramNode : GoToNode
     {

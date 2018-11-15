@@ -1,6 +1,6 @@
 ﻿using Antlr4.Runtime.Misc;
 
-namespace GoTo.Features.AbstractSyntaxTree
+namespace GoTo.Parser.AbstractSyntaxTree
 {
     class AbstractSyntaxTreeGenerator : GoToBaseVisitor<GoToNode>
     {

@@ -193,7 +193,7 @@ namespace Tests
 
         static void AssertSingleErrorContainingKeywords(string input, params string[] errorKeywords)
         {
-            var (_, messages) = Compiler.Run(input);
+            var (_, messages) = Language.Run(input);
 
             var errorMessages = messages.Where(message => message.Severity == SeverityEnum.Error);
 
@@ -209,7 +209,7 @@ namespace Tests
         
         static void AssertEqualErrorsCountContainingKeyword(string input, string keyword, int expectedErrorsCount = 2)
         {
-            var (_, messages) = Compiler.Run(input);
+            var (_, messages) = Language.Run(input);
 
             var errorMessages = messages.Where(message => message.Severity == SeverityEnum.Error);
 

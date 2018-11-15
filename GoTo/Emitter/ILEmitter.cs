@@ -1,13 +1,13 @@
-﻿using GoTo.Features.AbstractSyntaxTree;
+﻿using GoTo.Parser.AbstractSyntaxTree;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace GoTo.Features.CodeGenerator
+namespace GoTo.Emitter
 {
-    class CodeGenerator
+    class ILEmitter
     {
         const string ExitLabel = "E";
         const int InputAndAuxVarsLength = 8;
@@ -38,10 +38,10 @@ namespace GoTo.Features.CodeGenerator
                 assemblyBuilder.DefineDynamicModule(assemblyName.Name) :
                 assemblyBuilder.DefineDynamicModule(assemblyName.Name, $"{outputType}.dll");
             var typeBuilder = moduleBuilder.DefineType(
-                $"{Compiler.OutputNamespace}.{outputType}", TypeAttributes.Public | TypeAttributes.Class);
+                $"{Language.OutputNamespace}.{outputType}", TypeAttributes.Public | TypeAttributes.Class);
             var inputType = typeof(int);
             var methodBuilder = typeBuilder.DefineMethod(
-                Compiler.OutputMethodName,
+                Language.OutputMethodName,
                 MethodAttributes.Public | MethodAttributes.Static,
                 typeof(int),
                 new Type[] { inputType, inputType, inputType, inputType, inputType, inputType, inputType, inputType });

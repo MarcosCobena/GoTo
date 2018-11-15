@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection.Emit;
 
-namespace GoTo.Features.CodeGenerator
+namespace GoTo.Emitter
 {
     static class ILGeneratorExtensions
     {

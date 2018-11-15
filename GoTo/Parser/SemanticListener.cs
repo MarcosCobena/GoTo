@@ -1,10 +1,10 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
-using GoTo.Features.Parser;
+using GoTo.Parser;
 using System.Collections.Generic;
 using static GoToParser;
 
-namespace GoTo.Features.SemanticAnalyzer
+namespace GoTo.Parser
 {
     class SemanticListener : GoToBaseListener
     {

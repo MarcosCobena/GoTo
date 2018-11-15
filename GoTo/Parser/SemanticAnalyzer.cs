@@ -1,9 +1,9 @@
-﻿using GoTo.Features.AbstractSyntaxTree;
-using GoTo.Features.Parser;
+﻿using GoTo.Parser.AbstractSyntaxTree;
+using GoTo.Parser;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GoTo.Features.SemanticAnalyzer
+namespace GoTo.Parser
 {
      class SemanticAnalyzer
     {

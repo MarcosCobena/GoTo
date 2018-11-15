@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace GoTo.Features.Parser
+namespace GoTo.Parser
 {
     class LexerErrorListener : IAntlrErrorListener<int>
     {
