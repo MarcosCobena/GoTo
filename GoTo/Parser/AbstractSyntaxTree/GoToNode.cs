@@ -1,6 +1,6 @@
 ﻿namespace GoTo.Parser.AbstractSyntaxTree
 {
-    abstract class GoToNode
+    public abstract class GoToNode
     {
     }
 }

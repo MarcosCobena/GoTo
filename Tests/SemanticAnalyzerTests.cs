@@ -1,5 +1,6 @@
 ﻿using GoTo;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -18,7 +19,7 @@ namespace Tests
         [Fact]
         public void EqualVarsSkip()
         {
-            AssertExtensions.RunWithEmptyMessages("X = X");
+            AssertExtensions.AnalyzeWithEmptyMessages("X = X");
         }
 
         [Theory]
@@ -70,7 +71,7 @@ namespace Tests
         [InlineData("-")]
         public void EqualVarsIncrementOrDecrement(string @operator)
         {
-            AssertExtensions.RunWithEmptyMessages($"X = X {@operator} 1");
+            AssertExtensions.AnalyzeWithEmptyMessages($"X = X {@operator} 1");
         }
 
         [Theory]
@@ -193,7 +194,7 @@ namespace Tests
 
         static void AssertSingleErrorContainingKeywords(string input, params string[] errorKeywords)
         {
-            var (_, messages) = Language.Run(input);
+            Language.Analyze(input, out List<Message> messages);
 
             var errorMessages = messages.Where(message => message.Severity == SeverityEnum.Error);
 
@@ -209,7 +210,7 @@ namespace Tests
         
         static void AssertEqualErrorsCountContainingKeyword(string input, string keyword, int expectedErrorsCount = 2)
         {
-            var (_, messages) = Language.Run(input);
+            Language.Analyze(input, out List<Message> messages);
 
             var errorMessages = messages.Where(message => message.Severity == SeverityEnum.Error);
 

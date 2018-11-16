@@ -2,7 +2,7 @@
 
 namespace GoTo.Parser.AbstractSyntaxTree
 {
-    abstract class InstructionNode : GoToNode
+    public abstract class InstructionNode : GoToNode
     {
         readonly int _line;
         readonly int _column;

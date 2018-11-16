@@ -17,6 +17,51 @@ namespace GoTo
         public const string OutputMethodName = "Run";
         public const string OutputNamespace = "GoTo";
 
+        public static ProgramNode Analyze(string input, out List<Message> messages)
+        {
+            messages = new List<Message>();
+
+            var expandedInput = ExpandMacros(input, messages);
+
+            var inputStream = CharStreams.fromstring(expandedInput);
+
+            var lexer = new GoToLexer(inputStream);
+            var lexerErrorListener = new LexerErrorListener();
+            lexer.AddErrorListener(lexerErrorListener);
+            messages.AddRange(lexerErrorListener.Messages);
+
+            var tokenStream = new CommonTokenStream(lexer);
+            var parser = new GoToParser(tokenStream);
+            var parserErrorListener = new ParserErrorListener();
+            parser.AddErrorListener(parserErrorListener);
+            var contextSyntaxTree = parser.program();
+            messages.AddRange(parserErrorListener.Messages);
+
+            var listener = new SemanticListener();
+            ParseTreeWalker.Default.Walk(listener, contextSyntaxTree);
+            messages.AddRange(listener.Messages);
+
+            if (AreThereErrors(messages))
+            {
+                return null;
+            }
+
+            var abstractSyntaxTreeGenerator = new AbstractSyntaxTreeGenerator();
+            var program = abstractSyntaxTreeGenerator.VisitProgram(contextSyntaxTree) as ProgramNode;
+
+            SemanticAnalyzer.CheckLastLineSkip(program, ref messages);
+            SemanticAnalyzer.CheckMissingLabel(program, ref messages);
+
+            if (AreThereErrors(messages))
+            {
+                return null;
+            }
+            else
+            {
+                return program;
+            }
+        }
+
         public static IEnumerable<Message> Build(StreamReader inputStream, string programName, string outputPath)
         {
             var input = inputStream.ReadToEnd();
@@ -50,46 +95,13 @@ namespace GoTo
             return (result, output.messages);
         }
 
-        static void Analyze(string input, List<Message> messages, out GoToParser.ProgramContext contextSyntaxTree)
-        {
-            var inputStream = CharStreams.fromstring(input);
-
-            var lexer = new GoToLexer(inputStream);
-            var lexerErrorListener = new LexerErrorListener();
-            lexer.AddErrorListener(lexerErrorListener);
-            messages.AddRange(lexerErrorListener.Messages);
-
-            var tokenStream = new CommonTokenStream(lexer);
-            var parser = new GoToParser(tokenStream);
-            var parserErrorListener = new ParserErrorListener();
-            parser.AddErrorListener(parserErrorListener);
-            contextSyntaxTree = parser.program();
-            messages.AddRange(parserErrorListener.Messages);
-
-            var listener = new SemanticListener();
-            ParseTreeWalker.Default.Walk(listener, contextSyntaxTree);
-            messages.AddRange(listener.Messages);
-        }
-
         static bool AreThereErrors(IEnumerable<Message> messages) => 
-            messages.Where(message => message.Severity == SeverityEnum.Error).Any();
+            messages.Any(message => message.Severity == SeverityEnum.Error);
 
         static (Type result, IEnumerable<Message> messages) Compile(
             string input, string programName = "Program", string outputPath = null)
         {
-            var expandedInput = ExpandMacros(input, out List<Message> messages);
-            Analyze(expandedInput, messages, out GoToParser.ProgramContext contextSyntaxTree);
-
-            if (AreThereErrors(messages))
-            {
-                return (null, messages);
-            }
-
-            var abstractSyntaxTreeGenerator = new AbstractSyntaxTreeGenerator();
-            var program = abstractSyntaxTreeGenerator.VisitProgram(contextSyntaxTree) as ProgramNode;
-
-            SemanticAnalyzer.CheckLastLineSkip(program, ref messages);
-            SemanticAnalyzer.CheckMissingLabel(program, ref messages);
+            var program = Analyze(input, out List<Message> messages);
 
             if (AreThereErrors(messages))
             {
@@ -110,14 +122,13 @@ namespace GoTo
             }
         }
 
-        static string ExpandMacros(string input, out List<Message> messages)
+        static string ExpandMacros(string input, List<Message> messages)
         {
             var inputStream = CharStreams.fromstring(input);
 
             var lexer = new GoToLexer(inputStream);
             var lexerErrorListener = new LexerErrorListener();
             lexer.AddErrorListener(lexerErrorListener);
-            messages = new List<Message>();
             messages.AddRange(lexerErrorListener.Messages);
 
             var tokenStream = new CommonTokenStream(lexer);

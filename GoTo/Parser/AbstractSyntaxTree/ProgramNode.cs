@@ -2,7 +2,7 @@
 
 namespace GoTo.Parser.AbstractSyntaxTree
 {
-    class ProgramNode : GoToNode
+    public class ProgramNode : GoToNode
     {
         readonly IList<InstructionNode> _instructions = new List<InstructionNode>();
 

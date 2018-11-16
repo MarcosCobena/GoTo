@@ -1,6 +1,6 @@
 ﻿namespace GoTo.Parser.AbstractSyntaxTree
 {
-    class BinaryExpressionInstructionNode : ExpressionInstructionNode
+    public class BinaryExpressionInstructionNode : ExpressionInstructionNode
     {
         readonly OperatorEnum _operator;
 
