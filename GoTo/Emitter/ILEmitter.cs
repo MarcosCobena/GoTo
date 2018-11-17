@@ -34,9 +34,9 @@ namespace GoTo.Emitter
             assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(
                 assemblyName,
                 isTransient ? AssemblyBuilderAccess.Run : AssemblyBuilderAccess.Save);
-            var moduleBuilder = isTransient ? 
-                assemblyBuilder.DefineDynamicModule(assemblyName.Name) :
-                assemblyBuilder.DefineDynamicModule(assemblyName.Name, $"{outputType}.dll");
+            var moduleBuilder = //isTransient ? 
+                assemblyBuilder.DefineDynamicModule(assemblyName.Name); //:
+                //assemblyBuilder.DefineDynamicModule(assemblyName.Name, $"{outputType}.dll");
             var typeBuilder = moduleBuilder.DefineType(
                 $"{Language.OutputNamespace}.{outputType}", TypeAttributes.Public | TypeAttributes.Class);
             var inputType = typeof(int);
