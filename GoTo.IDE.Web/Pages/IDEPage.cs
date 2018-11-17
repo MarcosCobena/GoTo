@@ -1,10 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Xamarin.Forms;
 
 namespace GoTo.IDE.Web.Pages
 {
     public class IDEPage : ContentPage
     {
+        Button _runButton;
         Entry _x1Entry;
         Editor _textEditor;
         Editor _outputLabel;
@@ -13,10 +15,19 @@ namespace GoTo.IDE.Web.Pages
         {
             InitializeComponent();
 
-            _x1Entry.Text = "1";
-            _textEditor.Text = "Y = Y + 1";
+            _runButton.Clicked += (_, __) => Run();
 
+#if DEBUG
             Run();
+#endif
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            _x1Entry.Text = "0";
+            _textEditor.Text = "Y = Y + 1";
         }
 
         void InitializeComponent()
@@ -38,9 +49,9 @@ namespace GoTo.IDE.Web.Pages
                 RowSpacing = 8
             };
             var toolbarStackLayout = new StackLayout { Orientation = StackOrientation.Horizontal };
-            toolbarStackLayout.Children.Add(new Button { Text = "Run" });
+            toolbarStackLayout.Children.Add(_runButton = new Button { Text = "Run" });
             grid.Children.Add(toolbarStackLayout, 0, 0);
-            _x1Entry = new Entry { Placeholder = "X1", WidthRequest = 50 };
+            _x1Entry = new Entry { Placeholder = "X1" };
             toolbarStackLayout.Children.Add(_x1Entry);
             _textEditor = new Editor();
             grid.Children.Add(_textEditor, 0, 1);
@@ -53,22 +64,39 @@ namespace GoTo.IDE.Web.Pages
 
         void Run()
         {
-            var output = Language.Run(_textEditor.Text, int.Parse(_x1Entry.Text));
+            var isSuccess = true;
+
+            isSuccess = int.TryParse(_x1Entry.Text, out int x1);
+
+            if (!isSuccess)
+            {
+                Log($"{_x1Entry.Placeholder} must be an {x1.GetType()}");
+                return;
+            }
+
+            var output = Language.Run(_textEditor.Text, x1);
             var isFailed = output.messages.Any(message => message.Severity == SeverityEnum.Error);
 
             if (isFailed)
             {
-                _outputLabel.TextColor = Color.Red;
-                _outputLabel.Text = output.messages
+                var errorMessages = output.messages
                     .Select(message =>
                         $"{message.Severity} at line {message.Line}, column {message.Column}: {message.Description}")
                     .Aggregate((current, next) => $"{current}\r\n{next}");
+                Log(errorMessages);
             }
             else
             {
-                _outputLabel.TextColor = Color.Green;
-                _outputLabel.Text = $"Y = {output.result}";
+                Log($"Y = {output.result}", isSuccess: true);
             }
+        }
+
+        void Log(string message, bool isSuccess = false)
+        {
+            _outputLabel.TextColor = isSuccess ? 
+                Color.Green : 
+                Color.Red;
+            _outputLabel.Text = message;
         }
     }
 }
