@@ -2,7 +2,7 @@
 using System.Linq;
 using Xamarin.Forms;
 
-namespace GoTo.IDE.Web.Pages
+namespace GoTo.Studio.Web.Pages
 {
     public class IDEPage : ContentPage
     {

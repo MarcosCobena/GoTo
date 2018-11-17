@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace GoTo.IDE.Web
+namespace GoTo.Studio.Web
 {
     public class Program
     {

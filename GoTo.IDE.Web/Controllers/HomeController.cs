@@ -1,11 +1,11 @@
-﻿using GoTo.IDE.Web.Models;
-using GoTo.IDE.Web.Pages;
+﻿using GoTo.Studio.Web.Models;
+using GoTo.Studio.Web.Pages;
 using Microsoft.AspNetCore.Mvc;
 using Ooui.AspNetCore;
 using System.Diagnostics;
 using Xamarin.Forms;
 
-namespace GoTo.IDE.Web.Controllers
+namespace GoTo.Studio.Web.Controllers
 {
     public class HomeController : Controller
     {

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Xamarin.Forms;
 
-namespace GoTo.IDE.Web
+namespace GoTo.Studio.Web
 {
     public class Startup
     {
