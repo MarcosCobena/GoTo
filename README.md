@@ -1,5 +1,7 @@
 ![Build status](https://marcoscm.visualstudio.com/GoTo/_apis/build/status/GoTo-.NET%20Desktop-CI)
 
+[![NuGet](https://img.shields.io/nuget/v/GoTo.svg?label=NuGet)](https://www.nuget.org/packages/GoTo)
+
 # GoTo
 
 This' a program written in GOTO, would you guess its goal?
