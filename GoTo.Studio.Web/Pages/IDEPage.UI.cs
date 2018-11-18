@@ -49,14 +49,14 @@ namespace GoTo.Studio.Web.Pages
             grid.Children.Add(_textEditor = new Editor(), 0, 1);
 
             var inputsStackLayout = new StackLayout();
-            inputsStackLayout.Children.Add(_x1Entry = new Entry { Placeholder = "X1", Text="0" });
-            inputsStackLayout.Children.Add(_x2Entry = new Entry { Placeholder = "X2", Text="0" });
-            inputsStackLayout.Children.Add(_x3Entry = new Entry { Placeholder = "X3", Text="0" });
-            inputsStackLayout.Children.Add(_x4Entry = new Entry { Placeholder = "X4", Text="0" });
-            inputsStackLayout.Children.Add(_x5Entry = new Entry { Placeholder = "X5", Text="0" });
-            inputsStackLayout.Children.Add(_x6Entry = new Entry { Placeholder = "X6", Text="0" });
-            inputsStackLayout.Children.Add(_x7Entry = new Entry { Placeholder = "X7", Text="0" });
-            inputsStackLayout.Children.Add(_x8Entry = new Entry { Placeholder = "X8", Text="0" });
+            inputsStackLayout.Children.Add(_x1Entry = new Entry { Placeholder = "X1" });
+            inputsStackLayout.Children.Add(_x2Entry = new Entry { Placeholder = "X2" });
+            inputsStackLayout.Children.Add(_x3Entry = new Entry { Placeholder = "X3" });
+            inputsStackLayout.Children.Add(_x4Entry = new Entry { Placeholder = "X4" });
+            inputsStackLayout.Children.Add(_x5Entry = new Entry { Placeholder = "X5" });
+            inputsStackLayout.Children.Add(_x6Entry = new Entry { Placeholder = "X6" });
+            inputsStackLayout.Children.Add(_x7Entry = new Entry { Placeholder = "X7" });
+            inputsStackLayout.Children.Add(_x8Entry = new Entry { Placeholder = "X8" });
             grid.Children.Add(inputsStackLayout, 1, 1);
 
             grid.Children.Add(_outputLabel = new Editor { IsEnabled = false }, 2, 1);

@@ -62,5 +62,25 @@ namespace Tests
                 "END\n" +
                 "AA X");
         }
+
+        [Fact]
+        public void MultipleMacros()
+        {
+            AssertExtensions.AnalyzeWithEmptyMessages(
+                "MACRO FIRST V\n" +
+                "V = V\n" +
+                "END\n" +
+                "MACRO SECOND V\n" +
+                "V = V\n" +
+                "END\n" +
+                "FIRST X\n" +
+                "SECOND X");
+        }
+
+        [Fact]
+        public void RandomInput()
+        {
+            AssertExtensions.AnalyzeWithAnyMessage("Lorem ipsum");
+        }
     }
 }

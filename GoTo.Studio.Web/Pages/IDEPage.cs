@@ -62,21 +62,16 @@ namespace GoTo.Studio.Web.Pages
 
         void Run()
         {
-            var isX1Parsed = int.TryParse(_x1Entry.Text, out int x1);
-            var isX2Parsed = int.TryParse(_x2Entry.Text, out int x2);
-            var isX3Parsed = int.TryParse(_x3Entry.Text, out int x3);
-            var isX4Parsed = int.TryParse(_x4Entry.Text, out int x4);
-            var isX5Parsed = int.TryParse(_x5Entry.Text, out int x5);
-            var isX6Parsed = int.TryParse(_x6Entry.Text, out int x6);
-            var isX7Parsed = int.TryParse(_x7Entry.Text, out int x7);
-            var isX8Parsed = int.TryParse(_x8Entry.Text, out int x8);
+            var x1 = int.TryParse(_x1Entry.Text, out int parsedX1) ? parsedX1 : 0;
+            var x2 = int.TryParse(_x2Entry.Text, out int parsedX2) ? parsedX2 : 0;
+            var x3 = int.TryParse(_x3Entry.Text, out int parsedX3) ? parsedX3 : 0;
+            var x4 = int.TryParse(_x4Entry.Text, out int parsedX4) ? parsedX4 : 0;
+            var x5 = int.TryParse(_x5Entry.Text, out int parsedX5) ? parsedX5 : 0;
+            var x6 = int.TryParse(_x6Entry.Text, out int parsedX6) ? parsedX6 : 0;
+            var x7 = int.TryParse(_x7Entry.Text, out int parsedX7) ? parsedX7 : 0;
+            var x8 = int.TryParse(_x8Entry.Text, out int parsedX8) ? parsedX8 : 0;
 
-            if (!(isX1Parsed && isX2Parsed && isX3Parsed && isX4Parsed && 
-                isX5Parsed && isX6Parsed && isX7Parsed && isX8Parsed))
-            {
-                Log($"Every X input must be an integer");
-                return;
-            }
+            Log("Running...", isSuccess: true);
 
             (int result, IEnumerable<Message> messages) output;
             var isRunAborted = false;
