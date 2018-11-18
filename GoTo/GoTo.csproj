@@ -1,9 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
+    <Authors>Marcos Cobeña Morián</Authors>
+    <Description>GOTO compiler for .NET.</Description>
+    <Copyright>Marcos Cobeña Morián</Copyright>
+    <PackageProjectUrl>https://github.com/MarcosCobena/GoTo</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/MarcosCobena/GoTo/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/MarcosCobena/GoTo</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>goto compiler dotnet</PackageTags>
+    <PackageReleaseNotes>Initial version :-)</PackageReleaseNotes>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
+	  <DefineConstants>NETSTANDARD</DefineConstants>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Antlr4.Runtime.Standard" Version="4.7.1.1" />
+    <PackageReference Include="System.Reflection.Emit" Version="4.3.0" Condition=" '$(TargetFramework)' == 'netstandard2.0'" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+  </ItemGroup>
+  
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <CustomCommands>
       <CustomCommands>
@@ -15,11 +36,6 @@
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
-    
-  <ItemGroup>
-    <PackageReference Include="Antlr4.Runtime.Standard" Version="4.7.1.1" />
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-  </ItemGroup>
     
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="cd $(ProjectDir)Parser&#xD;&#xA;java -jar antlr-4.7.1-complete.jar -Dlanguage=CSharp -visitor GoTo.g4" />

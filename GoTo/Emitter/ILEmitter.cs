@@ -20,7 +20,9 @@ namespace GoTo.Emitter
         public static void CreateAssembly(ProgramNode program, string outputType, string outputPath)
         {
             ActualCreateAssembly(program, outputType, out AssemblyBuilder assemblyBuilder);
+#if !NETSTANDARD
             assemblyBuilder.Save(outputPath);
+#endif
         }
 
         public static Type CreateType(ProgramNode program, string outputType) => 
@@ -33,10 +35,20 @@ namespace GoTo.Emitter
             var appDomain = AppDomain.CurrentDomain;
             assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(
                 assemblyName,
-                isTransient ? AssemblyBuilderAccess.Run : AssemblyBuilderAccess.Save);
-            var moduleBuilder = //isTransient ? 
-                assemblyBuilder.DefineDynamicModule(assemblyName.Name); //:
-                //assemblyBuilder.DefineDynamicModule(assemblyName.Name, $"{outputType}.dll");
+#if NETSTANDARD
+                AssemblyBuilderAccess.Run
+#else
+                isTransient ? AssemblyBuilderAccess.Run : AssemblyBuilderAccess.Save
+#endif
+                );
+            var moduleBuilder =
+#if NETSTANDARD
+                assemblyBuilder.DefineDynamicModule(assemblyName.Name);
+#else
+                isTransient ? 
+                    assemblyBuilder.DefineDynamicModule(assemblyName.Name) :
+                    assemblyBuilder.DefineDynamicModule(assemblyName.Name, $"{outputType}.dll");
+#endif
             var typeBuilder = moduleBuilder.DefineType(
                 $"{Language.OutputNamespace}.{outputType}", TypeAttributes.Public | TypeAttributes.Class);
             var inputType = typeof(int);
@@ -59,7 +71,12 @@ namespace GoTo.Emitter
 
             TranslateInto(program, il);
 
-            var resultingType = typeBuilder.CreateType();
+            var resultingType = typeBuilder.
+#if NETSTANDARD
+                CreateTypeInfo();
+#else
+                CreateType();
+#endif
 
             return resultingType;
         }
