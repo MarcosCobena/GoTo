@@ -1,0 +1,13 @@
+﻿Welcome to GoTo Studio!
+
+I'm the output, here you'll see the result of running those programs you write at my left —the editor.
+
+Do you see that column of entries at center? They're the inputs, waiting for you to type integers.
+
+Why don't you just start by typing 42 at X1 and click Run?
+
+Oh, if you may encounter any issue, please report it at
+
+	https://github.com/MarcosCobena/GoTo/issues
+
+Thanks in advance.

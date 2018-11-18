@@ -1,29 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Xamarin.Forms;
 
 namespace GoTo.Studio.Web.Pages
 {
-    public class IDEPage : ContentPage
+    public partial class IDEPage
     {
         private readonly string _goToVersion;
-
-        Button _runButton;
-        Entry _x1Entry;
-        Button _helpButton;
-        Editor _textEditor;
-        Editor _outputLabel;
 
         public IDEPage()
         {
             InitializeComponent();
-
-#if DEBUG
-            Initialize();
-            Run();
-#endif
 
             _goToVersion = typeof(Language)
                 .GetTypeInfo()
@@ -47,49 +37,14 @@ namespace GoTo.Studio.Web.Pages
             base.OnDisappearing();
         }
 
-        void InitializeComponent()
-        {
-            var grid = new Grid
-            {
-                ColumnDefinitions = new ColumnDefinitionCollection
-                {
-                    new ColumnDefinition { Width = new GridLength(2, GridUnitType.Star) },
-                    new ColumnDefinition { Width = new GridLength(3, GridUnitType.Star) }
-                },
-                ColumnSpacing = 8,
-                RowDefinitions = new RowDefinitionCollection
-                {
-                    new RowDefinition { Height = GridLength.Auto },
-                    new RowDefinition { Height = GridLength.Star }
-                },
-                RowSpacing = 8
-            };
-            var toolbarStackLayout = new StackLayout
-            {
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                Orientation = StackOrientation.Horizontal
-            };
-            toolbarStackLayout.Children.Add(_runButton = new Button { Text = "Run" });
-            toolbarStackLayout.Children.Add(_x1Entry = new Entry { Placeholder = "X1" });
-            grid.Children.Add(toolbarStackLayout, 0, 0);
-
-            grid.Children.Add(_helpButton = new Button { HorizontalOptions = LayoutOptions.End, Text = "Help" }, 1, 0);
-
-            grid.Children.Add(_textEditor = new Editor(), 0, 1);
-
-            grid.Children.Add(_outputLabel = new Editor { IsEnabled = false }, 1, 1);
-
-            Content = grid;
-            Padding = 16;
-        }
-
-        private void Initialize()
+        void Initialize()
         {
             _runButton.Clicked += RunButton_Clicked;
             _helpButton.Clicked += HelpButton_Clicked;
 
-            _x1Entry.Text = "0";
-            _textEditor.Text = "Y = Y + 1";
+            _textEditor.Text = LoadEmbeddedResource("CopyX.goto");
+
+            Help();
         }
 
         void HelpButton_Clicked(object sender, EventArgs e)
@@ -97,7 +52,7 @@ namespace GoTo.Studio.Web.Pages
             // This' currently not implemented
             //Device.OpenUri(new Uri("https://github.com/MarcosCobena/GoTo/wiki"));
 
-            DisplayAlert("Help", $"GoTo Studio (GoTo v. {_goToVersion})", "Thanks");
+            Help();
         }
 
         void RunButton_Clicked(object sender, EventArgs e)
@@ -107,13 +62,19 @@ namespace GoTo.Studio.Web.Pages
 
         void Run()
         {
-            var isSuccess = true;
+            var isX1Parsed = int.TryParse(_x1Entry.Text, out int x1);
+            var isX2Parsed = int.TryParse(_x2Entry.Text, out int x2);
+            var isX3Parsed = int.TryParse(_x3Entry.Text, out int x3);
+            var isX4Parsed = int.TryParse(_x4Entry.Text, out int x4);
+            var isX5Parsed = int.TryParse(_x5Entry.Text, out int x5);
+            var isX6Parsed = int.TryParse(_x6Entry.Text, out int x6);
+            var isX7Parsed = int.TryParse(_x7Entry.Text, out int x7);
+            var isX8Parsed = int.TryParse(_x8Entry.Text, out int x8);
 
-            isSuccess = int.TryParse(_x1Entry.Text, out int x1);
-
-            if (!isSuccess)
+            if (!(isX1Parsed && isX2Parsed && isX3Parsed && isX4Parsed && 
+                isX5Parsed && isX6Parsed && isX7Parsed && isX8Parsed))
             {
-                Log($"{_x1Entry.Placeholder} must be an {x1.GetType()}");
+                Log($"Every X input must be an integer");
                 return;
             }
 
@@ -122,7 +83,7 @@ namespace GoTo.Studio.Web.Pages
 
             try
             {
-                output = Language.Run(_textEditor.Text, x1);
+                output = Language.Run(_textEditor.Text, x1, x2, x3, x4, x5, x6, x7, x8);
             }
             catch (Exception exception)
             {
@@ -153,12 +114,35 @@ namespace GoTo.Studio.Web.Pages
             }
         }
 
+        void Help()
+        {
+            _outputLabel.Text = string.Empty;
+            _outputLabel.TextColor = Color.Black;
+
+            var text = LoadEmbeddedResource("Welcome.txt") +
+                "\n\n" +
+                $"GoTo Studio (GoTo {_goToVersion})";
+            _outputLabel.Text = text;
+        }
+
         void Log(string message, bool isSuccess = false)
         {
             _outputLabel.TextColor = isSuccess ? 
                 Color.Green : 
                 Color.Red;
             _outputLabel.Text = message;
+        }
+
+        string LoadEmbeddedResource(string fileName)
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var resourceName = $"GoTo.Studio.Web.Pages.{fileName}";
+
+            using (var stream = assembly.GetManifestResourceStream(resourceName))
+            using (var reader = new StreamReader(stream))
+            {
+                return reader.ReadToEnd();
+            }
         }
     }
 }
