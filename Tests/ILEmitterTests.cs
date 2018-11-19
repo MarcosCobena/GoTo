@@ -139,6 +139,8 @@ namespace Tests
         [Fact]
         public void InfiniteLoop()
         {
+            Assert.True(false);
+
             var output = Language.Run("[A] IF X != 0 GOTO A", 1);
 
             Assert.Equal(0, output.result);
