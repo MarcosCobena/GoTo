@@ -1,6 +1,5 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
-using GoTo.Parser;
 using System.Collections.Generic;
 using static GoToParser;
 
@@ -17,10 +16,12 @@ namespace GoTo.Parser
         public const char OutputVar = 'Y';
 
         readonly IList<Message> _messages;
+        readonly List<string> _usedLabels;
 
         public SemanticListener()
         {
             _messages = new List<Message>();
+            _usedLabels = new List<string>();
         }
 
         public IEnumerable<Message> Messages => _messages;
@@ -67,7 +68,24 @@ namespace GoTo.Parser
         {
             base.ExitLabeledLine(context);
 
-            CheckValidLabel(context.ID().Symbol, isIdentifyingLine: true);
+            var symbol = context.ID().Symbol;
+            CheckValidLabel(symbol, isIdentifyingLine: true);
+
+            var text = symbol.Text;
+
+            if (_usedLabels.Contains(text))
+            {
+                var message = new Message(
+                    SeverityEnum.Error,
+                    $"Labels' must identify only one instruction.",
+                    symbol.Line,
+                    symbol.Column);
+                _messages.Add(message);
+            }
+            else
+            {
+                _usedLabels.Add(text);
+            }
         }
 
         public override void ExitProgram([NotNull] ProgramContext context)

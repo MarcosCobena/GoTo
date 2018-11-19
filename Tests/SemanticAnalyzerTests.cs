@@ -190,6 +190,15 @@ namespace Tests
             AssertEqualErrorsCountContainingKeyword("IF X != 0 GOTO A", "label", expectedErrorsCount: 1);
         }
 
+        [Fact]
+        public void LabelsUsedMoreThanOnce()
+        {
+            AssertSingleErrorContainingKeywords(
+                "[A] X = X " +
+                "[A] X = X",
+                "label", "one");
+        }
+
         #endregion Labels
 
         static void AssertSingleErrorContainingKeywords(string input, params string[] errorKeywords)

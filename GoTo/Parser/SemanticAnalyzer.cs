@@ -1,11 +1,10 @@
 ﻿using GoTo.Parser.AbstractSyntaxTree;
-using GoTo.Parser;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace GoTo.Parser
 {
-     class SemanticAnalyzer
+    class SemanticAnalyzer
     {
         public static void CheckLastLineSkip(ProgramNode program, ref List<Message> messages)
         {
