@@ -10,9 +10,12 @@
     <RepositoryUrl>https://github.com/MarcosCobena/GoTo</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>goto compiler dotnet</PackageTags>
-    <PackageReleaseNotes>Initial version :-)</PackageReleaseNotes>
+    <PackageReleaseNotes>Vars can't be negative anymore
+Detected same label used multiple times</PackageReleaseNotes>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.1</Version>
+    <AssemblyVersion>1.0.1.0</AssemblyVersion>
   </PropertyGroup>
   
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
