@@ -15,6 +15,15 @@ namespace GoTo.Emitter
         public static void EmitBinaryExpression(
             this ILGenerator il, LocalBuilder array, OpCode operation, int index, Type resultType)
         {
+            var alreadyOneLabel = il.DefineLabel();
+
+            if (operation == OpCodes.Sub)
+            {
+                il.EmitArrayValueAtIndex(array, index);
+                il.Emit(OpCodes.Ldc_I4_1);
+                il.Emit(OpCodes.Ble, alreadyOneLabel);
+            }
+
             il.EmitArrayValueAtIndex(array, index);
             il.Emit(OpCodes.Ldc_I4_1);
             il.Emit(operation);
@@ -25,6 +34,11 @@ namespace GoTo.Emitter
             il.Emit(OpCodes.Ldc_I4, index);
             il.Emit(OpCodes.Ldloc, tempVar);
             il.Emit(OpCodes.Stelem_I4);
+
+            if (operation == OpCodes.Sub)
+            {
+                il.MarkLabel(alreadyOneLabel);
+            }
         }
 
         public static LocalBuilder EmitNewLocalArray(

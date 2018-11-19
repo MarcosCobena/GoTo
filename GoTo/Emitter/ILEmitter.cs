@@ -212,10 +212,7 @@ namespace GoTo.Emitter
                     il.EmitBinaryExpression(vars.x, operation, relativeVarIndex, _arrayElementType);
                     break;
                 case InstructionNode.VarTypeEnum.Output:
-                    il.Emit(OpCodes.Ldloc, vars.y);
-                    il.Emit(OpCodes.Ldc_I4_1);
-                    il.Emit(operation);
-                    il.Emit(OpCodes.Stloc, vars.y);
+                    TranslateSubBinaryExpressionOnOutputVar(il, vars.y, operation);
                     break;
                 case InstructionNode.VarTypeEnum.Aux:
                     il.EmitBinaryExpression(vars.z, operation, relativeVarIndex, _arrayElementType);
@@ -244,6 +241,28 @@ namespace GoTo.Emitter
             var zAuxVars = il.EmitNewLocalArray(_arrayType, _arrayElementType, InputAndAuxVarsLength);
 
             return (xInputVars, yOutputVar, zAuxVars);
+        }
+
+        static void TranslateSubBinaryExpressionOnOutputVar(ILGenerator il, LocalBuilder y, OpCode operation)
+        {
+            var alreadyOneLabel = il.DefineLabel();
+
+            if (operation == OpCodes.Sub)
+            {
+                il.Emit(OpCodes.Ldloc, y);
+                il.Emit(OpCodes.Ldc_I4_1);
+                il.Emit(OpCodes.Ble, alreadyOneLabel);
+            }
+
+            il.Emit(OpCodes.Ldloc, y);
+            il.Emit(OpCodes.Ldc_I4_1);
+            il.Emit(operation);
+            il.Emit(OpCodes.Stloc, y);
+
+            if (operation == OpCodes.Sub)
+            {
+                il.MarkLabel(alreadyOneLabel);
+            }
         }
     }
 }

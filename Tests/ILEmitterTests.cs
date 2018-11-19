@@ -31,10 +31,35 @@ namespace Tests
         }
 
         [Fact]
+        public void InputVarDecrement()
+        {
+            AssertResultWhenNoInput(
+                "X = X - 1 " +
+                "X = X + 1 " +
+                "IF X != 0 GOTO A " +
+                "Z = Z + 1 " +
+                "IF Z != 0 GOTO E " +
+                "[A] Y = Y + 1", 
+                1);
+        }
+
+        [Fact]
         public void OutputVarDecrement()
         {
-            // I'm not 100% sure should stick to the original specs where think vars belong to K
-            AssertResultWhenNoInput("Y = Y - 1", -1);
+            AssertResultWhenNoInput("Y = Y - 1", 0);
+        }
+
+        [Fact]
+        public void AuxVarDecrement()
+        {
+            AssertResultWhenNoInput(
+                "Z = Z - 1 " +
+                "Z = Z + 1 " +
+                "IF Z != 0 GOTO A " +
+                "Z2 = Z2 + 1 " +
+                "IF Z2 != 0 GOTO E " +
+                "[A] Y = Y + 1",
+                1);
         }
 
         #endregion In/decrement
