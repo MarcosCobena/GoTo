@@ -251,7 +251,7 @@ namespace GoTo.Emitter
             {
                 il.Emit(OpCodes.Ldloc, y);
                 il.Emit(OpCodes.Ldc_I4_1);
-                il.Emit(OpCodes.Ble, alreadyOneLabel);
+                il.Emit(OpCodes.Blt, alreadyOneLabel);
             }
 
             il.Emit(OpCodes.Ldloc, y);

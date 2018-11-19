@@ -21,7 +21,7 @@ namespace GoTo.Emitter
             {
                 il.EmitArrayValueAtIndex(array, index);
                 il.Emit(OpCodes.Ldc_I4_1);
-                il.Emit(OpCodes.Ble, alreadyOneLabel);
+                il.Emit(OpCodes.Blt, alreadyOneLabel);
             }
 
             il.EmitArrayValueAtIndex(array, index);
