@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using Xamarin.Forms;
@@ -42,7 +41,7 @@ namespace GoTo.Studio.Web.Pages
             _runButton.Clicked += RunButton_Clicked;
             _helpButton.Clicked += HelpButton_Clicked;
 
-            _textEditor.Text = LoadEmbeddedResource("CopyX.goto");
+            _textEditor.Text = EmbeddedResourceHelper.Load("CopyX.goto");
 
             Help();
         }
@@ -71,7 +70,7 @@ namespace GoTo.Studio.Web.Pages
             var x7 = int.TryParse(_x7Entry.Text, out int parsedX7) ? parsedX7 : 0;
             var x8 = int.TryParse(_x8Entry.Text, out int parsedX8) ? parsedX8 : 0;
 
-            _runButton.IsEnabled = false;
+            BlockUI();
             _runButton.Text = "Running...";
 
             (int result, IEnumerable<Message> messages) output;
@@ -91,7 +90,7 @@ namespace GoTo.Studio.Web.Pages
             finally
             {
                 _runButton.Text = "Run";
-                _runButton.IsEnabled = true;
+                BlockUI(false);
             }
 
             if (isRunAborted)
@@ -115,12 +114,18 @@ namespace GoTo.Studio.Web.Pages
             }
         }
 
+        void BlockUI(bool isBlocked = true)
+        {
+            _runButton.IsEnabled = !isBlocked;
+            _helpButton.IsEnabled = !isBlocked;
+        }
+
         void Help()
         {
             _outputLabel.Text = string.Empty;
             _outputLabel.TextColor = Color.Black;
 
-            var text = LoadEmbeddedResource("Welcome.txt") +
+            var text = EmbeddedResourceHelper.Load("Welcome.txt") +
                 "\n\n" +
                 $"GoTo Studio (GoTo {_goToVersion})";
             _outputLabel.Text = text;
@@ -132,18 +137,6 @@ namespace GoTo.Studio.Web.Pages
                 Color.Green : 
                 Color.Red;
             _outputLabel.Text = message;
-        }
-
-        string LoadEmbeddedResource(string fileName)
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = $"GoTo.Studio.Web.Pages.{fileName}";
-
-            using (var stream = assembly.GetManifestResourceStream(resourceName))
-            using (var reader = new StreamReader(stream))
-            {
-                return reader.ReadToEnd();
-            }
         }
     }
 }

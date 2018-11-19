@@ -24,7 +24,7 @@ namespace GoTo.Studio.Web.Pages
                 ColumnDefinitions = new ColumnDefinitionCollection
                 {
                     new ColumnDefinition { Width = GridLength.Star },
-                    new ColumnDefinition { Width = GridLength.Auto },
+                    new ColumnDefinition { Width = new GridLength(100) },
                     new ColumnDefinition { Width = GridLength.Star }
                 },
                 ColumnSpacing = 8,
@@ -35,13 +35,9 @@ namespace GoTo.Studio.Web.Pages
                 },
                 RowSpacing = 8
             };
-            var toolbarStackLayout = new StackLayout
-            {
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                Orientation = StackOrientation.Horizontal
-            };
-            toolbarStackLayout.Children.Add(_runButton = new Button { Text = "Run" });
-            grid.Children.Add(toolbarStackLayout, 0, 0);
+
+            grid.Children.Add(
+                new Label { FontSize = Device.GetNamedSize(NamedSize.Large, typeof(Label)), Text = "GoTo Studio" });
 
             grid.Children.Add(
                 _helpButton = new Button { HorizontalOptions = LayoutOptions.End, Text = "Help" }, 2, 0);
@@ -57,6 +53,7 @@ namespace GoTo.Studio.Web.Pages
             inputsStackLayout.Children.Add(_x6Entry = new Entry { Placeholder = "X6" });
             inputsStackLayout.Children.Add(_x7Entry = new Entry { Placeholder = "X7" });
             inputsStackLayout.Children.Add(_x8Entry = new Entry { Placeholder = "X8" });
+            inputsStackLayout.Children.Add(_runButton = new Button { Text = "Run" });
             grid.Children.Add(inputsStackLayout, 1, 1);
 
             grid.Children.Add(_outputLabel = new Editor { IsEnabled = false }, 2, 1);

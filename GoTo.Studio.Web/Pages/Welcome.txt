@@ -4,7 +4,7 @@ I'm the output, here you'll see the result of running those programs you write a
 
 Do you see that column of entries at center? They're the inputs, waiting for you to type integers.
 
-Why don't you just start by typing 42 at X1 and click Run?
+Why don't you just start by typing 42 at X1 and click Run? Please, be patient as sometimes it takes some time to show up.
 
 Oh, if you may encounter any issue, please report it at
 
