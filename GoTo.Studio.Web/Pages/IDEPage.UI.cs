@@ -15,7 +15,7 @@ namespace GoTo.Studio.Web.Pages
         Entry _x6Entry;
         Entry _x7Entry;
         Entry _x8Entry;
-        Editor _outputLabel;
+        Editor _outputEditor;
 
         void InitializeComponent()
         {
@@ -42,7 +42,7 @@ namespace GoTo.Studio.Web.Pages
             grid.Children.Add(
                 _helpButton = new Button { HorizontalOptions = LayoutOptions.End, Text = "Help" }, 2, 0);
 
-            grid.Children.Add(_textEditor = new Editor(), 0, 1);
+            grid.Children.Add(_textEditor = new Editor { FontFamily = "monospace" }, 0, 1);
 
             var inputsStackLayout = new StackLayout();
             inputsStackLayout.Children.Add(_x1Entry = new Entry { Placeholder = "X1" });
@@ -56,7 +56,7 @@ namespace GoTo.Studio.Web.Pages
             inputsStackLayout.Children.Add(_runButton = new Button { Text = "Run" });
             grid.Children.Add(inputsStackLayout, 1, 1);
 
-            grid.Children.Add(_outputLabel = new Editor { IsEnabled = false }, 2, 1);
+            grid.Children.Add(_outputEditor = new Editor(), 2, 1);
 
             Content = grid;
             Padding = 16;

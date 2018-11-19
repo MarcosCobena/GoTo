@@ -122,21 +122,21 @@ namespace GoTo.Studio.Web.Pages
 
         void Help()
         {
-            _outputLabel.Text = string.Empty;
-            _outputLabel.TextColor = Color.Black;
+            _outputEditor.Text = string.Empty;
+            _outputEditor.TextColor = Color.Black;
 
             var text = EmbeddedResourceHelper.Load("Welcome.txt") +
                 "\n\n" +
                 $"GoTo Studio (GoTo {_goToVersion})";
-            _outputLabel.Text = text;
+            _outputEditor.Text = text;
         }
 
         void Log(string message, bool isSuccess = false)
         {
-            _outputLabel.TextColor = isSuccess ? 
+            _outputEditor.TextColor = isSuccess ? 
                 Color.Green : 
                 Color.Red;
-            _outputLabel.Text = message;
+            _outputEditor.Text = message;
         }
     }
 }
