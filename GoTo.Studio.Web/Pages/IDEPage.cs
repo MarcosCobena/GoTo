@@ -71,7 +71,8 @@ namespace GoTo.Studio.Web.Pages
             var x7 = int.TryParse(_x7Entry.Text, out int parsedX7) ? parsedX7 : 0;
             var x8 = int.TryParse(_x8Entry.Text, out int parsedX8) ? parsedX8 : 0;
 
-            Log("Running...", isSuccess: true);
+            _runButton.IsEnabled = false;
+            _runButton.Text = "Running...";
 
             (int result, IEnumerable<Message> messages) output;
             var isRunAborted = false;
@@ -86,6 +87,11 @@ namespace GoTo.Studio.Web.Pages
 
                 isRunAborted = true;
                 output = (-1, null);
+            }
+            finally
+            {
+                _runButton.Text = "Run";
+                _runButton.IsEnabled = true;
             }
 
             if (isRunAborted)

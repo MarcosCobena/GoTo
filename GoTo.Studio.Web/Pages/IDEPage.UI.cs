@@ -23,9 +23,9 @@ namespace GoTo.Studio.Web.Pages
             {
                 ColumnDefinitions = new ColumnDefinitionCollection
                 {
-                    new ColumnDefinition { Width = new GridLength(2, GridUnitType.Star) },
+                    new ColumnDefinition { Width = GridLength.Star },
                     new ColumnDefinition { Width = GridLength.Auto },
-                    new ColumnDefinition { Width = new GridLength(3, GridUnitType.Star) }
+                    new ColumnDefinition { Width = GridLength.Star }
                 },
                 ColumnSpacing = 8,
                 RowDefinitions = new RowDefinitionCollection
