@@ -76,11 +76,5 @@ namespace Tests
                 "FIRST X\n" +
                 "SECOND X");
         }
-
-        [Fact]
-        public void RandomInput()
-        {
-            AssertExtensions.AnalyzeWithAnyMessage("Lorem ipsum");
-        }
     }
 }

@@ -13,7 +13,7 @@ namespace Tests
         [Fact]
         public void DifferentVarsSkip()
         {
-            AssertSingleErrorContainingKeywords("X = X2", "skip");
+            AssertExtensions.AssertSingleErrorContainingKeywords("X = X2", "skip");
         }
 
         [Fact]
@@ -63,7 +63,7 @@ namespace Tests
         [InlineData("-")]
         public void DifferentVarsIncrementOrDecrement(string @operator)
         {
-            AssertSingleErrorContainingKeywords($"X = X2 {@operator} 1", "increment", "decrement");
+            AssertExtensions.AssertSingleErrorContainingKeywords($"X = X2 {@operator} 1", "increment", "decrement");
         }
 
         [Theory]
@@ -193,7 +193,7 @@ namespace Tests
         [Fact]
         public void LabelsUsedMoreThanOnce()
         {
-            AssertSingleErrorContainingKeywords(
+            AssertExtensions.AssertSingleErrorContainingKeywords(
                 "[A] X = X " +
                 "[A] X = X",
                 "label", "one");
@@ -201,22 +201,16 @@ namespace Tests
 
         #endregion Labels
 
-        static void AssertSingleErrorContainingKeywords(string input, params string[] errorKeywords)
+        #region Others
+
+        [Fact]
+        public void RandomInput()
         {
-            Language.Analyze(input, out List<Message> messages);
-
-            var errorMessages = messages.Where(message => message.Severity == SeverityEnum.Error);
-
-            Assert.Single(errorMessages);
-
-            var firstError = errorMessages.First();
-
-            foreach (var item in errorKeywords)
-            {
-                Assert.Contains(item, firstError.Description, StringComparison.InvariantCultureIgnoreCase);
-            }
+            AssertExtensions.AssertSingleErrorContainingKeywords("Lorem ipsum", "unknown");
         }
-        
+
+        #endregion Others
+
         static void AssertEqualErrorsCountContainingKeyword(string input, string keyword, int expectedErrorsCount = 2)
         {
             Language.Analyze(input, out List<Message> messages);

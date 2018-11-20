@@ -49,6 +49,7 @@ namespace GoTo
             var abstractSyntaxTreeGenerator = new AbstractSyntaxTreeGenerator();
             var program = abstractSyntaxTreeGenerator.VisitProgram(contextSyntaxTree) as ProgramNode;
 
+            SemanticAnalyzer.CheckUnknownInput(program, ref messages);
             SemanticAnalyzer.CheckLastLineSkip(program, ref messages);
             SemanticAnalyzer.CheckMissingLabel(program, ref messages);
 

@@ -1,6 +1,6 @@
-﻿using GoTo.Parser.AbstractSyntaxTree;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using GoTo.Parser.AbstractSyntaxTree;
 
 namespace GoTo.Parser
 {
@@ -44,6 +44,19 @@ namespace GoTo.Parser
                         item.Column);
                     messages.Add(message);
                 }
+            }
+        }
+
+        public static void CheckUnknownInput(ProgramNode program, ref List<Message> messages)
+        {
+            if (program.Instructions.All(instruction => instruction == null))
+            {
+                var message = new Message(
+                    SeverityEnum.Error,
+                    $"Unknown input.",
+                    0,
+                    0);
+                messages.Add(message);
             }
         }
     }
