@@ -7,12 +7,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace GoTo
 {
     public static class Language
     {
         const int ErrorResult = 0;
+
+        static readonly TimeSpan TimeBeforeConsideringInfiniteLoop = TimeSpan.FromSeconds(15);
 
         public const string OutputMethodName = "Run";
         public const string OutputNamespace = "GoTo";
@@ -89,9 +92,29 @@ namespace GoTo
                 return (0, output.messages);
             }
 
-            var result = (int)output.result
-                .GetMethod(OutputMethodName)
-                .Invoke(null, new object[] { x1, x2, x3, x4, x5, x6, x7, x8 });
+            var programTask = new Task<int>(
+                () => (int)output.result.GetMethod(OutputMethodName)
+                    .Invoke(null, new object[] { x1, x2, x3, x4, x5, x6, x7, x8 }));
+            bool isProgramFinished;
+            int result;
+
+            try
+            {
+                programTask.Start();
+                isProgramFinished = programTask.Wait(TimeBeforeConsideringInfiniteLoop);
+            }
+            catch (AggregateException)
+            {
+                isProgramFinished = false;
+            }
+
+            if (!isProgramFinished)
+            {
+                throw new InfiniteLoopException(
+                    "The program took too much time to run, may there be an infinite loop?");
+            }
+
+            result = programTask.Result;
 
             return (result, output.messages);
         }

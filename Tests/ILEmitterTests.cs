@@ -1,5 +1,4 @@
 ﻿using GoTo;
-using System.Linq;
 using Xunit;
 
 namespace Tests
@@ -135,16 +134,10 @@ namespace Tests
             AssertResultWhenNoInput(string.Empty, 0);
         }
 
-        // TODO break running after X s through CancellationTokens
         [Fact]
         public void InfiniteLoop()
         {
-            Assert.True(false);
-
-            var output = Language.Run("[A] IF X != 0 GOTO A", 1);
-
-            Assert.Equal(0, output.result);
-            Assert.True(output.messages.Any());
+            Assert.Throws<InfiniteLoopException>(() => Language.Run("[A] IF X != 0 GOTO A", 1));
         }
 
         [Theory]
