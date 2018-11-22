@@ -61,7 +61,13 @@ namespace GoTo.Parser
 
             var ids = context.ID();
             CheckValidVar(ids[0].Symbol);
-            CheckValidLabel(ids[1].Symbol);
+            var targetLabel = ids[1].Symbol;
+            CheckValidLabel(targetLabel);
+
+            if (context.Parent is LabeledLineContext labeledLine)
+            {
+                CheckInfiniteLoop(labeledLine.label, targetLabel);
+            }
         }
 
         public override void ExitLabeledLine([NotNull] LabeledLineContext context)
@@ -88,9 +94,17 @@ namespace GoTo.Parser
             }
         }
 
-        public override void ExitProgram([NotNull] ProgramContext context)
+        void CheckInfiniteLoop(IToken label, IToken targetLabel)
         {
-            base.ExitProgram(context);
+            if (label.Text.Equals(targetLabel.Text))
+            {
+                var message = new Message(
+                    SeverityEnum.Error,
+                    $"Infinite loops are not allowed.",
+                    targetLabel.Line,
+                    targetLabel.Column);
+                _messages.Add(message);
+            }
         }
 
         void CheckValidLabel(IToken token, bool isIdentifyingLine = false)

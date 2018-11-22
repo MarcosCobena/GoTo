@@ -134,12 +134,6 @@ namespace Tests
             AssertResultWhenNoInput(string.Empty, 0);
         }
 
-        [Fact]
-        public void InfiniteLoop()
-        {
-            Assert.Throws<InfiniteLoopException>(() => Language.Run("[A] IF X != 0 GOTO A", 1));
-        }
-
         [Theory]
         [InlineData(2, 2)]
         [InlineData(int.MaxValue, int.MaxValue)]

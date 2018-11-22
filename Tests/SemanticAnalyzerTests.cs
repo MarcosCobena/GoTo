@@ -209,6 +209,12 @@ namespace Tests
             AssertExtensions.AssertSingleErrorContainingKeywords("Lorem ipsum", "unknown");
         }
 
+        [Fact]
+        public void InfiniteLoop()
+        {
+            AssertExtensions.AssertSingleErrorContainingKeywords("[A] IF X != 0 GOTO A", "infinite", "loop");
+        }
+
         #endregion Others
 
         static void AssertEqualErrorsCountContainingKeyword(string input, string keyword, int expectedErrorsCount = 2)
