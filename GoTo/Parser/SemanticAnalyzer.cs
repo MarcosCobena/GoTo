@@ -4,9 +4,36 @@ using GoTo.Parser.AbstractSyntaxTree;
 
 namespace GoTo.Parser
 {
-    class SemanticAnalyzer
+    static class SemanticAnalyzer
     {
-        public static void CheckLastLineSkip(ProgramNode program, ref List<Message> messages)
+        internal static void Check(ProgramNode program, ref List<Message> messages)
+        {
+            CheckUnknownInput(program, ref messages);
+            CheckLastLineSkip(program, ref messages);
+            CheckMissingLabel(program, ref messages);
+            CheckInfiniteLoop(program, ref messages);
+        }
+
+        static void CheckInfiniteLoop(ProgramNode program, ref List<Message> messages)
+        {
+            var loopConditionals = program.Instructions.Where(instruction =>
+                instruction is ConditionalInstructionNode node &&
+                !string.IsNullOrWhiteSpace(node.TargetLabel) &&
+                !string.IsNullOrWhiteSpace(node.Label) &&
+                node.TargetLabel == node.Label);
+
+            foreach (var item in loopConditionals)
+            {
+                var message = new Message(
+                    SeverityEnum.Error,
+                    SemanticListener.InfiniteLoopMessage,
+                    item.Line,
+                    item.Column);
+                messages.Add(message);
+            }
+        }
+
+        static void CheckLastLineSkip(ProgramNode program, ref List<Message> messages)
         {
             var lastInstruction = program.Instructions.LastOrDefault();
             var outputVar = SemanticListener.OutputVar.ToString();
@@ -23,7 +50,7 @@ namespace GoTo.Parser
             }
         }
 
-        public static void CheckMissingLabel(ProgramNode program, ref List<Message> messages)
+        static void CheckMissingLabel(ProgramNode program, ref List<Message> messages)
         {
             var conditionals = program.Instructions
                 .Where(item => item is ConditionalInstructionNode node && 
@@ -47,7 +74,7 @@ namespace GoTo.Parser
             }
         }
 
-        public static void CheckUnknownInput(ProgramNode program, ref List<Message> messages)
+        static void CheckUnknownInput(ProgramNode program, ref List<Message> messages)
         {
             if (program.Instructions.All(instruction => instruction == null))
             {

@@ -15,6 +15,8 @@ namespace GoTo.Parser
 
         public const char OutputVar = 'Y';
 
+        internal const string InfiniteLoopMessage = "Infinite loops are not allowed.";
+
         readonly IList<Message> _messages;
         readonly List<string> _usedLabels;
 
@@ -100,7 +102,7 @@ namespace GoTo.Parser
             {
                 var message = new Message(
                     SeverityEnum.Error,
-                    $"Infinite loops are not allowed.",
+                    InfiniteLoopMessage,
                     targetLabel.Line,
                     targetLabel.Column);
                 _messages.Add(message);

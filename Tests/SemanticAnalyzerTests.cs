@@ -210,7 +210,7 @@ namespace Tests
         }
 
         [Fact]
-        public void InfiniteLoop()
+        public void InfiniteLoopSingleInstruction()
         {
             AssertExtensions.AssertSingleErrorContainingKeywords("[A] IF X != 0 GOTO A", "infinite", "loop");
         }
