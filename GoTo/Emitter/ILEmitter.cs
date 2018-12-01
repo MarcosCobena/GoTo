@@ -50,10 +50,10 @@ namespace GoTo.Emitter
                     assemblyBuilder.DefineDynamicModule(assemblyName.Name, $"{outputType}.dll");
 #endif
             var typeBuilder = moduleBuilder.DefineType(
-                $"{Language.OutputNamespace}.{outputType}", TypeAttributes.Public | TypeAttributes.Class);
+                $"{Framework.OutputNamespace}.{outputType}", TypeAttributes.Public | TypeAttributes.Class);
             var inputType = typeof(int);
             var methodBuilder = typeBuilder.DefineMethod(
-                Language.OutputMethodName,
+                Framework.OutputMethodName,
                 MethodAttributes.Public | MethodAttributes.Static,
                 typeof(int),
                 new Type[] { inputType, inputType, inputType, inputType, inputType, inputType, inputType, inputType });

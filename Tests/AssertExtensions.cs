@@ -1,4 +1,5 @@
 ﻿using GoTo;
+using GoTo.Parser.AbstractSyntaxTree;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,39 +11,48 @@ namespace Tests
     {
         internal static void AnalyzeWithAnyMessage(string input)
         {
-            var messages = Analyze(input);
+            var isSuccess = Framework.TryAnalyze(input, out ProgramNode _, out IEnumerable<Message> messages);
 
+            Assert.False(isSuccess);
             Assert.NotEmpty(messages);
         }
 
         internal static void AnalyzeWithEmptyMessages(string input)
         {
-            var messages = Analyze(input);
+            var isSuccess = Framework.TryAnalyze(input, out ProgramNode _, out IEnumerable<Message> messages);
 
+            Assert.True(isSuccess);
             Assert.Empty(messages);
         }
-
-        internal static void AssertSingleErrorContainingKeywords(string input, params string[] errorKeywords)
+        
+        // TODO refactor below two
+        internal static void EqualErrorsCountContainingKeyword(
+            string input, 
+            string keyword, 
+            int expectedErrorsCount = 2)
         {
-            Language.Analyze(input, out List<Message> messages);
-
+            var isSuccess = Framework.TryAnalyze(input, out ProgramNode _, out IEnumerable<Message> messages);
             var errorMessages = messages.Where(message => message.Severity == SeverityEnum.Error);
 
-            Assert.Single(errorMessages);
-
-            var firstError = errorMessages.First();
-
-            foreach (var item in errorKeywords)
-            {
-                Assert.Contains(item, firstError.Description, StringComparison.InvariantCultureIgnoreCase);
-            }
+            Assert.False(isSuccess);
+            Assert.Equal(expectedErrorsCount, errorMessages.Count());
+            Assert.All(
+                errorMessages,
+                message => Assert.Contains(keyword, message.Description, StringComparison.InvariantCultureIgnoreCase));
         }
 
-        static List<Message> Analyze(string input)
+        internal static void SingleErrorContainingKeywords(string input, params string[] errorKeywords)
         {
-            Language.Analyze(input, out List<Message> messages);
+            var isSuccess = Framework.TryAnalyze(input, out ProgramNode _, out IEnumerable<Message> messages);
+            var errorMessages = messages.Where(message => message.Severity == SeverityEnum.Error);
+            var firstError = errorMessages.First();
 
-            return messages;
+            Assert.False(isSuccess);
+            Assert.Single(errorMessages);
+            Assert.All(
+                errorKeywords, 
+                keyword => 
+                    Assert.Contains(keyword, firstError.Description, StringComparison.InvariantCultureIgnoreCase));
         }
     }
 }
