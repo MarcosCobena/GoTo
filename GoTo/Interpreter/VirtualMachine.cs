@@ -7,6 +7,8 @@ namespace GoTo.Interpreter
 {
     internal static class VirtualMachine
     {
+        private const int MaxSteps = 2 << 12;
+
         private static int[] x;
         private static int[] y;
         private static int[] z;
@@ -26,11 +28,12 @@ namespace GoTo.Interpreter
             z = new int[Settings.InputAndAuxVarsLength];
 
             var instructionPointer = 0;
+            var stepsTaken = 0;
 
-            // TODO avoid infinite loops
-            while (instructionPointer >= 0 && instructionPointer < program.Instructions.Count)
+            while (instructionPointer >= 0 && instructionPointer < program.Instructions.Count && stepsTaken < MaxSteps)
             {
                 instructionPointer = Step(instructionPointer, program.Instructions);
+                stepsTaken++;
             }
 
             return y[0];

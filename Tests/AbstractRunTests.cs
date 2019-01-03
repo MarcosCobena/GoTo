@@ -6,7 +6,7 @@ namespace Tests
 {
     public abstract class AbstractRunTests
     {
-        private const int IntVeryBig = 1024;
+        private const int IntVeryBig = 2 << 10;
 
         readonly bool isInterpreted;
 
