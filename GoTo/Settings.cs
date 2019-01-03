@@ -1,7 +1,8 @@
-﻿namespace GoTo.Parser
+﻿namespace GoTo
 {
     static class Settings
     {
-        internal static char ExitLabel { get; } = 'E';
+        internal const char ExitLabel = 'E';
+        internal const int InputAndAuxVarsLength = 8;
     }
 }

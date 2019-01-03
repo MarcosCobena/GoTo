@@ -113,7 +113,7 @@ namespace GoTo
                     return false;
                 }
 
-                result = VirtualMachine.Run();
+                result = VirtualMachine.Run(program, x1, x2, x3, x4, x5, x6, x7, x8);
             }
             else
             {

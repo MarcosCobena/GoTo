@@ -6,6 +6,8 @@ namespace Tests
 {
     public abstract class AbstractRunTests
     {
+        private const int IntVeryBig = 1024;
+
         readonly bool isInterpreted;
 
         public AbstractRunTests(bool isInterpreted)
@@ -128,7 +130,7 @@ namespace Tests
                 "IF V != 0 GOTO K\n" +
                 "END\n" +
                 "ZERO A X",
-                int.MaxValue,
+                IntVeryBig,
                 0);
         }
 
@@ -138,7 +140,7 @@ namespace Tests
 
         [Theory]
         [InlineData(2, 2)]
-        [InlineData(int.MaxValue, int.MaxValue)]
+        [InlineData(IntVeryBig, IntVeryBig)]
         public void CopyXIntoY(int x, int expectedY)
         {
             AssertResultWhenInput(

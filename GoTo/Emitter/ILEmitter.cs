@@ -9,9 +9,6 @@ namespace GoTo.Emitter
 {
     class ILEmitter
     {
-        const string ExitLabel = "E";
-        const int InputAndAuxVarsLength = 8;
-
         static readonly Type _arrayType = typeof(int[]);
         static readonly Type _arrayElementType = typeof(int);
 
@@ -58,7 +55,7 @@ namespace GoTo.Emitter
                 typeof(int),
                 new Type[] { inputType, inputType, inputType, inputType, inputType, inputType, inputType, inputType });
 
-            for (int parameterIndex = 1; parameterIndex <= InputAndAuxVarsLength; parameterIndex++)
+            for (int parameterIndex = 1; parameterIndex <= Settings.InputAndAuxVarsLength; parameterIndex++)
             {
                 var parameterBuilder = methodBuilder.DefineParameter(
                     parameterIndex,
@@ -122,7 +119,7 @@ namespace GoTo.Emitter
                 }
             }
 
-            if (_labels.TryGetValue(ExitLabel, out Label exitLabel))
+            if (_labels.TryGetValue(Settings.ExitLabel.ToString(), out Label exitLabel))
             {
                 il.MarkLabel(exitLabel);
             }
@@ -145,10 +142,10 @@ namespace GoTo.Emitter
                 _labels.Add(item.TargetLabel, label);
             }
 
-            if (!_labels.ContainsKey(ExitLabel))
+            if (!_labels.ContainsKey(Settings.ExitLabel.ToString()))
             {
                 var exitLabel = il.DefineLabel();
-                _labels.Add(ExitLabel, exitLabel);
+                _labels.Add(Settings.ExitLabel.ToString(), exitLabel);
             }
         }
 
@@ -224,9 +221,9 @@ namespace GoTo.Emitter
 
         static (LocalBuilder x, LocalBuilder y, LocalBuilder z) EmitLocalVars(ILGenerator il)
         {
-            var xInputVars = il.EmitNewLocalArray(_arrayType, _arrayElementType, InputAndAuxVarsLength);
+            var xInputVars = il.EmitNewLocalArray(_arrayType, _arrayElementType, Settings.InputAndAuxVarsLength);
 
-            for (var i = 0; i < InputAndAuxVarsLength; i++)
+            for (var i = 0; i < Settings.InputAndAuxVarsLength; i++)
             {
                 il.Emit(OpCodes.Ldloc, xInputVars);
                 il.Emit(OpCodes.Ldc_I4, i);
@@ -238,7 +235,7 @@ namespace GoTo.Emitter
             il.Emit(OpCodes.Ldc_I4_0);
             il.Emit(OpCodes.Stloc, yOutputVar);
 
-            var zAuxVars = il.EmitNewLocalArray(_arrayType, _arrayElementType, InputAndAuxVarsLength);
+            var zAuxVars = il.EmitNewLocalArray(_arrayType, _arrayElementType, Settings.InputAndAuxVarsLength);
 
             return (xInputVars, yOutputVar, zAuxVars);
         }
