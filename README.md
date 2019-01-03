@@ -18,4 +18,4 @@ What are you able to write with the [language](https://github.com/MarcosCobena/G
 
 ## GoTo Studio
 
-Would you like to start right now? It doesn't matter if you're in your phone, or tablet, it's OK: [GoTo Studio](https://goto-studio.azurewebsites.net/).
+Would you like to start right now? It doesn't matter if you're in your phone, or tablet, it's OK: [GoTo Studio](https://marcoscobena.com/goto-studio/).
