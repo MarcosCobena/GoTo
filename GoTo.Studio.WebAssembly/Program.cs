@@ -1,4 +1,4 @@
-﻿using GoTo.Studio.Web.Pages;
+﻿using GoTo.Studio.Pages;
 using Ooui;
 using Xamarin.Forms;
 

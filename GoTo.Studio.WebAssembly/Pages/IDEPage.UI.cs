@@ -1,6 +1,6 @@
 ﻿using Xamarin.Forms;
 
-namespace GoTo.Studio.Web.Pages
+namespace GoTo.Studio.Pages
 {
     public partial class IDEPage : ContentPage
     {

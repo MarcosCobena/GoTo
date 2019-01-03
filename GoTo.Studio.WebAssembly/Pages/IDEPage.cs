@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Xamarin.Forms;
 
-namespace GoTo.Studio.Web.Pages
+namespace GoTo.Studio.Pages
 {
     public partial class IDEPage
     {
