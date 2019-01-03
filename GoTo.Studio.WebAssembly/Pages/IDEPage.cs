@@ -1,24 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Xamarin.Forms;
 
 namespace GoTo.Studio.Web.Pages
 {
     public partial class IDEPage
     {
-        private readonly string _goToVersion;
+        private const string GoToVersion = "GoTo 1.0.3.0";
+        private const string CopyXProgram = 
+            "[A] X = X - 1\n" +
+            "Y = Y + 1\n" +
+            "IF X != 0 GOTO A";
+        private const string Welcome =
+            "Welcome to GoTo Studio!\n" +
+            "\n" +
+            "I'm the output, here you'll see the result of running those programs you write at my left —the editor.\n" +
+            "\n" +
+            "Do you see that column of entries at center? They're the inputs, waiting for you to type integers.\n" +
+            "\n" +
+            "Why don't you just start by typing 42 at X1 and click Run? Please, be patient as sometimes it takes some time to show up.\n" +
+            "\n" +
+            "Oh, if you may encounter any issue, please report it at\n" +
+            "\n" +
+            "    https://github.com/MarcosCobena/GoTo/issues\n" +
+            "\n" +
+            "Thanks in advance.";
 
         public IDEPage()
         {
             InitializeComponent();
-
-            _goToVersion = typeof(Language)
-                .GetTypeInfo()
-                .Assembly
-                .GetCustomAttribute<AssemblyFileVersionAttribute>()
-                .Version;
         }
 
         protected override void OnAppearing()
@@ -41,7 +52,7 @@ namespace GoTo.Studio.Web.Pages
             _runButton.Clicked += RunButton_Clicked;
             _helpButton.Clicked += HelpButton_Clicked;
 
-            _textEditor.Text = EmbeddedResourceHelper.Load("CopyX.goto");
+            _textEditor.Text = CopyXProgram;
 
             Help();
         }
@@ -73,36 +84,26 @@ namespace GoTo.Studio.Web.Pages
             BlockUI();
             _runButton.Text = "Running...";
 
-            (int result, IEnumerable<Message> messages) output;
-            var isRunAborted = false;
+            var isSucceeded = Framework.TryRun(
+                _textEditor.Text, 
+                out int result,
+                out IEnumerable<Message> messages,
+                x1, 
+                x2, 
+                x3, 
+                x4, 
+                x5, 
+                x6, 
+                x7, 
+                x8, 
+                isInterpreted: true);
 
-            try
-            {
-                output = Language.Run(_textEditor.Text, x1, x2, x3, x4, x5, x6, x7, x8);
-            }
-            catch (Exception exception)
-            {
-                Log(exception.ToString());
+            _runButton.Text = "Run";
+            BlockUI(false);
 
-                isRunAborted = true;
-                output = (-1, null);
-            }
-            finally
+            if (!isSucceeded)
             {
-                _runButton.Text = "Run";
-                BlockUI(false);
-            }
-
-            if (isRunAborted)
-            {
-                return;
-            }
-
-            var isFailed = output.messages.Any(message => message.Severity == SeverityEnum.Error);
-
-            if (isFailed)
-            {
-                var errorMessages = output.messages
+                var errorMessages = messages
                     .Select(message =>
                         $"{message.Severity} at line {message.Line}, column {message.Column}: {message.Description}")
                     .Aggregate((current, next) => $"{current}\r\n{next}");
@@ -110,7 +111,7 @@ namespace GoTo.Studio.Web.Pages
             }
             else
             {
-                Log($"Y = {output.result}", isSuccess: true);
+                Log($"Y = {result}", isSuccess: true);
             }
         }
 
@@ -125,9 +126,9 @@ namespace GoTo.Studio.Web.Pages
             _outputEditor.Text = string.Empty;
             _outputEditor.TextColor = Color.Black;
 
-            var text = EmbeddedResourceHelper.Load("Welcome.txt") +
+            var text = Welcome +
                 "\n\n" +
-                $"GoTo Studio (GoTo {_goToVersion})";
+                $"GoTo Studio (GoTo {GoToVersion})";
             _outputEditor.Text = text;
         }
 
