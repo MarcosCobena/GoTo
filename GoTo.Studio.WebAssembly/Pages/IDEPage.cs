@@ -7,7 +7,7 @@ namespace GoTo.Studio.Pages
 {
     public partial class IDEPage
     {
-        private const string GoToVersion = "GoTo 1.0.3.0";
+        private const string GoToVersion = "1.0.3.0";
         private const string CopyXProgram = 
             "[A] X = X - 1\n" +
             "Y = Y + 1\n" +
@@ -15,11 +15,13 @@ namespace GoTo.Studio.Pages
         private const string Welcome =
             "Welcome to GoTo Studio!\n" +
             "\n" +
-            "I'm the output, here you'll see the result of running those programs you write at my left —the editor.\n" +
+            "I'm the output, here you'll see the result of running those programs you write at my left " +
+            "—the editor.\n" +
             "\n" +
             "Do you see that column of entries at center? They're the inputs, waiting for you to type integers.\n" +
             "\n" +
-            "Why don't you just start by typing 42 at X1 and click Run? Please, be patient as sometimes it takes some time to show up.\n" +
+            "Why don't you just start by typing 42 at X1 and click Run? Please, be patient as sometimes it takes " +
+            "some time to show up.\n" +
             "\n" +
             "Oh, if you may encounter any issue, please report it at\n" +
             "\n" +
