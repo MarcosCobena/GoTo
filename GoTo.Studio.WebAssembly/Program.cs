@@ -2,7 +2,7 @@
 using Ooui;
 using Xamarin.Forms;
 
-namespace GoTo.Studio.WebAssembly
+namespace GoTo.Studio
 {
     class Program
     {
@@ -11,7 +11,6 @@ namespace GoTo.Studio.WebAssembly
             Forms.Init();
 
             var page = new IDEPage();
-
             UI.Publish("/", page.GetOouiElement());
         }
     }

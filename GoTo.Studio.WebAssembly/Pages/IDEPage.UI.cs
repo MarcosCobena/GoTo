@@ -5,6 +5,7 @@ namespace GoTo.Studio.Pages
     public partial class IDEPage : ContentPage
     {
         Button _runButton;
+        Button _shareButton;
         Button _helpButton;
         Editor _textEditor;
         Entry _x1Entry;
@@ -39,8 +40,16 @@ namespace GoTo.Studio.Pages
             grid.Children.Add(
                 new Label { FontSize = Device.GetNamedSize(NamedSize.Large, typeof(Label)), Text = "GoTo Studio" });
 
-            grid.Children.Add(
-                _helpButton = new Button { HorizontalOptions = LayoutOptions.End, Text = "Help" }, 2, 0);
+            var topRightStackLayout = new StackLayout
+            {
+                HorizontalOptions = LayoutOptions.End,
+                Orientation = StackOrientation.Horizontal
+            };
+            topRightStackLayout.Children.Add(
+                _shareButton = new Button { Text = "Share" });
+            topRightStackLayout.Children.Add(
+                _helpButton = new Button { Text = "Help" });
+            grid.Children.Add(topRightStackLayout, 2, 0);
 
             grid.Children.Add(_textEditor = new Editor { FontFamily = "monospace" }, 0, 1);
 
