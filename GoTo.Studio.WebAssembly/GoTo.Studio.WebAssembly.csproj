@@ -6,10 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GoTo" Version="1.0.3" />
     <PackageReference Include="Ooui.Forms" Version="0.10.222" />
     <PackageReference Include="Ooui.Wasm" Version="0.10.222" />
     <PackageReference Include="Xamarin.Forms" Version="3.4.0.1008975" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GoTo\GoTo.csproj" />
   </ItemGroup>
 
 </Project>
