@@ -76,5 +76,25 @@ namespace Tests
                 "FIRST X\n" +
                 "SECOND X");
         }
+
+        [Fact]
+        public void SingleLineComment()
+        {
+            AssertExtensions.AnalyzeWithEmptyMessages(
+                "; Foo\n" +
+                "Y = Y + 1");
+        }
+
+        [Fact]
+        public void InlineComment()
+        {
+            AssertExtensions.AnalyzeWithEmptyMessages("Y = Y + 1 ; Foo");
+        }
+
+        [Fact]
+        public void JustAComment()
+        {
+            AssertExtensions.SingleErrorContainingKeywords("; Y = Y + 1", "unknown");
+        }
     }
 }

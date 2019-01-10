@@ -38,7 +38,7 @@ public partial class GoToParser : Parser {
 	public const int
 		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, 
 		T__9=10, T__10=11, T__11=12, ID=13, LETTER=14, WORD=15, DIGIT=16, NEWLINE=17, 
-		WHITESPACE=18;
+		WHITESPACE=18, COMMENT=19;
 	public const int
 		RULE_program = 0, RULE_macroDefinition = 1, RULE_macro = 2, RULE_macroName = 3, 
 		RULE_macroParams = 4, RULE_macroBody = 5, RULE_line = 6, RULE_instruction = 7, 
@@ -54,7 +54,7 @@ public partial class GoToParser : Parser {
 	};
 	private static readonly string[] _SymbolicNames = {
 		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, "ID", "LETTER", "WORD", "DIGIT", "NEWLINE", "WHITESPACE"
+		null, "ID", "LETTER", "WORD", "DIGIT", "NEWLINE", "WHITESPACE", "COMMENT"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 
@@ -764,7 +764,7 @@ public partial class GoToParser : Parser {
 
 	private static char[] _serializedATN = {
 		'\x3', '\x608B', '\xA72A', '\x8133', '\xB9ED', '\x417C', '\x3BE7', '\x7786', 
-		'\x5964', '\x3', '\x14', 'Q', '\x4', '\x2', '\t', '\x2', '\x4', '\x3', 
+		'\x5964', '\x3', '\x15', 'Q', '\x4', '\x2', '\t', '\x2', '\x4', '\x3', 
 		'\t', '\x3', '\x4', '\x4', '\t', '\x4', '\x4', '\x5', '\t', '\x5', '\x4', 
 		'\x6', '\t', '\x6', '\x4', '\a', '\t', '\a', '\x4', '\b', '\t', '\b', 
 		'\x4', '\t', '\t', '\t', '\x4', '\n', '\t', '\n', '\x3', '\x2', '\a', 

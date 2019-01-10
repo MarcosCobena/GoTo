@@ -39,3 +39,5 @@ DIGIT : [0-9] ;
 NEWLINE : [\r\n]+ -> channel(HIDDEN) ;
 
 WHITESPACE : [ \t]+ -> channel(HIDDEN) ;
+
+COMMENT : ';' .*? '\n' -> skip ;
