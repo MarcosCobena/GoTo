@@ -8,7 +8,7 @@ namespace GoTo.Studio.Pages
 {
     public partial class IDEPage
     {
-        const string GoToVersion = "1.0.3.0";
+        const string GoToVersion = "1.1.0.0";
         const string CopyXProgram = 
             "; X must be > 0\n" +
             "[A] X = X - 1\n" +
