@@ -1,4 +1,6 @@
-﻿using System;
+﻿using GoTo.Interpreter;
+using GoTo.Parser.AbstractSyntaxTree;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using WebAssembly;
@@ -70,6 +72,18 @@ namespace GoTo.Studio.Pages
             _helpButton.IsEnabled = !isBlocked;
         }
 
+        void DebugReleaseSwitch_Toggled(object sender, ToggledEventArgs e)
+        {
+            if (e.Value)
+            {
+                _debugReleaseLabel.Text = "Release";
+            }
+            else
+            {
+                _debugReleaseLabel.Text = "Debug";
+            }
+        }
+
         void Help()
         {
             var message = Welcome +
@@ -88,9 +102,12 @@ namespace GoTo.Studio.Pages
 
         void Initialize()
         {
-            _runButton.Clicked += RunButton_Clicked;
+            _debugReleaseSwitch.Toggled += DebugReleaseSwitch_Toggled;
             _shareButton.Clicked += ShareButton_Clicked;
             _helpButton.Clicked += HelpButton_Clicked;
+            _runButton.Clicked += RunButton_Clicked;
+
+            _debugReleaseSwitch.IsToggled = true;
 
             LoadStartUpProgram();
         }
@@ -127,6 +144,20 @@ namespace GoTo.Studio.Pages
             _outputEditor.Text = message;
         }
 
+        void Log(IEnumerable<Message> messages)
+        {
+            var errorMessages = messages
+                .Select(message =>
+                    $"{message.Severity} at line {message.Line}, column {message.Column}: {message.Description}")
+                .Aggregate((current, next) => $"{current}\r\n{next}");
+            Log(errorMessages);
+        }
+
+        void LogPrepend(string message)
+        {
+            _outputEditor.Text = message + _outputEditor.Text;
+        }
+
         void Run()
         {
             var x1 = int.TryParse(_x1Entry.Text, out int parsedX1) ? parsedX1 : 0;
@@ -141,10 +172,48 @@ namespace GoTo.Studio.Pages
             BlockUI();
             _runButton.Text = "Running...";
 
-            var isSucceeded = Framework.TryRun(
+            var isSucceeded = Framework.TryAnalyze(
                 _textEditor.Text,
+                out ProgramNode program,
+                out IEnumerable<Message> messages);
+
+            if (!isSucceeded)
+            {
+                Log(messages);
+
+                _runButton.Text = "Run";
+                BlockUI(false);
+
+                return;
+            }
+
+            Log(string.Empty, isSuccess: true);
+
+            var step = 0;
+            Func<Locals, bool> stepDebugAndContinueFunc;
+
+            if (_debugReleaseSwitch.IsToggled)
+            {
+                stepDebugAndContinueFunc = _ => true;
+            }
+            else
+            {
+                stepDebugAndContinueFunc = new Func<Locals, bool>(locals =>
+                {
+                    step++;
+
+                    var message =
+                        $"Step #{step}:\n" +
+                        $"{locals}\n\n";
+                    LogPrepend(message);
+
+                    return true;
+                });
+            }
+
+            isSucceeded = Framework.TryRunInterpreted(
+                program,
                 out int result,
-                out IEnumerable<Message> messages,
                 x1,
                 x2,
                 x3,
@@ -153,20 +222,16 @@ namespace GoTo.Studio.Pages
                 x6,
                 x7,
                 x8,
-                isInterpreted: true);
+                stepDebugAndContinueFunc);
 
             _runButton.Text = "Run";
             BlockUI(false);
 
             if (!isSucceeded)
             {
-                var errorMessages = messages
-                    .Select(message =>
-                        $"{message.Severity} at line {message.Line}, column {message.Column}: {message.Description}")
-                    .Aggregate((current, next) => $"{current}\r\n{next}");
-                Log(errorMessages);
+                Log(messages);
             }
-            else
+            else if (_debugReleaseSwitch.IsToggled)
             {
                 Log($"Y = {result}", isSuccess: true);
             }

@@ -13,7 +13,17 @@ namespace GoTo.Interpreter
         private static int[] y;
         private static int[] z;
 
-        internal static int Run(ProgramNode program, int x1, int x2, int x3, int x4, int x5, int x6, int x7, int x8)
+        internal static int Run(
+            ProgramNode program, 
+            int x1, 
+            int x2, 
+            int x3, 
+            int x4, 
+            int x5, 
+            int x6, 
+            int x7, 
+            int x8, 
+            Func<Locals, bool> stepDebugAndContinue = null)
         {
             x = new int[Settings.InputAndAuxVarsLength];
             x[0] = x1;
@@ -34,6 +44,13 @@ namespace GoTo.Interpreter
             {
                 instructionPointer = Step(instructionPointer, program.Instructions);
                 stepsTaken++;
+
+                var currentLocals = new Locals { X = x, Y = y[0], Z = z };
+
+                if (stepDebugAndContinue != null && !stepDebugAndContinue.Invoke(currentLocals))
+                {
+                    break;
+                }
             }
 
             return y[0];

@@ -4,7 +4,8 @@ namespace GoTo.Studio.Pages
 {
     public partial class IDEPage : ContentPage
     {
-        Button _runButton;
+        Switch _debugReleaseSwitch;
+        Label _debugReleaseLabel;
         Button _shareButton;
         Button _helpButton;
         Editor _textEditor;
@@ -16,6 +17,7 @@ namespace GoTo.Studio.Pages
         Entry _x6Entry;
         Entry _x7Entry;
         Entry _x8Entry;
+        Button _runButton;
         Editor _outputEditor;
 
         void InitializeComponent()
@@ -37,8 +39,14 @@ namespace GoTo.Studio.Pages
                 RowSpacing = 8
             };
 
-            grid.Children.Add(
+            var topLeftStackLayout = new StackLayout { Orientation = StackOrientation.Horizontal };
+            topLeftStackLayout.Children.Add(
                 new Label { FontSize = Device.GetNamedSize(NamedSize.Large, typeof(Label)), Text = "GoTo Studio" });
+            topLeftStackLayout.Children.Add(
+                _debugReleaseSwitch = new Switch { VerticalOptions = LayoutOptions.Center });
+            topLeftStackLayout.Children.Add(
+                _debugReleaseLabel = new Label { VerticalOptions = LayoutOptions.Center });
+            grid.Children.Add(topLeftStackLayout);
 
             var topRightStackLayout = new StackLayout
             {

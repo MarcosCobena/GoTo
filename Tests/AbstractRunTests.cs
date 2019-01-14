@@ -1,4 +1,5 @@
 ﻿using GoTo;
+using GoTo.Parser.AbstractSyntaxTree;
 using System.Collections.Generic;
 using Xunit;
 
@@ -155,12 +156,20 @@ namespace Tests
 
         void AssertResultWhenInput(string input, int x1, int expectedResult)
         {
-            var isSuccess = Framework.TryRun(
-                input,
-                out int result,
-                out IEnumerable<Message> messages,
-                x1,
-                isInterpreted: isInterpreted);
+            bool isSuccess;
+            int result;
+
+            if (isInterpreted)
+            {
+                isSuccess = Framework.TryAnalyze(input, out ProgramNode program, out IEnumerable<Message> _);
+                isSuccess &= Framework.TryRunInterpreted(program, out int localResult, x1);
+                result = localResult;
+            }
+            else
+            {
+                isSuccess = Framework.TryRun(input, out int localResult, out IEnumerable<Message> messages, x1);
+                result = localResult;
+            }
 
             Assert.True(isSuccess);
             Assert.Equal(expectedResult, result);

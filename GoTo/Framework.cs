@@ -98,38 +98,40 @@ namespace GoTo
             int x5 = 0, 
             int x6 = 0, 
             int x7 = 0, 
-            int x8 = 0,
-            bool isInterpreted = false)
+            int x8 = 0)
         {
             result = DefaultProgramOutput;
 
-            if (isInterpreted)
+            var isSuccess = TryCompile(input, out Type type, out IEnumerable<Message> compilationMessages);
+            messages = compilationMessages;
+
+            if (!isSuccess || AreThereErrors(compilationMessages))
             {
-                var isSuccess = TryAnalyze(input, out ProgramNode program, out IEnumerable<Message> analysisMessages);
-                messages = analysisMessages;
-
-                if (!isSuccess || AreThereErrors(analysisMessages))
-                {
-                    return false;
-                }
-
-                result = VirtualMachine.Run(program, x1, x2, x3, x4, x5, x6, x7, x8);
+                return false;
             }
-            else
-            {
-                var isSuccess = TryCompile(input, out Type type, out IEnumerable<Message> compilationMessages);
-                messages = compilationMessages;
 
-                if (!isSuccess || AreThereErrors(compilationMessages))
-                {
-                    return false;
-                }
-
-                result = (int)type
-                    .GetMethod(OutputMethodName)
-                    .Invoke(null, new object[] { x1, x2, x3, x4, x5, x6, x7, x8 });
-            }
+            result = (int)type
+                .GetMethod(OutputMethodName)
+                .Invoke(null, new object[] { x1, x2, x3, x4, x5, x6, x7, x8 });
             
+            return true;
+        }
+
+        public static bool TryRunInterpreted(
+            ProgramNode program,
+            out int result,
+            int x1 = 0,
+            int x2 = 0,
+            int x3 = 0,
+            int x4 = 0,
+            int x5 = 0,
+            int x6 = 0,
+            int x7 = 0,
+            int x8 = 0,
+            Func<Locals, bool> stepDebugAndContinue = null)
+        {
+            result = VirtualMachine.Run(program, x1, x2, x3, x4, x5, x6, x7, x8, stepDebugAndContinue);
+
             return true;
         }
 
