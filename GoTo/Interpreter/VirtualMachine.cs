@@ -40,8 +40,13 @@ namespace GoTo.Interpreter
             var instructionPointer = 0;
             var stepsTaken = 0;
 
-            while (instructionPointer >= 0 && instructionPointer < program.Instructions.Count && stepsTaken < MaxSteps)
+            while (instructionPointer >= 0 && instructionPointer < program.Instructions.Count)
             {
+                if (stepsTaken >= MaxSteps)
+                {
+                    throw new MaxStepsExceededException();
+                }
+
                 instructionPointer = Step(instructionPointer, program.Instructions);
                 stepsTaken++;
 

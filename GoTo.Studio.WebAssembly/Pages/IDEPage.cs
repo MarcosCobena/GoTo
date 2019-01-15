@@ -205,35 +205,63 @@ namespace GoTo.Studio.Pages
                     var message =
                         $"Step #{step}:\n" +
                         $"{locals}\n\n";
+                    // FIXME out of memory in infinite loops
                     LogPrepend(message);
 
                     return true;
                 });
             }
 
-            isSucceeded = Framework.TryRunInterpreted(
-                program,
-                out int result,
-                x1,
-                x2,
-                x3,
-                x4,
-                x5,
-                x6,
-                x7,
-                x8,
-                stepDebugAndContinueFunc);
+            int result = -1;
+
+            try
+            {
+                Framework.RunInterpreted(
+                    program,
+                    out int localResult,
+                    x1,
+                    x2,
+                    x3,
+                    x4,
+                    x5,
+                    x6,
+                    x7,
+                    x8,
+                    stepDebugAndContinueFunc);
+                result = localResult;
+            }
+            catch (MaxStepsExceededException)
+            {
+                isSucceeded = false;
+            }
 
             _runButton.Text = "Run";
             BlockUI(false);
 
-            if (!isSucceeded)
+            if (isSucceeded)
             {
-                Log(messages);
+                if (_debugReleaseSwitch.IsToggled)
+                {
+                    Log($"Y = {result}", isSuccess: true);
+                }
+                else
+                {
+                    // Intentionally empty
+                }
             }
-            else if (_debugReleaseSwitch.IsToggled)
+            else
             {
-                Log($"Y = {result}", isSuccess: true);
+                const string MaxStepsExceededMessage = 
+                    "The execution exceeded max steps, it's likely the program contains an infinite loop.";
+
+                if (_debugReleaseSwitch.IsToggled)
+                {
+                    Log(MaxStepsExceededMessage);
+                }
+                else
+                {
+                    LogPrepend(MaxStepsExceededMessage);
+                }
             }
         }
 

@@ -162,8 +162,20 @@ namespace Tests
             if (isInterpreted)
             {
                 isSuccess = Framework.TryAnalyze(input, out ProgramNode program, out IEnumerable<Message> _);
-                isSuccess &= Framework.TryRunInterpreted(program, out int localResult, x1);
-                result = localResult;
+                result = -1;
+
+                if (isSuccess)
+                {
+                    try
+                    {
+                        Framework.RunInterpreted(program, out int localResult, x1);
+                        result = localResult;
+                    }
+                    catch
+                    {
+                        isSuccess = false;
+                    }
+                }
             }
             else
             {

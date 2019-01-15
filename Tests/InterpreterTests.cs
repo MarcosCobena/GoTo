@@ -1,4 +1,5 @@
 ﻿using GoTo;
+using GoTo.Interpreter;
 using GoTo.Parser.AbstractSyntaxTree;
 using System.Collections.Generic;
 using Xunit;
@@ -18,7 +19,19 @@ namespace Tests
                 "IF X != 0 GOTO A", 
                 out ProgramNode program, 
                 out IEnumerable<Message> _);
-            Framework.TryRunInterpreted(program, out int _);
+
+            var isExpectedExceptionCatched = false;
+
+            try
+            {
+                Framework.RunInterpreted(program, out int _);
+            }
+            catch (MaxStepsExceededException)
+            {
+                isExpectedExceptionCatched = true;
+            }
+
+            Assert.True(isExpectedExceptionCatched);
         }
 
         [Fact]
@@ -27,7 +40,7 @@ namespace Tests
             var isTestFinished = false;
 
             Framework.TryAnalyze("Y = Y + 1", out ProgramNode program, out IEnumerable<Message> _);
-            Framework.TryRunInterpreted(
+            Framework.RunInterpreted(
                 program,
                 out int _,
                 stepDebugAndContinue: state =>
@@ -53,7 +66,7 @@ namespace Tests
                 "Y = Y + 1", 
                 out ProgramNode program, 
                 out IEnumerable<Message> _);
-            Framework.TryRunInterpreted(
+            Framework.RunInterpreted(
                 program,
                 out int _,
                 stepDebugAndContinue: state =>
