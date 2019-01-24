@@ -1,5 +1,4 @@
-﻿using GoTo.Studio.Pages;
-using Ooui;
+﻿using Ooui;
 using Xamarin.Forms;
 
 namespace GoTo.Studio
