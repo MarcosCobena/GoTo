@@ -12,9 +12,12 @@
     <PackageTags>goto compiler dotnet</PackageTags>
     <PackageReleaseNotes>Added a new interpreter mode (a small Virtual Machine actually)</PackageReleaseNotes>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>1.0.3</Version>
     <AssemblyVersion>1.0.3.0</AssemblyVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
@@ -27,7 +30,7 @@
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
   
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <!--<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <CustomCommands>
       <CustomCommands>
         <Command>
@@ -41,6 +44,6 @@
     
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="cd $(ProjectDir)Parser&#xD;&#xA;java -jar antlr-4.7.1-complete.jar -Dlanguage=CSharp -visitor GoTo.g4" />
-  </Target>
+  </Target>-->
     
 </Project>
