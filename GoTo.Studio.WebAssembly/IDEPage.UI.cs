@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms;
+﻿using Ooui.Forms;
+using Xamarin.Forms;
 
 namespace GoTo.Studio
 {
@@ -6,7 +7,7 @@ namespace GoTo.Studio
     {
         Switch _debugReleaseSwitch;
         Label _debugReleaseLabel;
-        Button _shareButton, _helpButton, _runButton;
+        Button _shareButton, _runButton;
         Entry _x1Entry, _x2Entry, _x3Entry, _x4Entry, _x5Entry, _x6Entry, _x7Entry, _x8Entry, _yEntry;
         Editor _textEditor, _outputEditor;
 
@@ -59,11 +60,24 @@ namespace GoTo.Studio
                 Orientation = StackOrientation.Horizontal
             };
             topRightStackLayout.Children.Add(
+                new LinkLabel 
+                { 
+                    HRef = "https://github.com/MarcosCobena/GoTo/wiki/Language", 
+                    Target = "_blank",
+                    Text = "Language", 
+                    VerticalOptions = LayoutOptions.Center
+                });
+            topRightStackLayout.Children.Add(
+                new LinkLabel 
+                { 
+                    HRef = "https://github.com/MarcosCobena/GoTo/issues/new", 
+                    Target = "_blank",
+                    Text = "Report issue", 
+                    VerticalOptions = LayoutOptions.Center
+                });
+            topRightStackLayout.Children.Add(
                 _shareButton = new Button { Text = "Share" });
             _shareButton.SetBinding(Button.CommandProperty, nameof(ViewModel.ShareCommand));
-            topRightStackLayout.Children.Add(
-                _helpButton = new Button { Text = "Help" });
-            _helpButton.SetBinding(Button.CommandProperty, nameof(ViewModel.HelpCommand));
             grid.Children.Add(topRightStackLayout, 2, 0);
 
             grid.Children.Add(_textEditor = new Editor { FontFamily = "monospace" }, 0, 1);

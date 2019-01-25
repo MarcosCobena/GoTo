@@ -25,19 +25,14 @@ namespace GoTo.Studio
         const string Welcome =
             "Welcome to GoTo Studio!\n" +
             "\n" +
-            "I'm the output, here you'll see the result of running those programs you write at my left " +
+            "I'm the output, here you'll see the info while running those programs you write at my left " +
             "—the editor.\n" +
             "\n" +
             "Do you see that column of entries at center? They're the inputs, waiting for you to type integers.\n" +
             "\n" +
-            "Why don't you just start by typing 42 at X1 and click Run? Please, be patient as sometimes it takes " +
-            "some time to show up.\n" +
+            "Why don't you just start by typing 42 at X1 and click Run?\n" +
             "\n" +
-            "Oh, if you may encounter any issue, please report it at\n" +
-            "\n" +
-            "    https://github.com/MarcosCobena/GoTo/issues\n" +
-            "\n" +
-            "Thanks in advance.";
+            "Oh, if you may encounter any issue, please send it to us through above Report issue link. Thanks in advance.";
 
         internal const string LogMessage = nameof(LogMessage);
 
@@ -49,7 +44,6 @@ namespace GoTo.Studio
 
         public IDEViewModel()
         {
-            HelpCommand = new Command(Help);
             RunCommand = new Command(Run);
             ShareCommand = new Command(Share);
 
@@ -125,8 +119,6 @@ namespace GoTo.Studio
             set => SetAndRaisePropertyChanged(ref _y, value);
         }
 
-        public ICommand HelpCommand { get; }
-
         public ICommand RunCommand { get; }
 
         public ICommand ShareCommand { get; }
@@ -184,6 +176,7 @@ namespace GoTo.Studio
 
         void Run()
         {
+            Y = string.Empty;
             Log(string.Empty);
             
             // TODO converter
@@ -219,10 +212,10 @@ namespace GoTo.Studio
             else
             {
                 Log("Running...");
-                stepDebugAndContinueFunc = new Func<Locals, bool>(locals => StepDebugAndContinue(locals, step++));
+                stepDebugAndContinueFunc = new Func<Locals, bool>(locals => StepDebugAndContinue(locals, ++step));
             }
 
-            var result = -1;
+            var result = 0;
 
             try
             {
@@ -253,7 +246,6 @@ namespace GoTo.Studio
             else
             {
                 Log(MaxStepsExceededMessage);
-                Y = ":-(";
             }
         }
 
