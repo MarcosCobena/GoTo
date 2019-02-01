@@ -1,4 +1,6 @@
-﻿using Xamarin.Forms;
+﻿using System;
+using System.ComponentModel;
+using Xamarin.Forms;
 
 namespace GoTo.Studio
 {
@@ -29,22 +31,6 @@ namespace GoTo.Studio
             MessagingCenter.Instance.Unsubscribe<IDEViewModel, string>(this, IDEViewModel.LogMessage);
         }
 
-        void Log(IDEViewModel _, string message)
-        {
-            if (string.IsNullOrEmpty(message))
-            {
-                _outputEditor.Text = string.Empty;
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(_outputEditor.Text))
-            {
-                _outputEditor.Text = message;
-                return;
-            }
-
-            // TODO scroll to bottom
-            _outputEditor.Text += $"\n{message}";
-        }
+        void Log(IDEViewModel _, string message) => _outputEditor.Text = message;
     }
 }

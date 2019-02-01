@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Windows.Input;
 using WebAssembly;
 using Xamarin.Forms;
@@ -130,14 +131,10 @@ namespace GoTo.Studio
             LoadStartUpProgram();
         }
 
-        void Help()
-        {
-            var message = Welcome +
-                "\n\n" +
-                $"GoTo Studio (GoTo {GoToVersion})";
-            Log(string.Empty);
-            Log(message);
-        }
+        void Help() => Log(
+            $"{Welcome}\n" +
+            "\n" +
+            $"GoTo Studio (GoTo {GoToVersion})");
 
         void LoadStartUpProgram()
         {
@@ -165,20 +162,8 @@ namespace GoTo.Studio
 
         void Log(string message) => MessagingCenter.Instance.Send(this, LogMessage, message);
 
-        void Log(IEnumerable<Message> messages)
-        {
-            var errorMessages = messages
-                .Select(message =>
-                    $"{message.Severity} at line {message.Line}, column {message.Column}: {message.Description}")
-                .Aggregate((current, next) => $"{current}\r\n{next}");
-            Log(errorMessages);
-        }
-
         void Run()
         {
-            Y = string.Empty;
-            Log(string.Empty);
-            
             // TODO converter
             var x1 = int.TryParse(_x1, out int parsedX1) ? parsedX1 : 0;
             var x2 = int.TryParse(_x2, out int parsedX2) ? parsedX2 : 0;
@@ -196,11 +181,16 @@ namespace GoTo.Studio
 
             if (!isSucceeded)
             {
-                Log(messages);
+                var errors = messages
+                    .Select(item =>
+                        $"{item.Severity} at line {item.Line}, column {item.Column}: {item.Description}")
+                    .Aggregate((current, next) => $"{current}\r\n{next}");
+                Log(errors);
                 return;
             }
 
-            Log("Program analyzed without errors.");
+            var message = new StringBuilder();
+            message.AppendLine("Program analyzed without errors.");
 
             var step = 0;
             Func<Locals, bool> stepDebugAndContinueFunc;
@@ -211,8 +201,9 @@ namespace GoTo.Studio
             }
             else
             {
-                Log("Running...");
-                stepDebugAndContinueFunc = new Func<Locals, bool>(locals => StepDebugAndContinue(locals, ++step));
+                message.AppendLine("Running...");
+                stepDebugAndContinueFunc = new Func<Locals, bool>(
+                    locals => StepDebugAndContinue(locals, ++step, message));
             }
 
             var result = 0;
@@ -240,13 +231,16 @@ namespace GoTo.Studio
 
             if (isSucceeded)
             {
-                Log("Program run successfully.");
+                message.AppendLine("Program run successfully.");
                 Y = result.ToString();
             }
             else
             {
-                Log(MaxStepsExceededMessage);
+                message.AppendLine(MaxStepsExceededMessage);
+                Y = string.Empty;
             }
+
+            Log(message.ToString());
         }
 
         void SetAndRaisePropertyChanged<TRef>(
@@ -264,14 +258,12 @@ namespace GoTo.Studio
                 "Copy this link to share the current program:\n" +
                 "\n" +
                 newURI;
-            Log(string.Empty);
             Log(message);
         }
 
-        bool StepDebugAndContinue(Locals locals, int step)
+        bool StepDebugAndContinue(Locals locals, int step, StringBuilder message)
         {
-            // FIXME out of memory in infinite loops
-            Log(
+            message.AppendLine(
                 $"Step #{step}:\n" +
                 $"{locals}");
 
