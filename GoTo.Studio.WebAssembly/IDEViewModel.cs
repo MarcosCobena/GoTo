@@ -3,6 +3,7 @@ using GoTo.Parser.AbstractSyntaxTree;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -19,7 +20,6 @@ namespace GoTo.Studio
             "[A] X = X - 1\n" +
             "Y = Y + 1\n" +
             "IF X != 0 GOTO A";
-        const string GoToVersion = "1.1.0.0";
         const string MaxStepsExceededMessage =
             "The execution exceeded max steps, it's likely the program contains an infinite loop.";
         const string ProgramQueryStringParam = "p=";
@@ -131,11 +131,6 @@ namespace GoTo.Studio
             LoadStartUpProgram();
         }
 
-        void Help() => Log(
-            $"{Welcome}\n" +
-            "\n" +
-            $"GoTo Studio (GoTo {GoToVersion})");
-
         void LoadStartUpProgram()
         {
             var query = _currentURI.Query;
@@ -156,7 +151,7 @@ namespace GoTo.Studio
             else
             {
                 CurrentProgram = CopyXProgram;
-                Help();
+                Log(Welcome);
             }
         }
 
@@ -174,10 +169,13 @@ namespace GoTo.Studio
             var x7 = int.TryParse(_x7, out int parsedX7) ? parsedX7 : 0;
             var x8 = int.TryParse(_x8, out int parsedX8) ? parsedX8 : 0;
 
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
             var isSucceeded = Framework.TryAnalyze(
                 _currentProgram,
                 out ProgramNode program,
                 out IEnumerable<Message> messages);
+            stopwatch.Stop();
 
             if (!isSucceeded)
             {
@@ -190,7 +188,7 @@ namespace GoTo.Studio
             }
 
             var message = new StringBuilder();
-            message.AppendLine("Program analyzed without errors.");
+            message.AppendLine($"Program analyzed without errors ({stopwatch.ElapsedMilliseconds} ms)");
 
             var step = 0;
             Func<Locals, bool> stepDebugAndContinueFunc;
@@ -207,6 +205,7 @@ namespace GoTo.Studio
             }
 
             var result = 0;
+            stopwatch.Restart();
 
             try
             {
@@ -228,10 +227,14 @@ namespace GoTo.Studio
             {
                 isSucceeded = false;
             }
+            finally
+            {
+                stopwatch.Stop();
+            }
 
             if (isSucceeded)
             {
-                message.AppendLine("Program run successfully.");
+                message.AppendLine($"Program run successfully ({stopwatch.ElapsedMilliseconds} ms)");
                 Y = result.ToString();
             }
             else

@@ -5,6 +5,8 @@ namespace GoTo.Studio
 {
     public partial class IDEPage : ContentPage
     {
+        private const int DefaultSpacing = 8;
+
         Switch _debugReleaseSwitch;
         Label _debugReleaseLabel;
         Button _shareButton, _runButton;
@@ -21,22 +23,30 @@ namespace GoTo.Studio
                     new ColumnDefinition { Width = new GridLength(100) },
                     new ColumnDefinition { Width = GridLength.Star }
                 },
-                ColumnSpacing = 8,
+                ColumnSpacing = DefaultSpacing,
                 RowDefinitions = new RowDefinitionCollection
                 {
                     new RowDefinition { Height = GridLength.Auto },
+                    new RowDefinition { Height = GridLength.Auto },
                     new RowDefinition { Height = GridLength.Star }
                 },
-                RowSpacing = 8
+                RowSpacing = DefaultSpacing
             };
 
             var topLeftStackLayout = new StackLayout { Orientation = StackOrientation.Horizontal };
             topLeftStackLayout.Children.Add(
                 new Label { FontSize = Device.GetNamedSize(NamedSize.Large, typeof(Label)), Text = "GoTo Studio" });
-            topLeftStackLayout.Children.Add(
+            grid.Children.Add(topLeftStackLayout);
+
+            var leftMenuStackLayout = new StackLayout 
+            { 
+                Orientation = StackOrientation.Horizontal,
+                Spacing = DefaultSpacing
+            };
+            leftMenuStackLayout.Children.Add(
                 _debugReleaseSwitch = new Switch { VerticalOptions = LayoutOptions.Center });
             _debugReleaseSwitch.SetBinding(Switch.IsToggledProperty, nameof(ViewModel.IsReleaseEnabled));
-            topLeftStackLayout.Children.Add(
+            leftMenuStackLayout.Children.Add(
                 _debugReleaseLabel = new Label { VerticalOptions = LayoutOptions.Center });
             var debugTrigger = new DataTrigger(typeof(Label))
             {
@@ -52,14 +62,19 @@ namespace GoTo.Studio
             };
             releaseTrigger.Setters.Add(new Setter { Property = Label.TextProperty, Value = "Release" });
             _debugReleaseLabel.Triggers.Add(releaseTrigger);
-            grid.Children.Add(topLeftStackLayout);
+            leftMenuStackLayout.Children.Add(_runButton = new Button { Text = "Run" });
+            _runButton.SetBinding(Button.CommandProperty, nameof(ViewModel.RunCommand));
+            leftMenuStackLayout.Children.Add(
+                _shareButton = new Button { Text = "Share" });
+            _shareButton.SetBinding(Button.CommandProperty, nameof(ViewModel.ShareCommand));
+            grid.Children.Add(leftMenuStackLayout, 0, 1);
 
-            var topRightStackLayout = new StackLayout
-            {
+            var rightMenuStackLayout = new StackLayout 
+            { 
                 HorizontalOptions = LayoutOptions.End,
-                Orientation = StackOrientation.Horizontal
+                Orientation = StackOrientation.Horizontal 
             };
-            topRightStackLayout.Children.Add(
+            rightMenuStackLayout.Children.Add(
                 new LinkLabel 
                 { 
                     HRef = "https://github.com/MarcosCobena/GoTo/wiki/Language", 
@@ -67,7 +82,7 @@ namespace GoTo.Studio
                     Text = "Language", 
                     VerticalOptions = LayoutOptions.Center
                 });
-            topRightStackLayout.Children.Add(
+            rightMenuStackLayout.Children.Add(
                 new LinkLabel 
                 { 
                     HRef = "https://github.com/MarcosCobena/GoTo/issues/new", 
@@ -75,19 +90,14 @@ namespace GoTo.Studio
                     Text = "Report issue", 
                     VerticalOptions = LayoutOptions.Center
                 });
-            topRightStackLayout.Children.Add(
-                _shareButton = new Button { Text = "Share" });
-            _shareButton.SetBinding(Button.CommandProperty, nameof(ViewModel.ShareCommand));
-            grid.Children.Add(topRightStackLayout, 2, 0);
+            grid.Children.Add(rightMenuStackLayout, 2, 1);
 
-            grid.Children.Add(_textEditor = new Editor { FontFamily = "monospace" }, 0, 1);
+            grid.Children.Add(_textEditor = new Editor { FontFamily = "monospace" }, 0, 2);
             _textEditor.SetBinding(Editor.TextProperty, nameof(ViewModel.CurrentProgram));
 
             var inputsStackLayout = new StackLayout();
             inputsStackLayout.Children.Add(_yEntry = new Entry { IsEnabled = false, Placeholder = "Y" });
             _yEntry.SetBinding(Entry.TextProperty, nameof(ViewModel.Y));
-            inputsStackLayout.Children.Add(_runButton = new Button { Text = "Run" });
-            _runButton.SetBinding(Button.CommandProperty, nameof(ViewModel.RunCommand));
             inputsStackLayout.Children.Add(_x1Entry = new Entry { Placeholder = "X1" });
             _x1Entry.SetBinding(Entry.TextProperty, nameof(ViewModel.X1));
             inputsStackLayout.Children.Add(_x2Entry = new Entry { Placeholder = "X2" });
@@ -104,12 +114,12 @@ namespace GoTo.Studio
             _x7Entry.SetBinding(Entry.TextProperty, nameof(ViewModel.X7));
             inputsStackLayout.Children.Add(_x8Entry = new Entry { Placeholder = "X8" });
             _x8Entry.SetBinding(Entry.TextProperty, nameof(ViewModel.X8));
-            grid.Children.Add(inputsStackLayout, 1, 1);
+            grid.Children.Add(inputsStackLayout, 1, 2);
 
-            grid.Children.Add(_outputEditor = new Editor { FontFamily = "monospace" }, 2, 1);
+            grid.Children.Add(_outputEditor = new Editor { FontFamily = "monospace" }, 2, 2);
 
             Content = grid;
-            Padding = 16;
+            Padding = DefaultSpacing;
         }
     }
 }
