@@ -1,8 +1,10 @@
-﻿namespace GoTo
+﻿using GoTo.Parser.AbstractSyntaxTree;
+
+namespace GoTo
 {
     static class Settings
     {
-        internal const char ExitLabel = 'E';
+        internal const Label.LabelIdEnum ExitLabelId = Label.LabelIdEnum.E;
         internal const int InputAndAuxVarsLength = 8;
     }
 }

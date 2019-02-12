@@ -50,8 +50,8 @@ namespace GoTo.Parser.AbstractSyntaxTree
 
         public int Column => _column;
 
-        public string Label { get; internal set; }
-
+        public Label Label { get; set; }
+        
         public VarTypeEnum VarType { get; }
 
         public int VarIndex { get; }

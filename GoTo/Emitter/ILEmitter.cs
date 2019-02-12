@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using ILLabel = System.Reflection.Emit.Label;
 
 namespace GoTo.Emitter
 {
@@ -12,7 +13,7 @@ namespace GoTo.Emitter
         static readonly Type _arrayType = typeof(int[]);
         static readonly Type _arrayElementType = typeof(int);
 
-        static IDictionary<string, Label> _labels = new Dictionary<string, Label>();
+        static IDictionary<string, ILLabel> _labels = new Dictionary<string, ILLabel>();
 
         public static void CreateAssembly(ProgramNode program, string outputType, string outputPath)
         {
@@ -88,16 +89,17 @@ namespace GoTo.Emitter
             {
                 if (item.Label != null)
                 {
-                    Label label;
+                    ILLabel label;
+                    var rawLabel = item.Label.ToString();
 
-                    if (_labels.ContainsKey(item.Label))
+                    if (_labels.ContainsKey(rawLabel))
                     {
-                        label = _labels[item.Label];
+                        label = _labels[rawLabel];
                     }
                     else
                     {
                         label = il.DefineLabel();
-                        _labels.Add(item.Label, label);
+                        _labels.Add(rawLabel, label);
                     }
 
                     il.MarkLabel(label);
@@ -119,7 +121,7 @@ namespace GoTo.Emitter
                 }
             }
 
-            if (_labels.TryGetValue(Settings.ExitLabel.ToString(), out Label exitLabel))
+            if (_labels.TryGetValue(Settings.ExitLabelId.ToString(), out ILLabel exitLabel))
             {
                 il.MarkLabel(exitLabel);
             }
@@ -139,13 +141,13 @@ namespace GoTo.Emitter
             foreach (var item in conditionalInstructions)
             {
                 var label = il.DefineLabel();
-                _labels.Add(item.TargetLabel, label);
+                _labels.Add(item.TargetLabel.ToString(), label);
             }
 
-            if (!_labels.ContainsKey(Settings.ExitLabel.ToString()))
+            if (!_labels.ContainsKey(Settings.ExitLabelId.ToString()))
             {
                 var exitLabel = il.DefineLabel();
-                _labels.Add(Settings.ExitLabel.ToString(), exitLabel);
+                _labels.Add(Settings.ExitLabelId.ToString(), exitLabel);
             }
         }
 
@@ -157,16 +159,17 @@ namespace GoTo.Emitter
             PushVar(il, node, vars);
             il.Emit(OpCodes.Ldc_I4_0);
 
-            Label label;
+            ILLabel label;
+            var rawTargetLabel = node.TargetLabel.ToString();
 
-            if (_labels.ContainsKey(node.TargetLabel))
+            if (_labels.ContainsKey(rawTargetLabel))
             {
-                label = _labels[node.TargetLabel];
+                label = _labels[rawTargetLabel];
             }
             else
             {
                 label = il.DefineLabel();
-                _labels.Add(node.TargetLabel, label);
+                _labels.Add(rawTargetLabel, label);
             }
 
             il.Emit(OpCodes.Bne_Un, label);

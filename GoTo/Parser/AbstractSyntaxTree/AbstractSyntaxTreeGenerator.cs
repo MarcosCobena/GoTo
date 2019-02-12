@@ -25,7 +25,7 @@ namespace GoTo.Parser.AbstractSyntaxTree
         public override GoToNode VisitLabeledLine([NotNull] GoToParser.LabeledLineContext context)
         {
             var instruction = Visit(context.instruction()) as InstructionNode;
-            instruction.Label = context.label.Text;
+            instruction.Label = new Label(context.label.Text);
 
             return instruction;
         }

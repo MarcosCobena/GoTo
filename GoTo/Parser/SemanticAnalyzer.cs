@@ -18,8 +18,6 @@ namespace GoTo.Parser
         {
             var loopConditionals = program.Instructions.Where(instruction =>
                 instruction is ConditionalInstructionNode node &&
-                !string.IsNullOrWhiteSpace(node.TargetLabel) &&
-                !string.IsNullOrWhiteSpace(node.Label) &&
                 node.TargetLabel == node.Label);
 
             foreach (var item in loopConditionals)
@@ -53,8 +51,7 @@ namespace GoTo.Parser
         static void CheckMissingLabel(ProgramNode program, ref List<Message> messages)
         {
             var conditionals = program.Instructions
-                .Where(item => item is ConditionalInstructionNode node && 
-                    !node.TargetLabel.Equals(Settings.ExitLabel.ToString()))
+                .Where(item => item is ConditionalInstructionNode node && node.TargetLabel.Id != Settings.ExitLabelId)
                 .Cast<ConditionalInstructionNode>();
             var labels = program.Instructions
                 .Cast<InstructionNode>()

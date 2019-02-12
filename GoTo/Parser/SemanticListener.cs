@@ -127,11 +127,11 @@ namespace GoTo.Parser
 
             var rawIndex = text.Substring(1);
 
-            if (isIdentifyingLine && letter == Settings.ExitLabel)
+            if (isIdentifyingLine && letter == Settings.ExitLabelId.ToString()[0])
             {
                 var message = new Message(
                     SeverityEnum.Error,
-                    $"The special exit label '{Settings.ExitLabel}' cannot be used to identify a line.",
+                    $"The special exit label '{Settings.ExitLabelId}' cannot be used to identify a line.",
                     token.Line,
                     token.Column);
                 _messages.Add(message);
