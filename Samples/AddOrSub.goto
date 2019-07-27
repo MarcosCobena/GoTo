@@ -1,0 +1,12 @@
+; Provided by Jorge Cantón Ferrero (Jorgemagic)
+[A] Z1 = Z1 + 1
+X1 = X1 - 1
+IF X1 != 0 GOTO A
+ 
+[B] X2 = X2 - 1
+Z1 = Z1 + 1 ; - 1 for sub
+IF X2 != 0 GOTO B
+ 
+[C] Z1 = Z1 - 1
+Y = Y + 1
+IF Z1 != 0 GOTO C
