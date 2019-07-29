@@ -4,12 +4,12 @@ using Xunit;
 public class CodifierTests
 {
     [Theory]
-    [InlineData(InstructionNode.VarTypeEnum.Input, 1, 2)]
-    [InlineData(InstructionNode.VarTypeEnum.Output, 1, 1)]
-    [InlineData(InstructionNode.VarTypeEnum.Aux, 1, 3)]
-    public void Var(InstructionNode.VarTypeEnum type, int index, int result)
+    [InlineData("X", 2)]
+    [InlineData("Y", 1)]
+    [InlineData("Z", 3)]
+    public void Variable(string rawVar, int result)
     {
-        var var = (type, index);
+        var var = new Var(rawVar);
 
         var number = CodifierHelpers.Codify(var);
 

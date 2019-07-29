@@ -178,21 +178,23 @@ namespace GoTo.Emitter
         static void PushVar(
             ILGenerator il, InstructionNode node, (LocalBuilder x, LocalBuilder y, LocalBuilder z) vars)
         {
-            var relativeVarIndex = node.VarIndex - 1;
+            var var = node.Var;
+            var relativeVarIndex = var.Index - 1;
 
-            switch (node.VarType)
+            switch (var.Type)
             {
-                case InstructionNode.VarTypeEnum.Input:
+                case Var.VarTypeEnum.Input:
                     il.EmitArrayValueAtIndex(vars.x, relativeVarIndex);
                     break;
-                case InstructionNode.VarTypeEnum.Output:
+                case Var.VarTypeEnum.Output:
                     il.Emit(OpCodes.Ldloc, vars.y);
                     break;
-                case InstructionNode.VarTypeEnum.Aux:
+                case Var.VarTypeEnum.Aux:
                     il.EmitArrayValueAtIndex(vars.z, relativeVarIndex);
                     break;
                 default:
-                    throw new ArgumentException($"Unrecognized var type: {node.VarType}", nameof(node));
+                    throw new ArgumentException(
+                        $"Unrecognized var type: {var.Type}", nameof(node));
             }
         }
 
@@ -204,21 +206,23 @@ namespace GoTo.Emitter
             var operation = node.Operator == BinaryExpressionInstructionNode.OperatorEnum.Increment ?
                 OpCodes.Add :
                 OpCodes.Sub;
-            var relativeVarIndex = node.VarIndex - 1;
+            var var = node.Var;
+            var relativeVarIndex = var.Index - 1;
 
-            switch (node.VarType)
+            switch (var.Type)
             {
-                case InstructionNode.VarTypeEnum.Input:
+                case Var.VarTypeEnum.Input:
                     il.EmitBinaryExpression(vars.x, operation, relativeVarIndex, _arrayElementType);
                     break;
-                case InstructionNode.VarTypeEnum.Output:
+                case Var.VarTypeEnum.Output:
                     TranslateSubBinaryExpressionOnOutputVar(il, vars.y, operation);
                     break;
-                case InstructionNode.VarTypeEnum.Aux:
+                case Var.VarTypeEnum.Aux:
                     il.EmitBinaryExpression(vars.z, operation, relativeVarIndex, _arrayElementType);
                     break;
                 default:
-                    throw new ArgumentException($"Unrecognized var type: {node.VarType}", nameof(node));
+                    throw new ArgumentException(
+                        $"Unrecognized var type: {var.Type}", nameof(node));
             }
         }
 

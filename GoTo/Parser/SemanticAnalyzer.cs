@@ -37,7 +37,7 @@ namespace GoTo.Parser
             var outputVar = SemanticListener.OutputVar.ToString();
 
             if (lastInstruction is UnaryExpressionInstructionNode skipInstruction &&
-                skipInstruction.VarType == ExpressionInstructionNode.VarTypeEnum.Output)
+                skipInstruction.Var.Type == Var.VarTypeEnum.Output)
             {
                 var message = new Message(
                     SeverityEnum.Error,

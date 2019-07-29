@@ -1,47 +1,14 @@
-﻿using System;
-
-namespace GoTo.Parser.AbstractSyntaxTree
+﻿namespace GoTo.Parser.AbstractSyntaxTree
 {
     public abstract class InstructionNode : GoToNode
     {
+        readonly Var _var;
         readonly int _line;
         readonly int _column;
 
-        public enum VarTypeEnum
-        {
-            Input,
-            Output,
-            Aux
-        }
-
         protected InstructionNode(string var, int line, int column = -1)
         {
-            var letter = var[0];
-
-            switch (letter)
-            {
-                case 'X':
-                    VarType = VarTypeEnum.Input;
-                    break;
-                case 'Y':
-                    VarType = VarTypeEnum.Output;
-                    break;
-                case 'Z':
-                    VarType = VarTypeEnum.Aux;
-                    break;
-                default:
-                    throw new ArgumentException($"Unrecognized var type: {letter}", nameof(var));
-            }
-
-            if (var.Length > 1)
-            {
-                VarIndex = int.Parse(var.Substring(1));
-            }
-            else
-            {
-                VarIndex = 1;
-            }
-
+            _var = new Var(var);
             _line = line;
             _column = column;
         }
@@ -52,8 +19,6 @@ namespace GoTo.Parser.AbstractSyntaxTree
 
         public Label Label { get; set; }
         
-        public VarTypeEnum VarType { get; }
-
-        public int VarIndex { get; }
+        public Var Var => _var;
     }
 }

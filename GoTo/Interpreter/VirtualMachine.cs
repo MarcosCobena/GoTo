@@ -85,7 +85,7 @@ namespace GoTo.Interpreter
 
         private static void StepBinaryExpression(BinaryExpressionInstructionNode binaryExpression)
         {
-            var targetVar = GetTargetVar(binaryExpression.VarType);
+            var targetVar = GetTargetVar(binaryExpression.Var.Type);
             var index = GetNormalizedIndex(binaryExpression);
 
             switch (binaryExpression.Operator)
@@ -111,7 +111,7 @@ namespace GoTo.Interpreter
             IEnumerable<InstructionNode> instructions)
         {
             int newInstructionPointer;
-            var targetVar = GetTargetVar(conditional.VarType);
+            var targetVar = GetTargetVar(conditional.Var.Type);
             int index = GetNormalizedIndex(conditional);
 
             if (targetVar[index] != 0)
@@ -137,21 +137,22 @@ namespace GoTo.Interpreter
             return newInstructionPointer;
         }
 
-        private static int GetNormalizedIndex(InstructionNode instruction) => instruction.VarIndex - 1;
+        private static int GetNormalizedIndex(InstructionNode instruction) => 
+            instruction.Var.Index - 1;
 
-        private static int[] GetTargetVar(InstructionNode.VarTypeEnum varType)
+        private static int[] GetTargetVar(Var.VarTypeEnum varType)
         {
             int[] targetVar;
 
             switch (varType)
             {
-                case InstructionNode.VarTypeEnum.Input:
+                case Var.VarTypeEnum.Input:
                     targetVar = x;
                     break;
-                case InstructionNode.VarTypeEnum.Output:
+                case Var.VarTypeEnum.Output:
                     targetVar = y;
                     break;
-                case InstructionNode.VarTypeEnum.Aux:
+                case Var.VarTypeEnum.Aux:
                     targetVar = z;
                     break;
                 default:

@@ -4,20 +4,20 @@ using GoTo.Parser.AbstractSyntaxTree;
 // Based on (page 4): http://www.cs.us.es/cursos/mcc-2017/temas/tema-3-trans.pdf
 public class CodifierHelpers
 {
-    public static int Codify((InstructionNode.VarTypeEnum type, int index) var)
+    public static int Codify(Var var)
     {
         int number;
 
-        switch (var.type)
+        switch (var.Type)
         {
-            case InstructionNode.VarTypeEnum.Input:
-                number = 2 * var.index;
+            case Var.VarTypeEnum.Input:
+                number = 2 * var.Index;
                 break;
-            case InstructionNode.VarTypeEnum.Output:
+            case Var.VarTypeEnum.Output:
                 number = 1;
                 break;
-            case InstructionNode.VarTypeEnum.Aux:
-                number = 2 * var.index + 1;
+            case Var.VarTypeEnum.Aux:
+                number = 2 * var.Index + 1;
                 break;
             default:
                 throw new InvalidOperationException();
