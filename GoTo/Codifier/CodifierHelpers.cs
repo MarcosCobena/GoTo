@@ -1,9 +1,16 @@
 using System;
+using System.Numerics;
 using GoTo.Parser.AbstractSyntaxTree;
 
 // Based on (page 4): http://www.cs.us.es/cursos/mcc-2017/temas/tema-3-trans.pdf
 public class CodifierHelpers
 {
+    static readonly int[] primes = 
+    {
+        2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 
+        71, 73, 79, 83, 89, 97
+    };
+
     public static int Codify(Var var)
     {
         int number;
@@ -94,6 +101,25 @@ public class CodifierHelpers
         var b = CodifyFormat(instruction);
         var c = Codify(instruction.Var) - 1;
         var number = Gödel(a, Gödel(b, c));
+
+        return number;
+    }
+
+    public static BigInteger Codify(ProgramNode program)
+    {
+        var number = new BigInteger(0);
+
+        for (int i = 0; i < program.Instructions.Count; i++)
+        {
+            var prime = primes[i];
+            
+            var instruction = program.Instructions[i];
+            var codifiedInstruction = Codify(instruction);
+            
+            number += BigInteger.Pow(prime, (int)codifiedInstruction);
+        }
+
+        number -= 1;
 
         return number;
     }

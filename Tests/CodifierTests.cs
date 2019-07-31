@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Numerics;
+using GoTo;
 using GoTo.Parser.AbstractSyntaxTree;
 using Xunit;
 
@@ -105,6 +108,35 @@ public class CodifierTests
         var instruction = new ConditionalInstructionNode("X", "A", 0);
 
         AssertEqualCodified(instruction, 46);
+    }
+
+    [Fact]
+    public void Program()
+    {
+        AssertEqualCodified(
+            "[A] X = X + 1 IF X != 0 GOTO A",
+            "8862938119652503193080");
+    }
+
+    [Fact]
+    public void Program2()
+    {
+        AssertEqualCodified(
+            "Y = Y",
+            "0");
+    }
+
+    private void AssertEqualCodified(string inputProgram, string expectedResult)
+    {
+        Framework.TryAnalyze(
+            inputProgram,
+            out ProgramNode program,
+            out IEnumerable<Message> _);
+        
+        var number = CodifierHelpers.Codify(program);
+
+        var expected = BigInteger.Parse(expectedResult);
+        Assert.Equal(expected, number);
     }
 
     private void AssertEqualCodified(
