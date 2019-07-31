@@ -57,4 +57,47 @@ public class CodifierHelpers
 
         return number;
     }
+
+    public static int CodifyFormat(InstructionNode instruction)
+    {
+        int number;
+
+        if (instruction is UnaryExpressionInstructionNode)
+        {
+            number = 0;
+        }
+        else if (instruction is BinaryExpressionInstructionNode 
+            binaryExpression)
+        {
+            number = binaryExpression.Operator == 
+                BinaryExpressionInstructionNode.OperatorEnum.Increment ? 
+                1 : 
+                2;
+        }
+        else if (instruction is ConditionalInstructionNode conditional)
+        {
+            number = Codify(conditional.TargetLabel) + 2;
+        }
+        else
+        {
+            throw new InvalidOperationException();
+        }
+
+        return number;
+    }
+
+    public static double Codify(InstructionNode instruction)
+    {
+        var a = instruction.Label != null ?
+            Codify(instruction.Label) :
+            0;
+        var b = CodifyFormat(instruction);
+        var c = Codify(instruction.Var) - 1;
+        var number = Gödel(a, Gödel(b, c));
+
+        return number;
+    }
+
+    public static double Gödel(double a, double b) => 
+        (Math.Pow(2, a) * ((2 * b) + 1)) - 1;
 }
