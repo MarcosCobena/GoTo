@@ -17,6 +17,10 @@ public class CodifierTests
         var number = CodifierHelpers.Codify(var);
 
         Assert.Equal(expectedResult, number);
+
+        var uncodifiedVar = CodifierHelpers.UncodifyVar(number);
+
+        Assert.Equal(var, uncodifiedVar);
     }
 
     [Theory]
@@ -32,6 +36,10 @@ public class CodifierTests
         var number = CodifierHelpers.Codify(label);
 
         Assert.Equal(expectedResult, number);
+
+        var uncodifiedLabel = CodifierHelpers.UncodifyLabel(number);
+
+        Assert.Equal(label, uncodifiedLabel);
     }
 
     [Fact]
@@ -73,11 +81,16 @@ public class CodifierTests
     [Theory]
     [InlineData(1, 1, 5)]
     [InlineData(1, 5, 21)]
-    public void Gödel(int a, int b, int expectedResult)
+    public void Pair(int a, int b, int expectedResult)
     {
-        var number = CodifierHelpers.Gödel(a, b);
+        var c = CodifierHelpers.Pair(a, b);
 
-        Assert.Equal(expectedResult, number);
+        Assert.Equal(expectedResult, c);
+
+        var ab = CodifierHelpers.Unpair(c);
+
+        Assert.Equal(a, ab.a);
+        Assert.Equal(b, ab.b);
     }
 
     [Fact]
@@ -146,6 +159,10 @@ public class CodifierTests
         var number = CodifierHelpers.Codify(instruction);
 
         Assert.Equal(expectedResult, number);
+        
+        var uncodifiedInstruction = CodifierHelpers.UncodifyInstruction(number);
+
+        Assert.Equal(instruction.ToString(), uncodifiedInstruction.ToString());
     }
 
     private void AssertEqualCodifiedFormat(
@@ -155,5 +172,10 @@ public class CodifierTests
         var number = CodifierHelpers.CodifyFormat(instruction);
 
         Assert.Equal(expectedResult, number);
+
+        //var uncodifiedInstruction = CodifierHelpers.UncodifyInstructionFormat(
+        //    number);
+
+        //Assert.Equal(instruction, uncodifiedInstruction);
     }
 }
