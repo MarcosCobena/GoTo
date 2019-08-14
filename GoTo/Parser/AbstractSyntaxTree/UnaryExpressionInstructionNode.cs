@@ -5,5 +5,7 @@
         public UnaryExpressionInstructionNode(string var, int line, int column = -1) : base(var, line, column)
         {
         }
+
+        public override string ToString() => $"{base.ToString()}{Var} = {Var}";
     }
 }

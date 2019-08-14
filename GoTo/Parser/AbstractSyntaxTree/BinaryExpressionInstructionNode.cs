@@ -19,5 +19,9 @@
         }
 
         public OperatorEnum Operator => _operator;
+
+        public override string ToString() => 
+            $"{base.ToString()}{Var} = {Var} " +
+            $"{(_operator == OperatorEnum.Decrement ? "-" : "+")} 1";
     }
 }

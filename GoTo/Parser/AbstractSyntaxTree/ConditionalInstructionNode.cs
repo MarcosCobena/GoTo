@@ -9,5 +9,8 @@
         }
 
         public Label TargetLabel { get; }
+
+        public override string ToString() => 
+            $"{base.ToString()}IF {Var} != 0 GOTO {TargetLabel}";
     }
 }

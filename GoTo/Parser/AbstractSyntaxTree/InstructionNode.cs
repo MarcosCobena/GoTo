@@ -20,5 +20,10 @@
         public Label Label { get; set; }
         
         public Var Var => _var;
+
+        public override string ToString() => 
+            Label == null ? 
+                string.Empty : 
+                $"[{Label}] ";
     }
 }
