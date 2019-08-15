@@ -17,11 +17,11 @@ namespace Tests
         {
             var var = new Var(rawVar);
 
-            var number = CodifierHelpers.Codify(var);
+            var number = Codifier.Codify(var);
 
             Assert.Equal(expectedResult, number);
 
-            var uncodifiedVar = CodifierHelpers.UncodifyVar(number);
+            var uncodifiedVar = Codifier.UncodifyVar(number);
 
             Assert.Equal(var, uncodifiedVar);
         }
@@ -36,11 +36,11 @@ namespace Tests
         {
             var label = new Label(rawLabel);
 
-            var number = CodifierHelpers.Codify(label);
+            var number = Codifier.Codify(label);
 
             Assert.Equal(expectedResult, number);
 
-            var uncodifiedLabel = CodifierHelpers.UncodifyLabel(number);
+            var uncodifiedLabel = Codifier.UncodifyLabel(number);
 
             Assert.Equal(label, uncodifiedLabel);
         }
@@ -76,7 +76,7 @@ namespace Tests
 
             var instruction = new ConditionalInstructionNode("X", rawLabel, 0);
             var label = new Label(rawLabel);
-            var codifiedLabel = CodifierHelpers.Codify(label);
+            var codifiedLabel = Codifier.Codify(label);
 
             AssertEqualCodifiedFormat(instruction, codifiedLabel + 2);
         }
@@ -86,11 +86,11 @@ namespace Tests
         [InlineData(1, 5, 21)]
         public void Pair(int a, int b, int expectedResult)
         {
-            var c = Pairing.Pair(a, b);
+            var c = PairingHelpers.Pair(a, b);
 
             Assert.Equal(expectedResult, c);
 
-            var ab = Pairing.Unpair(c);
+            var ab = PairingHelpers.Unpair(c);
 
             Assert.Equal(a, ab.a);
             Assert.Equal(b, ab.b);
@@ -157,7 +157,7 @@ namespace Tests
                 out ProgramNode program,
                 out IEnumerable<Message> _);
             
-            var number = CodifierHelpers.Codify(program);
+            var number = Codifier.Codify(program);
 
             var expected = BigInteger.Parse(expectedResult);
             Assert.Equal(expected, number);
@@ -169,7 +169,7 @@ namespace Tests
                 return;
             }
 
-            var uncodifiedProgram = CodifierHelpers.UncodifyProgram(number);
+            var uncodifiedProgram = Codifier.UncodifyProgram(number);
 
             Assert.Equal(
                 inputProgram, 
@@ -180,11 +180,11 @@ namespace Tests
             InstructionNode instruction,
             int expectedResult)
         {
-            var number = CodifierHelpers.Codify(instruction);
+            var number = Codifier.Codify(instruction);
 
             Assert.Equal(expectedResult, number);
             
-            var uncodifiedInstruction = CodifierHelpers.UncodifyInstruction(number);
+            var uncodifiedInstruction = Codifier.UncodifyInstruction(number);
 
             Assert.Equal(instruction.ToString(), uncodifiedInstruction.ToString());
         }
@@ -193,7 +193,7 @@ namespace Tests
             InstructionNode instruction,
             int expectedResult)
         {
-            var number = CodifierHelpers.CodifyFormat(instruction);
+            var number = Codifier.CodifyFormat(instruction);
 
             Assert.Equal(expectedResult, number);
         }

@@ -6,13 +6,15 @@ using GoTo.Parser.AbstractSyntaxTree;
 
 namespace GoTo.Codifier
 {
-    // Based on (page 4): http://www.cs.us.es/cursos/mcc-2017/temas/tema-3-trans.pdf
-    public static class CodifierHelpers
+    // Based on
+    // - http://www.cs.us.es/cursos/mcc-2017/temas/tema-3-trans.pdf (page 4)
+    // - http://www.cs.us.es/cursos/cc-2018/Tema-04.pdf
+    public static class Codifier
     {
         static readonly int[] primes = 
         {
-            2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 
-            71, 73, 79, 83, 89, 97
+            2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 
+            67, 71, 73, 79, 83, 89, 97
         };
 
         public static int Codify(Var var)
@@ -37,7 +39,7 @@ namespace GoTo.Codifier
             return number;
         }
 
-        public static Var UncodifyVar(double number)
+        public static Var UncodifyVar(int number)
         {
             string rawVar;
             int index;
@@ -50,12 +52,12 @@ namespace GoTo.Codifier
             else if ((number % 2) == 0)
             {
                 rawVar = "X";
-                index = (int)number / 2;
+                index = number / 2;
             }
             else if ((number % 2) == 1)
             {
                 rawVar = "Z";
-                index = ((int)number - 1) / 2;
+                index = (number - 1) / 2;
             }
             else
             {
@@ -100,7 +102,7 @@ namespace GoTo.Codifier
             return number;
         }
 
-        public static Label UncodifyLabel(double number)
+        public static Label UncodifyLabel(int number)
         {
             string id;
             var offset = number % 5;
@@ -164,7 +166,7 @@ namespace GoTo.Codifier
         }
 
         public static InstructionNode UncodifyInstructionFormat(
-            double number,
+            int number,
             Var var)
         {
             if (number < 0)
@@ -199,22 +201,22 @@ namespace GoTo.Codifier
             return fakeInstruction;
         }
 
-        public static double Codify(InstructionNode instruction)
+        public static int Codify(InstructionNode instruction)
         {
             var a = instruction.Label == null ?
                 0 :
                 Codify(instruction.Label);
             var b = CodifyFormat(instruction);
             var c = Codify(instruction.Var) - 1;
-            var number = Pairing.Pair(a, Pairing.Pair(b, c));
+            var number = PairingHelpers.Pair(a, PairingHelpers.Pair(b, c));
 
             return number;
         }
 
-        public static InstructionNode UncodifyInstruction(double number)
+        public static InstructionNode UncodifyInstruction(int number)
         {
-            var ab = Pairing.Unpair(number);
-            var bc = Pairing.Unpair(ab.b);
+            var ab = PairingHelpers.Unpair(number);
+            var bc = PairingHelpers.Unpair(ab.b);
             var var = UncodifyVar(bc.b + 1);
             var instruction = UncodifyInstructionFormat(bc.a, var);
 
@@ -237,7 +239,7 @@ namespace GoTo.Codifier
                 var instruction = program.Instructions[i];
                 var codifiedInstruction = Codify(instruction);
                 
-                number *= BigInteger.Pow(prime, (int)codifiedInstruction);
+                number *= BigInteger.Pow(prime, codifiedInstruction);
             }
 
             number -= 1;
@@ -256,7 +258,7 @@ namespace GoTo.Codifier
                 return singleInstruction.ToString();
             }
 
-            var instructions = new List<double>();
+            var instructions = new List<int>();
 
             for (int i = 0; i < primes.Length; i++)
             {
@@ -298,7 +300,7 @@ namespace GoTo.Codifier
             return program;
         }
 
-        static string UncodifyInstructions(List<double> instructions) =>
+        static string UncodifyInstructions(List<int> instructions) =>
             instructions
                 .Select(item => UncodifyInstruction(item))
                 .Aggregate(
