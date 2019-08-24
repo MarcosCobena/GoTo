@@ -1,4 +1,4 @@
-![Build status](https://marcoscm.visualstudio.com/GoTo/_apis/build/status/GoTo-.NET%20Desktop-CI)
+[![Build status](https://marcoscm.visualstudio.com/GoTo/_apis/build/status/CI)](https://marcoscm.visualstudio.com/GoTo/_build/latest?definitionId=2)
 
 # GoTo
 
