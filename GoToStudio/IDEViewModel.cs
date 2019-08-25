@@ -1,4 +1,6 @@
-﻿using GoTo.Interpreter;
+﻿using GoTo;
+using GoTo.Codifier;
+using GoTo.Interpreter;
 using GoTo.Parser.AbstractSyntaxTree;
 using System;
 using System.Collections.Generic;
@@ -11,9 +13,8 @@ using System.Text;
 using System.Windows.Input;
 using WebAssembly;
 using Xamarin.Forms;
-using TheCodifier = GoTo.Codifier.Codifier;
 
-namespace GoTo.Studio
+namespace GoToStudio
 {
     internal class IDEViewModel : INotifyPropertyChanged
     {
@@ -168,7 +169,7 @@ namespace GoTo.Studio
             {
                 try
                 {
-                    CurrentProgram = TheCodifier.UncodifyProgram(codifiedProgram);
+                    CurrentProgram = Codifier.UncodifyProgram(codifiedProgram);
                 }
                 catch (Exception exception)
                 {
@@ -188,7 +189,7 @@ namespace GoTo.Studio
 
                 try
                 {
-                    var number = TheCodifier.Codify(program);
+                    var number = Codifier.Codify(program);
                     Code = number.ToString();
                 }
                 catch (Exception exception)

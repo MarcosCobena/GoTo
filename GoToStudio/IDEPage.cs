@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using Xamarin.Forms;
 
-namespace GoTo.Studio
+namespace GoToStudio
 {
     public partial class IDEPage
     {

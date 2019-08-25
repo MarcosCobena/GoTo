@@ -1,7 +1,7 @@
 ﻿using Ooui;
 using Xamarin.Forms;
 
-namespace GoTo.Studio
+namespace GoToStudio
 {
     class Program
     {

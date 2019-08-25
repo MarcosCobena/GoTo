@@ -1,7 +1,7 @@
 ﻿using Ooui.Forms;
 using Xamarin.Forms;
 
-namespace GoTo.Studio
+namespace GoToStudio
 {
     public partial class IDEPage : ContentPage
     {

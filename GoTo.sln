@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoTo.CLI", "GoTo.CLI\GoTo.CLI.csproj", "{045E7FE0-12BE-4A09-87A5-D06D0919E85E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoTo.Studio.WebAssembly", "GoTo.Studio.WebAssembly\GoTo.Studio.WebAssembly.csproj", "{8F6D7C9F-4863-44F1-8EEF-B6AF7F893C93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoToStudio", "GoToStudio\GoToStudio.csproj", "{8F6D7C9F-4863-44F1-8EEF-B6AF7F893C93}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
