@@ -9,8 +9,8 @@ namespace GoTo.Studio
 
         Switch _debugReleaseSwitch;
         Label _debugReleaseLabel;
-        Button _shareButton, _runButton;
-        Entry _x1Entry, _x2Entry, _x3Entry, _x4Entry, _x5Entry, _x6Entry, _x7Entry, _x8Entry, _yEntry;
+        Button _codificationButton, _runButton, _shareButton;
+        Entry _codeEntry, _x1Entry, _x2Entry, _x3Entry, _x4Entry, _x5Entry, _x6Entry, _x7Entry, _x8Entry, _yEntry;
         Editor _textEditor, _outputEditor;
 
         void InitializeComponent()
@@ -27,22 +27,18 @@ namespace GoTo.Studio
                 RowDefinitions = new RowDefinitionCollection
                 {
                     new RowDefinition { Height = GridLength.Auto },
-                    new RowDefinition { Height = GridLength.Auto },
                     new RowDefinition { Height = GridLength.Star }
                 },
                 RowSpacing = DefaultSpacing
             };
-
-            var topLeftStackLayout = new StackLayout { Orientation = StackOrientation.Horizontal };
-            topLeftStackLayout.Children.Add(
-                new Label { FontSize = Device.GetNamedSize(NamedSize.Large, typeof(Label)), Text = "GoTo Studio" });
-            grid.Children.Add(topLeftStackLayout);
 
             var leftMenuStackLayout = new StackLayout 
             { 
                 Orientation = StackOrientation.Horizontal,
                 Spacing = DefaultSpacing
             };
+            leftMenuStackLayout.Children.Add(
+                new Label { FontSize = Device.GetNamedSize(NamedSize.Large, typeof(Label)), Text = "GoTo Studio" });
             leftMenuStackLayout.Children.Add(
                 _debugReleaseSwitch = new Switch { VerticalOptions = LayoutOptions.Center });
             _debugReleaseSwitch.SetBinding(Switch.IsToggledProperty, nameof(ViewModel.IsReleaseEnabled));
@@ -67,13 +63,25 @@ namespace GoTo.Studio
             leftMenuStackLayout.Children.Add(
                 _shareButton = new Button { Text = "Share" });
             _shareButton.SetBinding(Button.CommandProperty, nameof(ViewModel.ShareCommand));
-            grid.Children.Add(leftMenuStackLayout, 0, 1);
+            grid.Children.Add(leftMenuStackLayout, 0, 0);
+
+            _codificationButton = new Button { HorizontalOptions = LayoutOptions.FillAndExpand };
+            grid.Children.Add(_codificationButton, 1, 0);
+            _codificationButton.SetBinding(Button.CommandProperty, nameof(ViewModel.CodificationCommand));
+            _codificationButton.SetBinding(Button.TextProperty, nameof(ViewModel.CodificationTitle));
 
             var rightMenuStackLayout = new StackLayout 
             { 
-                HorizontalOptions = LayoutOptions.End,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
                 Orientation = StackOrientation.Horizontal 
             };
+            rightMenuStackLayout.Children.Add(
+                _codeEntry = new Entry 
+                { 
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    Placeholder = "Codify current program or type an integer to uncodify"
+                });
+            _codeEntry.SetBinding(Entry.TextProperty, nameof(ViewModel.Code));
             rightMenuStackLayout.Children.Add(
                 new LinkLabel 
                 { 
@@ -90,9 +98,9 @@ namespace GoTo.Studio
                     Text = "Report issue", 
                     VerticalOptions = LayoutOptions.Center
                 });
-            grid.Children.Add(rightMenuStackLayout, 2, 1);
+            grid.Children.Add(rightMenuStackLayout, 2, 0);
 
-            grid.Children.Add(_textEditor = new Editor { FontFamily = "monospace" }, 0, 2);
+            grid.Children.Add(_textEditor = new Editor { FontFamily = "monospace" }, 0, 1);
             _textEditor.SetBinding(Editor.TextProperty, nameof(ViewModel.CurrentProgram));
 
             var inputsStackLayout = new StackLayout();
@@ -114,9 +122,9 @@ namespace GoTo.Studio
             _x7Entry.SetBinding(Entry.TextProperty, nameof(ViewModel.X7));
             inputsStackLayout.Children.Add(_x8Entry = new Entry { Placeholder = "X8" });
             _x8Entry.SetBinding(Entry.TextProperty, nameof(ViewModel.X8));
-            grid.Children.Add(inputsStackLayout, 1, 2);
+            grid.Children.Add(inputsStackLayout, 1, 1);
 
-            grid.Children.Add(_outputEditor = new Editor { FontFamily = "monospace" }, 2, 2);
+            grid.Children.Add(_outputEditor = new Editor { FontFamily = "monospace" }, 2, 1);
 
             Content = grid;
             Padding = DefaultSpacing;
