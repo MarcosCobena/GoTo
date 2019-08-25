@@ -34,9 +34,15 @@ namespace GoToStudio
             "\n" +
             "Do you see that column of entries at center? They're the inputs, waiting for you to type integers.\n" +
             "\n" +
+            "The Codify button turns programs at left into numbers, and vice versa. \n" +
+            "You can see it as a way to un/compress.\n" +
+            "\n" +
             "Why don't you just start by typing 42 at X1 and click Run?\n" +
             "\n" +
-            "Oh, if you may encounter any issue, please send it to us through above Report issue link. Thanks in advance.";
+            "Oh, if you may encounter any issue, please send it to us through above Report issue link. " +
+            "Thanks in advance.\n" +
+            "\n" +
+            "(GoTo 1.1.0)";
 
         internal const string LogMessage = nameof(LogMessage);
 

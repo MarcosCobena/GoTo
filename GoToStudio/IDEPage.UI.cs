@@ -79,7 +79,7 @@ namespace GoToStudio
                 _codeEntry = new Entry 
                 { 
                     HorizontalOptions = LayoutOptions.FillAndExpand,
-                    Placeholder = "Codify current program or type an integer to uncodify"
+                    Placeholder = "Type an integer to uncodify; otherwise, codify current program"
                 });
             _codeEntry.SetBinding(Entry.TextProperty, nameof(ViewModel.Code));
             rightMenuStackLayout.Children.Add(
