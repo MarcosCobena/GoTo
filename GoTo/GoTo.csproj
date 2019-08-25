@@ -10,10 +10,10 @@
     <RepositoryUrl>https://github.com/MarcosCobena/GoTo</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>goto compiler dotnet</PackageTags>
-    <PackageReleaseNotes>Added a new interpreter mode (a small Virtual Machine actually)</PackageReleaseNotes>
+    <PackageReleaseNotes>Added an un/codifier to express programs as integers</PackageReleaseNotes>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>1.0.3</Version>
-    <AssemblyVersion>1.0.3.0</AssemblyVersion>
+    <Version>1.1.0</Version>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
