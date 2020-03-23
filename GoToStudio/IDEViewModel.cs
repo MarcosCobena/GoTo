@@ -339,13 +339,23 @@ namespace GoToStudio
         {
             _stopwatch.Restart();
             var isSucceeded = Framework.TryAnalyze(
-                _currentProgram,
+                _currentProgram, 
+                out string expandedInput,
                 out ProgramNode internalProgram,
                 out IEnumerable<Message> messages);
             _stopwatch.Stop();
             
             program = internalProgram;
             message = new StringBuilder();
+
+            var cleanExpandedInputWithLineNumbers = expandedInput.Split('\n')
+                .Select((item, index) => $"{index + 1}: {item}")
+                .Aggregate((current, next) => $"{current}\r\n{next}");
+
+            message.AppendLine($"Final program with macros (if used) expanded:");
+            message.AppendLine();
+            message.AppendLine(cleanExpandedInputWithLineNumbers);
+            message.AppendLine();
 
             if (!isSucceeded)
             {

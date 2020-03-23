@@ -161,7 +161,11 @@ namespace Tests
 
             if (isInterpreted)
             {
-                isSuccess = Framework.TryAnalyze(input, out ProgramNode program, out IEnumerable<Message> _);
+                isSuccess = Framework.TryAnalyze(
+                    input, 
+                    out string _, 
+                    out ProgramNode program, 
+                    out IEnumerable<Message> _);
                 result = -1;
 
                 if (isSuccess)

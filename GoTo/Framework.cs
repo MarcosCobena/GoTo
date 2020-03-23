@@ -33,16 +33,34 @@ namespace GoTo
             Func<Locals, bool> stepDebugAndContinue = null) =>
             result = VirtualMachine.Run(program, x1, x2, x3, x4, x5, x6, x7, x8, stepDebugAndContinue);
 
-        public static bool TryAnalyze(string input, out ProgramNode program, out IEnumerable<Message> messages)
+        public static bool TryAnalyze(
+            string input, 
+            out string expandedInput,
+            out ProgramNode program, 
+            out IEnumerable<Message> messages)
         {
             program = null;
             var analysisMessages = new List<Message>();
             messages = analysisMessages;
 
-            TryExpandMacros(input, out string expandedInput, out IEnumerable<Message> expasionMessages);
+            var isExpansionSucceeded = TryExpandMacros(
+                input, 
+                out string output, 
+                out IEnumerable<Message> expasionMessages);
             analysisMessages.AddRange(expasionMessages);
 
-            var inputStream = CharStreams.fromstring(expandedInput);
+            if (isExpansionSucceeded)
+            {
+                expandedInput = output;
+            }
+            else
+            {
+                expandedInput = input;
+
+                return false;
+            }
+
+            var inputStream = CharStreams.fromstring(output);
 
             var lexer = new GoToLexer(inputStream);
             var lexerErrorListener = new LexerErrorListener();
@@ -138,7 +156,11 @@ namespace GoTo
             string programName = DefaultProgramName, 
             string outputPath = null)
         {
-            var isSuccess = TryAnalyze(input, out ProgramNode program, out IEnumerable<Message> analysisMessages);
+            var isSuccess = TryAnalyze(
+                input, 
+                out string _, 
+                out ProgramNode program, 
+                out IEnumerable<Message> analysisMessages);
             messages = new List<Message>(analysisMessages);
 
             if (!isSuccess)
@@ -181,13 +203,17 @@ namespace GoTo
             ParseTreeWalker.Default.Walk(listener, contextSyntaxTree);
             expansionMessages.AddRange(listener.Messages);
 
-            output = listener.RewrittenTokenStream.GetText();
             messages = expansionMessages;
 
             if (AreThereErrors(expansionMessages))
             {
+                output = string.Empty;
+                
                 return false;
             }
+
+            var dirtyOutput = listener.RewrittenTokenStream.GetText();
+            output = dirtyOutput.TrimStart(Environment.NewLine.ToCharArray());
 
             return true;
         }

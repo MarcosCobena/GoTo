@@ -11,7 +11,11 @@ namespace Tests
     {
         internal static void AnalyzeWithAnyMessage(string input)
         {
-            var isSuccess = Framework.TryAnalyze(input, out ProgramNode _, out IEnumerable<Message> messages);
+            var isSuccess = Framework.TryAnalyze(
+                input, 
+                out string _, 
+                out ProgramNode _, 
+                out IEnumerable<Message> messages);
 
             Assert.False(isSuccess);
             Assert.NotEmpty(messages);
@@ -19,7 +23,11 @@ namespace Tests
 
         internal static void AnalyzeWithEmptyMessages(string input)
         {
-            var isSuccess = Framework.TryAnalyze(input, out ProgramNode _, out IEnumerable<Message> messages);
+            var isSuccess = Framework.TryAnalyze(
+                input, 
+                out string _, 
+                out ProgramNode _, 
+                out IEnumerable<Message> messages);
 
             Assert.True(isSuccess);
             Assert.Empty(messages);
@@ -31,7 +39,11 @@ namespace Tests
             string keyword, 
             int expectedErrorsCount = 2)
         {
-            var isSuccess = Framework.TryAnalyze(input, out ProgramNode _, out IEnumerable<Message> messages);
+            var isSuccess = Framework.TryAnalyze(
+                input, 
+                out string _,
+                out ProgramNode _, 
+                out IEnumerable<Message> messages);
             var errorMessages = messages.Where(message => message.Severity == SeverityEnum.Error);
 
             Assert.False(isSuccess);
@@ -43,7 +55,11 @@ namespace Tests
 
         internal static void SingleErrorContainingKeywords(string input, params string[] errorKeywords)
         {
-            var isSuccess = Framework.TryAnalyze(input, out ProgramNode _, out IEnumerable<Message> messages);
+            var isSuccess = Framework.TryAnalyze(
+                input, 
+                out string _, 
+                out ProgramNode _, 
+                out IEnumerable<Message> messages);
             var errorMessages = messages.Where(message => message.Severity == SeverityEnum.Error);
             var firstError = errorMessages.First();
 

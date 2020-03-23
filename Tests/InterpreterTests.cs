@@ -17,6 +17,7 @@ namespace Tests
             Framework.TryAnalyze(
                 "[A] X = X + 1 " +
                 "IF X != 0 GOTO A", 
+                out string _, 
                 out ProgramNode program, 
                 out IEnumerable<Message> _);
 
@@ -39,7 +40,7 @@ namespace Tests
         {
             var isTestFinished = false;
 
-            Framework.TryAnalyze("Y = Y + 1", out ProgramNode program, out IEnumerable<Message> _);
+            Framework.TryAnalyze("Y = Y + 1", out string _, out ProgramNode program, out IEnumerable<Message> _);
             Framework.RunInterpreted(
                 program,
                 out int _,
@@ -64,6 +65,7 @@ namespace Tests
             Framework.TryAnalyze(
                 "Y = Y + 1 " +
                 "Y = Y + 1", 
+                out string _, 
                 out ProgramNode program, 
                 out IEnumerable<Message> _);
             Framework.RunInterpreted(

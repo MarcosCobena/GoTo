@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using GoTo;
+using Xunit;
 
 namespace Tests
 {
@@ -95,6 +96,40 @@ namespace Tests
         public void JustAComment()
         {
             AssertExtensions.SingleErrorContainingKeywords("; Y = Y + 1", "unknown");
+        }
+
+        [Fact]
+        public void ExpandedInput()
+        {
+            var input = "Y = Y + 2";
+
+            var isSuccess = Framework.TryAnalyze(input, out string expandedInput, out var _, out var __);
+
+            Assert.False(isSuccess);
+            Assert.Equal(input, expandedInput);
+        }
+
+        [Fact]
+        public void CleanExpandedInput()
+        {
+            var input = @"MACRO ADDONE V
+V = V + 1
+END
+ADDONE X";
+
+            var isSuccess = Framework.TryAnalyze(input, out string expandedInput, out var _, out var __);
+
+            Assert.True(isSuccess);
+            Assert.Single(expandedInput.Split('\n'));
+        }
+
+        [Fact]
+        public void MissingParameterMacro()
+        {
+            AssertExtensions.AnalyzeWithAnyMessage(@"MACRO FOO BAR
+X = X + 1
+END
+FOO");
         }
     }
 }

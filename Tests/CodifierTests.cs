@@ -153,7 +153,8 @@ namespace Tests
         private void AssertEqualCodified(string inputProgram, string expectedResult)
         {
             Framework.TryAnalyze(
-                inputProgram,
+                inputProgram, 
+                out string _,
                 out ProgramNode program,
                 out IEnumerable<Message> _);
             
