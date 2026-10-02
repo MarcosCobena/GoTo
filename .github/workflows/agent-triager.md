@@ -6,7 +6,7 @@ on:
   issues:
     types: [labeled]
     names: [needs-triage]
-  bots: [framestudiodevghapp]
+  bots: [graph-engineering-framework]
   workflow_dispatch:
     inputs:
       issue:

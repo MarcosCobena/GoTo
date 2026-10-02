@@ -8,7 +8,7 @@ on:
     names: [triaged]
   issue_comment:
     types: [created]
-  bots: [framestudiodevghapp]
+  bots: [graph-engineering-framework]
   workflow_dispatch:
     inputs:
       issue_number:

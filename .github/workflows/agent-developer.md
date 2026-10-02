@@ -6,7 +6,7 @@ on:
   issues:
     types: [labeled]
     names: [ready, changes-requested]
-  bots: [framestudiodevghapp]
+  bots: [graph-engineering-framework]
   workflow_dispatch:
     inputs:
       issue_number:

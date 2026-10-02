@@ -5,7 +5,7 @@ description: Review pull requests against linked issue DoD and decide approve/re
 on:
   pull_request_target: # THIS IS UNSECURE. NEEDED ONLY TEMPORARILY UNTIL GITHUB FIXES THE ISSUE
     types: [opened, reopened, synchronize, ready_for_review]
-  bots: [framestudiodevghapp]
+  bots: [graph-engineering-framework]
   workflow_dispatch:
     inputs:
       issue_number:
