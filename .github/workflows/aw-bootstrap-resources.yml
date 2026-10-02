@@ -1,0 +1,182 @@
+name: "AW Bootstrap Resources"
+
+# Copies auxiliary resources that gh-aw v0.83.4 cannot install via
+# the `resources` manifest field (introduced in later versions).
+#
+# Uses the GitHub App (APP_CLIENT_ID + APP_PRIVATE_KEY) configured by
+# the aw.yml config to authenticate cross-repo access. The App must be
+# installed on both the source and target repositories.
+#
+# Resources copied:
+#   - .github/aw/scripts/compile-aw.ts
+#   - .github/aw/scripts/Install-AwPackage.ps1
+#   - .github/aw/actions-lock.json
+#   - .github/aw/tests/agent-planner/{run,scenarios}.js
+#   - .github/aw/tests/agent-developer/{run,scenarios}.js
+#   - .github/aw/tests/agent-reviewer/{run,scenarios}.js
+#   - .github/ISSUE_TEMPLATE/{bug,feature}.yml
+#   - .github/skills/agentic-workflows/SKILL.md
+#
+# Trigger manually after `gh aw add` installs the package:
+#   gh workflow run aw-bootstrap-resources.yml \
+#     -f source-repo=PlainConceptsResearch/FrameStudio.Dev \
+#     -f source-ref=feat/aw-package-installer
+
+on:
+  workflow_dispatch:
+    inputs:
+      source-repo:
+        description: "Source repository (owner/repo) to copy resources from"
+        required: false
+        default: ""
+      source-ref:
+        description: "Source ref (branch/tag/sha) to copy resources from"
+        required: false
+        default: "main"
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap-resources:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout target repository
+        uses: actions/checkout@v6
+
+      - name: Resolve source repository
+        id: resolve-source
+        uses: actions/github-script@v8
+        with:
+          script: |
+            let sourceRepo = "${{ inputs.source-repo }}";
+            const sourceRef = "${{ inputs.source-ref }}";
+
+            // Auto-detect from package metadata if not provided
+            if (!sourceRepo) {
+              const fs = require('fs');
+              const path = '.github/aw/packages/loop-engineering-workflows.json';
+              if (fs.existsSync(path)) {
+                const pkg = JSON.parse(fs.readFileSync(path, 'utf8'));
+                sourceRepo = pkg.sourceRepo || pkg.repository || '';
+                core.info(`Found source repo from package metadata: ${sourceRepo}`);
+              }
+            }
+
+            // Fallback: use the same repo (resources live in-repo)
+            if (!sourceRepo) {
+              sourceRepo = context.repo.owner + '/' + context.repo.repo;
+              core.info('Using current repo as source (in-repo resources)');
+            }
+
+            // Split into owner and name for create-github-app-token
+            const [owner, name] = sourceRepo.split('/');
+
+            core.setOutput('source-repo', sourceRepo);
+            core.setOutput('source-ref', sourceRef || 'main');
+            core.setOutput('source-owner', owner);
+            core.setOutput('source-name', name);
+
+      - name: Create GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: ${{ steps.resolve-source.outputs.source-owner }}
+          repositories: ${{ steps.resolve-source.outputs.source-name }}
+
+      - name: Download and copy resources
+        env:
+          APP_TOKEN: ${{ steps.app-token.outputs.token }}
+          SOURCE_OWNER: ${{ steps.resolve-source.outputs.source-owner }}
+          SOURCE_NAME: ${{ steps.resolve-source.outputs.source-name }}
+          SOURCE_REF: ${{ steps.resolve-source.outputs.source-ref }}
+        run: |
+          set -euo pipefail
+
+          declare -a RESOURCES=(
+            ".github/aw/scripts/compile-aw.ts"
+            ".github/aw/scripts/Install-AwPackage.ps1"
+            ".github/aw/actions-lock.json"
+            ".github/aw/tests/agent-planner/run.js"
+            ".github/aw/tests/agent-planner/scenarios.js"
+            ".github/aw/tests/agent-developer/run.js"
+            ".github/aw/tests/agent-developer/scenarios.js"
+            ".github/aw/tests/agent-reviewer/run.js"
+            ".github/aw/tests/agent-reviewer/scenarios.js"
+            ".github/ISSUE_TEMPLATE/bug.yml"
+            ".github/ISSUE_TEMPLATE/feature.yml"
+            ".github/skills/agentic-workflows/SKILL.md"
+          )
+
+          COPIED=0
+          SKIPPED=0
+          FAILED=0
+
+          for RESOURCE in "${RESOURCES[@]}"; do
+            DST="$RESOURCE"
+
+            # Create destination directory before download
+            mkdir -p "$(dirname "$DST")"
+
+            # Download raw file content via GitHub API using curl with App token
+            HTTP_CODE=$(curl -sSL \
+              -H "Authorization: Bearer ${APP_TOKEN}" \
+              -H "Accept: application/vnd.github.raw" \
+              -o "$DST.tmp" \
+              -w "%{http_code}" \
+              "https://api.github.com/repos/${SOURCE_OWNER}/${SOURCE_NAME}/contents/${RESOURCE}?ref=${SOURCE_REF}") || true
+
+            if [[ "$HTTP_CODE" != "200" ]] || [[ ! -s "$DST.tmp" ]]; then
+              echo "⚠ Source not found (HTTP $HTTP_CODE): $RESOURCE — skipping"
+              FAILED=$((FAILED + 1))
+              rm -f "$DST.tmp"
+              continue
+            fi
+
+            # Check if file already exists and is identical
+            if [[ -f "$DST" ]] && diff -q "$DST.tmp" "$DST" > /dev/null 2>&1; then
+              echo "✓ Already up-to-date: $DST"
+              SKIPPED=$((SKIPPED + 1))
+              rm -f "$DST.tmp"
+            else
+              mv "$DST.tmp" "$DST"
+              echo "✓ Copied: $DST"
+              COPIED=$((COPIED + 1))
+            fi
+          done
+
+          echo ""
+          echo "Bootstrap complete: $COPIED copied, $SKIPPED already up-to-date, $FAILED not found"
+
+      - name: Commit resources
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Stage all resource directories
+          git add .github/aw/scripts/ \
+                    .github/aw/tests/ \
+                    .github/aw/actions-lock.json \
+                    .github/ISSUE_TEMPLATE/ \
+                    .github/skills/ \
+                    2>/dev/null || true
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit — all resources already present"
+          else
+            git commit -m "bootstrap: copy auxiliary resources
+
+          Copied via aw-bootstrap-resources.yml workflow
+          (gh-aw v0.83.4 does not support 'resources' manifest field)
+
+          Source: ${{ steps.resolve-source.outputs.source-repo }}@${{ steps.resolve-source.outputs.source-ref }}"
+
+            git push
+            echo "✓ Resources committed and pushed"
+          fi
