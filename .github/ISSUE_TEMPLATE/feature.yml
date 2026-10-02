@@ -1,0 +1,41 @@
+name: Feature Request
+description: Propose a new feature or improvement
+labels: ["needs-triage"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What do you want to change and why?
+      placeholder: Describe the feature or improvement...
+    validations:
+      required: true
+  - type: textarea
+    id: dod
+    attributes:
+      label: Definition of Done
+      description: >
+        Objective, verifiable criteria that prove this is complete.
+        Use measurable statements: "build passes", "component renders X",
+        "API returns Y", "tests cover Z".
+      placeholder: |
+        - [ ] npm run build passes
+        - [ ] Component renders the new UI element
+        - [ ] ...
+    validations:
+      required: true
+  - type: textarea
+    id: non-goals
+    attributes:
+      label: Non-goals
+      description: What is explicitly out of scope?
+      placeholder: This issue does NOT cover...
+    validations:
+      required: false
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Screenshots, links, references, or anything else relevant.
+    validations:
+      required: false
