@@ -21,17 +21,12 @@ engine:
 network:
   allowed:
     - defaults
+    - dotnet
 tools:
   github:
     mode: gh-proxy
     toolsets: [issues, pull_requests, repos]
-  bash:
-    - "pnpm *"
-    - "npm *"
-    - "node *"
-    - "npx *"
-    - "cat *"
-    - "jq *"
+  bash: ["*"]
 safe-outputs:
   github-app:
     client-id: ${{ vars.APP_CLIENT_ID }}
@@ -76,20 +71,14 @@ Never modify repository code in this workflow. Your only outputs are reviews, la
 4. Read the linked issue to get its full spec and DoD criteria.
 5. If the linked issue does not have the `in-review` label, call `noop` with the reason "linked issue is not in-review" and stop. Do not change any labels.
 6. Inspect the PR diff — this is your primary artifact. Judge the diff against the DoD; do not audit the entire repository. Use the `github` tool (toolsets `pull_requests` and `repos`) to read the diff and changed files. **Never use shell commands** (`base64`, `curl`, `git diff`, etc.) to read PR content — they are blocked by the sandbox. The `github` tool already provides everything you need.
-7. Validate with build and lint:
+7. Validate with the environment setup, build, test and lint commands from the repository's own agent instructions (`AGENTS.md`, `.github/copilot-instructions.md`). If none exist, infer them from the README and the project manifests (`package.json`, `*.sln`, `*.csproj`, `pyproject.toml`, ...).
 
-```bash
-npm install
-npm run build
-npm run lint
-```
-
-Only use `bash` for the commands above (`npm install`, `npm run build`, `npm run lint`) and supporting read-only commands (`cat`, `jq`). Do NOT explore the repository with shell commands (`ls`, `find`, `pwd`, `node -e`, `base64`, `curl`, `git`). `bash` is for build and lint only.
+Only use `bash` for those commands and supporting read-only commands (`cat`, `jq`). Do NOT explore the repository with shell commands (`ls`, `find`, `pwd`, `node -e`, `base64`, `curl`, `git`). `bash` is for setup, build, test and lint only.
 
 8. For each DoD criterion, verify the diff satisfies it. Check for:
    - **Code correctness:** does the logic match the spec?
    - **Security:** no injection, XSS, or secrets exposed.
-   - **Scope:** no changes beyond what the spec requires. If the diff touches files the spec does not call for — `package.json`, `package-lock.json`, `tsconfig.json`, unrelated components — request changes citing the unexpected files, unless the change is clearly required to satisfy the DoD.
+   - **Scope:** no changes beyond what the spec requires. If the diff touches files the spec does not call for — dependency manifests, lock files, build configuration, unrelated components — request changes citing the unexpected files, unless the change is clearly required to satisfy the DoD.
    - **Conventions:** consistent with existing code patterns.
 
 9. Deliver your verdict immediately once the DoD comparison is done and checks have run. Do not keep investigating after the verdict is clear.

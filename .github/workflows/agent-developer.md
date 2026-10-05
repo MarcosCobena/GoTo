@@ -22,16 +22,12 @@ engine:
 network:
   allowed:
     - defaults
+    - dotnet
 tools:
   github:
     mode: gh-proxy
     toolsets: [issues, pull_requests, repos]
-  bash:
-    - "npm *"
-    - "node *"
-    - "npx *"
-    - "cat *"
-    - "jq *"
+  bash: ["*"]
 safe-outputs:
   github-app:
     client-id: ${{ vars.APP_CLIENT_ID }}
@@ -40,14 +36,6 @@ safe-outputs:
       administration: read
   create-pull-request:
     draft: false
-    allowed-files:
-      - "src/**"
-      - "public/**"
-      - "*.json"
-      - "*.mjs"
-      - "*.ts"
-      - "*.tsx"
-      - "*.md"
   push-to-pull-request-branch:
     max: 2
   add-labels:
@@ -82,20 +70,14 @@ Implement issue specs directly in the repository.
 5. Fresh mode:
 - Read the parent issue spec and modify only the files required by that spec.
 - If the issue is already implemented in the repository, add a comment with evidence and call `noop` instead of opening an empty PR.
-- Validate before proposing changes:
-
-```bash
-npm ci
-npm run build
-npm run lint
-```
+- Validate before proposing changes. Take the environment setup, build, test and lint commands from the repository's own agent instructions (`AGENTS.md`, `.github/copilot-instructions.md`). If none exist, infer them from the README and the project manifests (`package.json`, `*.sln`, `*.csproj`, `pyproject.toml`, ...). If validation cannot run, say so in the PR body instead of skipping it silently.
 
 6. Fresh mode PR handling:
 - New work: use `create-pull-request` and include `Closes #<N>` in the body.
 - When the PR is ready, in the same run call `add-labels` on the original issue number with labels `[in-review]` and `remove-labels` on the original issue number with labels `[ready, changes-requested]` to prevent redispatch loops.
 7. Re-entry mode (`changes-requested`):
 - Read the feedback context and fix only the requested changes.
-- Validate again with install/build/lint commands.
+- Validate again with the same commands used in fresh mode.
 - Push fixes to the same PR branch with `push-to-pull-request-branch` (never open a second PR).
 - In the same run call `add-labels` on the original issue number with labels `[in-review]` and `remove-labels` on the original issue number with labels `[changes-requested]` to return the issue to review.
 
