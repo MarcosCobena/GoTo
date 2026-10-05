@@ -18,7 +18,9 @@ namespace GoTo.Emitter
         public static void CreateAssembly(ProgramNode program, string outputType, string outputPath)
         {
             ActualCreateAssembly(program, outputType, out AssemblyBuilder assemblyBuilder);
-#if !NETSTANDARD
+#if NET9_0_OR_GREATER
+            ((PersistedAssemblyBuilder)assemblyBuilder).Save(outputPath);
+#elif !NETSTANDARD
             assemblyBuilder.Save(outputPath);
 #endif
         }
@@ -31,6 +33,11 @@ namespace GoTo.Emitter
         {
             var assemblyName = new AssemblyName(outputType);
             var appDomain = AppDomain.CurrentDomain;
+#if NET9_0_OR_GREATER
+            assemblyBuilder = isTransient ?
+                AssemblyBuilder.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run) :
+                new PersistedAssemblyBuilder(assemblyName, typeof(object).Assembly);
+#else
             assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(
                 assemblyName,
 #if NETSTANDARD
@@ -39,8 +46,9 @@ namespace GoTo.Emitter
                 isTransient ? AssemblyBuilderAccess.Run : AssemblyBuilderAccess.Save
 #endif
                 );
+#endif
             var moduleBuilder =
-#if NETSTANDARD
+#if NETSTANDARD || NET9_0_OR_GREATER
                 assemblyBuilder.DefineDynamicModule(assemblyName.Name);
 #else
                 isTransient ? 
@@ -70,7 +78,7 @@ namespace GoTo.Emitter
             TranslateInto(program, il);
 
             var resultingType = typeBuilder.
-#if NETSTANDARD
+#if NETSTANDARD || NET9_0_OR_GREATER
                 CreateTypeInfo();
 #else
                 CreateType();
