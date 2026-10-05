@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - run: dotnet restore GoTo.sln
+      - run: dotnet build GoTo.sln --no-restore
+      - run: dotnet test Tests/Tests.csproj --no-build
+
+  build-studio:
+    # GoToStudio is not built by GoTo.sln's configurations, so it is built explicitly.
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            2.1.x
+            10.0.x
+      - run: dotnet restore GoToStudio/GoToStudio.csproj
+      - run: dotnet build GoToStudio/GoToStudio.csproj --no-restore

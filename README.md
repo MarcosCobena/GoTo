@@ -1,4 +1,4 @@
-[![Build status](https://marcoscm.visualstudio.com/GoTo/_apis/build/status/CI)](https://marcoscm.visualstudio.com/GoTo/_build/latest?definitionId=2)
+[![CI](https://github.com/MarcosCobena/GoTo/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/MarcosCobena/GoTo/actions/workflows/ci.yml)
 
 # GoTo
 
