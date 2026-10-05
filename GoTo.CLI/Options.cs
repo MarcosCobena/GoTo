@@ -24,7 +24,7 @@ namespace GoTo.CLI
 
             using (var inputStream = File.OpenText(inputFilename))
             {
-                var messages = Language.Build(inputStream, programName, outputFilename);
+                Framework.TryBuild(inputStream, programName, outputFilename, out var messages);
 
                 Printer.Print(messages);
 
@@ -53,13 +53,13 @@ namespace GoTo.CLI
             var assembly = Assembly.LoadFile(fullPath);
 
             var programName = Path.GetFileNameWithoutExtension(assemblyFilename);
-            var type = assembly.GetType($"{Language.OutputNamespace}.{programName}");
+            var type = assembly.GetType($"{Framework.OutputNamespace}.{programName}");
 
             x1 = args[1];
             var actualX1 = int.Parse(x1);
 
             var result = (int)type
-                .GetMethod(Language.OutputMethodName)
+                .GetMethod(Framework.OutputMethodName)
                 .Invoke(null, new object[] { actualX1, 0, 0, 0, 0, 0, 0, 0 });
             Printer.Print(result.ToString());
         }

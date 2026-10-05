@@ -213,7 +213,7 @@ namespace GoTo
             }
 
             var dirtyOutput = listener.RewrittenTokenStream.GetText();
-            output = dirtyOutput.TrimStart(Environment.NewLine.ToCharArray());
+            output = dirtyOutput.TrimStart('\r', '\n');
 
             return true;
         }
