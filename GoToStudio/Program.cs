@@ -1,16 +1,17 @@
-﻿using Ooui;
-using Xamarin.Forms;
+using Avalonia;
+using Avalonia.Browser;
+using System.Runtime.Versioning;
+using System.Threading.Tasks;
+
+[assembly: SupportedOSPlatform("browser")]
 
 namespace GoToStudio
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
-        {
-            Forms.Init();
+        private static Task Main(string[] args) =>
+            BuildAvaloniaApp().StartBrowserAppAsync("out");
 
-            var page = new IDEPage();
-            UI.Publish("/", page.GetOouiElement());
-        }
+        public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<App>();
     }
 }

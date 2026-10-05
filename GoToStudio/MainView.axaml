@@ -1,0 +1,46 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:GoToStudio"
+             x:Class="GoToStudio.MainView"
+             x:DataType="local:IDEViewModel">
+  <Grid Margin="8" RowDefinitions="Auto,*" ColumnDefinitions="*,100,*" ColumnSpacing="8" RowSpacing="8">
+    <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Spacing="8">
+      <TextBlock Text="GoTo Studio" FontSize="24" VerticalAlignment="Center" />
+      <ToggleSwitch IsChecked="{Binding IsReleaseEnabled}"
+                    OnContent="Release" OffContent="Debug"
+                    VerticalAlignment="Center" />
+      <Button Content="Run" Command="{Binding RunCommand}" />
+      <Button Content="Share" Command="{Binding ShareCommand}" />
+    </StackPanel>
+
+    <Button Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+            Content="{Binding CodificationTitle}" Command="{Binding CodificationCommand}" />
+
+    <Grid Grid.Row="0" Grid.Column="2" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+      <TextBox Grid.Column="0" Text="{Binding Code}"
+               PlaceholderText="Type an integer to uncodify; otherwise, codify current program" />
+      <HyperlinkButton Grid.Column="1" Content="Language" VerticalAlignment="Center"
+                       NavigateUri="https://github.com/MarcosCobena/GoTo/wiki/Language" />
+      <HyperlinkButton Grid.Column="2" Content="Report issue" VerticalAlignment="Center"
+                       NavigateUri="https://github.com/MarcosCobena/GoTo/issues/new" />
+    </Grid>
+
+    <TextBox Grid.Row="1" Grid.Column="0" FontFamily="monospace" AcceptsReturn="True"
+             Text="{Binding CurrentProgram}" />
+
+    <StackPanel Grid.Row="1" Grid.Column="1" Spacing="8">
+      <TextBox IsEnabled="False" PlaceholderText="Y" Text="{Binding Y}" />
+      <TextBox PlaceholderText="X1" Text="{Binding X1}" />
+      <TextBox PlaceholderText="X2" Text="{Binding X2}" />
+      <TextBox PlaceholderText="X3" Text="{Binding X3}" />
+      <TextBox PlaceholderText="X4" Text="{Binding X4}" />
+      <TextBox PlaceholderText="X5" Text="{Binding X5}" />
+      <TextBox PlaceholderText="X6" Text="{Binding X6}" />
+      <TextBox PlaceholderText="X7" Text="{Binding X7}" />
+      <TextBox PlaceholderText="X8" Text="{Binding X8}" />
+    </StackPanel>
+
+    <TextBox Grid.Row="1" Grid.Column="2" FontFamily="monospace" AcceptsReturn="True" IsReadOnly="True"
+             Text="{Binding Output}" />
+  </Grid>
+</UserControl>

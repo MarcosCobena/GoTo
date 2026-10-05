@@ -1,4 +1,4 @@
-﻿using GoTo;
+using GoTo;
 using GoTo.Codifier;
 using GoTo.Interpreter;
 using GoTo.Parser.AbstractSyntaxTree;
@@ -9,13 +9,25 @@ using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices.JavaScript;
 using System.Text;
 using System.Windows.Input;
-using WebAssembly;
-using Xamarin.Forms;
 
 namespace GoToStudio
 {
+    internal class RelayCommand : ICommand
+    {
+        readonly Action _execute;
+
+        public RelayCommand(Action execute) => _execute = execute;
+
+        public event EventHandler CanExecuteChanged { add { } remove { } }
+
+        public bool CanExecute(object parameter) => true;
+
+        public void Execute(object parameter) => _execute();
+    }
+
     internal class IDEViewModel : INotifyPropertyChanged
     {
         const string CopyXProgram =
@@ -44,11 +56,9 @@ namespace GoToStudio
             "\n" +
             "(GoTo 1.1.0)";
 
-        internal const string LogMessage = nameof(LogMessage);
-
         readonly Uri _currentURI;
 
-        string _code, _codificationTitle, _currentProgram;
+        string _code, _codificationTitle, _currentProgram, _output;
         bool _isReleaseEnabled;
         Stopwatch _stopwatch = new Stopwatch();
 
@@ -56,12 +66,12 @@ namespace GoToStudio
 
         public IDEViewModel()
         {
-            RunCommand = new Command(Run);
-            ShareCommand = new Command(Share);
-            CodificationCommand = new Command(CodifyOrUncodify);
+            RunCommand = new RelayCommand(Run);
+            ShareCommand = new RelayCommand(Share);
+            CodificationCommand = new RelayCommand(CodifyOrUncodify);
 
-            var windowLocation = Runtime.InvokeJS("window.location");
-            _currentURI = new Uri(windowLocation);
+            var location = JSHost.GlobalThis.GetPropertyAsJSObject("location");
+            _currentURI = new Uri(location.GetPropertyAsString("href"));
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -90,6 +100,12 @@ namespace GoToStudio
         {
             get => _currentProgram;
             set => SetAndRaisePropertyChanged(ref _currentProgram, value);
+        }
+
+        public string Output
+        {
+            get => _output;
+            set => SetAndRaisePropertyChanged(ref _output, value);
         }
 
         public bool IsReleaseEnabled
@@ -168,8 +184,9 @@ namespace GoToStudio
 
         void CodifyOrUncodify()
         {
+            BigInteger codifiedProgram = default;
             var shouldUncodify = !string.IsNullOrWhiteSpace(_code) && 
-                BigInteger.TryParse(_code, out BigInteger codifiedProgram);
+                BigInteger.TryParse(_code, out codifiedProgram);
 
             if (shouldUncodify)
             {
@@ -229,7 +246,7 @@ namespace GoToStudio
             }
         }
 
-        void Log(string message) => MessagingCenter.Instance.Send(this, LogMessage, message);
+        void Log(string message) => Output = message;
 
         void Run()
         {
