@@ -1,0 +1,102 @@
+name: "Close Completed Parents"
+
+# GitHub does not close a parent issue when its last sub-issue is closed, so
+# planned issues stay open after the reviewer merges their last sub-issue.
+# A parent is closed only when every sub-issue was closed as completed; one
+# closed as not planned leaves the parent open for a human to decide.
+# The daily run catches closes this workflow missed, such as ones made with
+# GITHUB_TOKEN, which do not trigger workflows.
+
+on:
+  issues:
+    types: [closed]
+  schedule:
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+concurrency:
+  group: close-completed-parents
+  cancel-in-progress: false
+
+jobs:
+  close-completed-parents:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Close parents whose sub-issues are all completed
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const headers = { "GraphQL-Features": "sub_issues" };
+
+            async function getIssue(number) {
+              const query = `query($owner: String!, $repo: String!, $number: Int!, $after: String) {
+                repository(owner: $owner, name: $repo) {
+                  issue(number: $number) {
+                    number
+                    state
+                    parent { number }
+                    subIssues(first: 100, after: $after) {
+                      pageInfo { hasNextPage endCursor }
+                      nodes { number state stateReason }
+                    }
+                  }
+                }
+              }`;
+              let after = null;
+              let issue;
+              const subIssues = [];
+              do {
+                const result = await github.graphql(query, { owner, repo, number, after, headers });
+                issue = result.repository.issue;
+                subIssues.push(...issue.subIssues.nodes);
+                after = issue.subIssues.pageInfo.hasNextPage ? issue.subIssues.pageInfo.endCursor : null;
+              } while (after);
+              return { ...issue, subIssues };
+            }
+
+            async function closeIfCompleted(number) {
+              const issue = await getIssue(number);
+              if (issue.state !== "OPEN" || issue.subIssues.length === 0) {
+                return null;
+              }
+              const pending = issue.subIssues.filter(s => s.state !== "CLOSED" || s.stateReason !== "COMPLETED");
+              if (pending.length > 0) {
+                core.info(`#${number} still has ${pending.length} sub-issue(s) not completed: ${pending.map(s => `#${s.number}`).join(", ")}`);
+                return null;
+              }
+              const list = issue.subIssues.map(s => `#${s.number}`).join(", ");
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: number,
+                body: `All sub-issues are completed (${list}), so this issue is complete too.\n\n> Closed by [close-completed-parents](${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId})`,
+              });
+              await github.rest.issues.update({ owner, repo, issue_number: number, state: "closed", state_reason: "completed" });
+              core.info(`Closed #${number}`);
+              return issue.parent?.number ?? null;
+            }
+
+            async function closeAncestors(number) {
+              let parent = (await getIssue(number)).parent?.number ?? null;
+              while (parent) {
+                parent = await closeIfCompleted(parent);
+              }
+            }
+
+            if (context.eventName === "issues") {
+              await closeAncestors(context.payload.issue.number);
+              return;
+            }
+
+            const openIssues = await github.paginate(github.rest.issues.listForRepo, { owner, repo, state: "open", per_page: 100 });
+            for (const issue of openIssues.filter(i => !i.pull_request)) {
+              const parent = await closeIfCompleted(issue.number);
+              if (parent) {
+                await closeAncestors(issue.number);
+              }
+            }
