@@ -36,6 +36,7 @@ safe-outputs:
       administration: read
   create-pull-request:
     draft: false
+    preserve-branch-name: true
   push-to-pull-request-branch:
     max: 2
   add-labels:
@@ -64,7 +65,7 @@ Implement issue specs directly in the repository.
 - If issue number is missing or `0`, call `noop` and stop.
 3. Read the issue's current labels.
 - If neither `ready` nor `changes-requested` is currently present, call `noop` and stop.
-4. Determine mode by checking for an open PR on branch `agents/issue-<N>` for this issue number:
+4. Determine mode by checking for an open PR on branch `agents/issue-<N>`, or any open PR whose body contains `Closes #<N>`:
 - PR exists -> re-entry mode.
 - No PR exists -> fresh mode.
 5. Fresh mode:
@@ -73,7 +74,7 @@ Implement issue specs directly in the repository.
 - Validate before proposing changes. Take the environment setup, build, test and lint commands from the repository's own agent instructions (`AGENTS.md`, `.github/copilot-instructions.md`). If none exist, infer them from the README and the project manifests (`package.json`, `*.sln`, `*.csproj`, `pyproject.toml`, ...). If validation cannot run, say so in the PR body instead of skipping it silently.
 
 6. Fresh mode PR handling:
-- New work: use `create-pull-request` and include `Closes #<N>` in the body.
+- New work: use `create-pull-request` from branch `agents/issue-<N>` and include `Closes #<N>` in the body.
 - When the PR is ready, in the same run call `add-labels` on the original issue number with labels `[in-review]` and `remove-labels` on the original issue number with labels `[ready, changes-requested]` to prevent redispatch loops.
 7. Re-entry mode (`changes-requested`):
 - Read the feedback context and fix only the requested changes.
