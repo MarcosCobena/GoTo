@@ -36,9 +36,97 @@ safe-outputs:
   submit-pull-request-review:
     max: 1
     target: "*"
-  merge-pull-request:
-    max: 1
-    target: "*"
+  jobs:
+    merge-approved-pr:
+      description: "Squash-merge an approved pull request once its linked issue is labeled approved"
+      runs-on: ubuntu-latest
+      needs: safe_outputs
+      if: needs.detection.result == 'success' && needs.safe_outputs.result == 'success'
+      output: "Merge scheduled; it runs after the review and labels are applied."
+      permissions:
+        contents: read
+      inputs:
+        pull_request_number:
+          description: "Number of the pull request to merge"
+          required: true
+          type: string
+      steps:
+        - name: Generate GitHub App token
+          id: app-token
+          uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+          with:
+            client-id: ${{ vars.APP_CLIENT_ID }}
+            private-key: ${{ secrets.APP_PRIVATE_KEY }}
+            owner: ${{ github.repository_owner }}
+            repositories: ${{ github.event.repository.name }}
+            permission-contents: write
+            permission-issues: write
+            permission-pull-requests: write
+        - name: Merge approved pull request
+          env:
+            GH_TOKEN: ${{ steps.app-token.outputs.token }}
+            EVENT_PR: ${{ github.event.pull_request.number }}
+            REVIEWED_SHA: ${{ github.event.pull_request.head.sha }}
+            RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          run: |
+            set -euo pipefail
+            if [ ! -f "${GH_AW_AGENT_OUTPUT:-}" ]; then
+              echo "No agent output found"
+              exit 0
+            fi
+            mapfile -t prs < <(jq -r '.items[] | select(.type == "merge_approved_pr") | .pull_request_number' "$GH_AW_AGENT_OUTPUT")
+            if [ "${#prs[@]}" -eq 0 ]; then
+              echo "No merge requested"
+              exit 0
+            fi
+            if [ "${#prs[@]}" -gt 1 ]; then
+              echo "::error::Only one merge per run is allowed, got ${#prs[@]}"
+              exit 1
+            fi
+            pr="${prs[0]}"
+            if ! [[ "$pr" =~ ^[0-9]+$ ]]; then
+              echo "::error::Invalid pull request number: $pr"
+              exit 1
+            fi
+            if [ -n "$EVENT_PR" ] && [ "$pr" != "$EVENT_PR" ]; then
+              echo "::error::Pull request #$pr is not the one under review (#$EVENT_PR)"
+              exit 1
+            fi
+
+            pr_json=$(gh pr view "$pr" --repo "$GITHUB_REPOSITORY" --json state,body,headRefOid)
+            if [ "$(jq -r .state <<<"$pr_json")" != "OPEN" ]; then
+              echo "Pull request #$pr is not open; nothing to merge"
+              exit 0
+            fi
+            head_sha=$(jq -r .headRefOid <<<"$pr_json")
+            if [ -n "$REVIEWED_SHA" ] && [ "$head_sha" != "$REVIEWED_SHA" ]; then
+              echo "Pull request #$pr changed since review ($REVIEWED_SHA -> $head_sha); skipping merge"
+              exit 0
+            fi
+            issue=$(jq -r .body <<<"$pr_json" | grep -oiE '(close[sd]?|fix(e[sd])?|resolve[sd]?) #[0-9]+' | head -n1 | grep -oE '[0-9]+' || true)
+            if [ -z "$issue" ]; then
+              echo "::error::Pull request #$pr does not reference a linked issue"
+              exit 1
+            fi
+            if ! gh issue view "$issue" --repo "$GITHUB_REPOSITORY" --json labels --jq '.labels[].name' | grep -qx approved; then
+              echo "Linked issue #$issue is not labeled approved; skipping merge"
+              exit 0
+            fi
+
+            if error=$(gh api -X PUT "repos/$GITHUB_REPOSITORY/pulls/$pr/merge" -f merge_method=squash -f sha="$head_sha" 2>&1); then
+              echo "Merged pull request #$pr"
+              exit 0
+            fi
+            echo "::warning::Merge of #$pr failed: $error"
+            gh pr comment "$pr" --repo "$GITHUB_REPOSITORY" --body "The reviewer approved this pull request, but the merge failed and needs a human:
+
+            \`\`\`
+            $error
+            \`\`\`
+
+            > Reported by [merge-approved-pr]($RUN_URL)"
+            gh api -X DELETE "repos/$GITHUB_REPOSITORY/issues/$issue/labels/approved" > /dev/null
+            gh api "repos/$GITHUB_REPOSITORY/issues/$issue/labels" -f "labels[]=human-review" > /dev/null
   add-labels:
     max: 1
     allowed: [approved, changes-requested, human-review]
@@ -85,16 +173,12 @@ Only use `bash` for those commands and supporting read-only commands (`cat`, `jq
 
 ## Approve Path
 
-If ALL DoD criteria are met and build/lint pass, call ALL of the following in the SAME turn:
+If ALL DoD criteria are met and build/lint pass, first check with the `github` tool whether the PR has merge conflicts. If it does, take the **Merge Conflict Path** instead. Otherwise call ALL of the following in the SAME turn:
 
 1. `submit_pull_request_review(event=APPROVE, pull_request_number=<PR_NUMBER>)` — include a concise comment summarizing what was verified.
-2. `merge_pull_request(merge_method=squash, pull_request_number=<PR_NUMBER>)` — squash-merge the PR.
-3. Check the merge result:
-   - **Merged successfully** → proceed to step 4 below.
-   - **Merge conflict** (`cannot be merged` / conflict error) → see the **Merge Conflict Path** below. Do NOT loop trying to merge.
-   - **Transient error** (any other error) → `merge_pull_request` already retried internally; do NOT loop. Call `noop` noting the merge failed — the daily sweep re-runs the reviewer to retry.
-4. `remove_labels(item_number=<LINKED_ISSUE>, labels=["in-review"])` — on the **LINKED ISSUE**, not the PR.
-5. `add_labels(item_number=<LINKED_ISSUE>, labels=["approved"])` — on the **LINKED ISSUE**, not the PR.
+2. `merge_approved_pr(pull_request_number=<PR_NUMBER>)` — schedules the squash merge. It runs after this run finishes and after the labels below are applied, and only merges if the linked issue is labeled `approved` and the PR has not changed since this review. If the merge fails, it comments on the PR and moves the linked issue from `approved` to `human-review`, so do not wait for or retry the merge.
+3. `remove_labels(item_number=<LINKED_ISSUE>, labels=["in-review"])` — on the **LINKED ISSUE**, not the PR.
+4. `add_labels(item_number=<LINKED_ISSUE>, labels=["approved"])` — on the **LINKED ISSUE**, not the PR.
 
 All calls (review + merge + labels) must happen in the same turn to keep the hand-off atomic.
 
@@ -110,7 +194,7 @@ If ANY DoD criterion is not met, call BOTH of the following in the SAME turn:
 
 ## Merge Conflict Path
 
-If the merge fails due to a conflict, call BOTH of the following in the SAME turn:
+If the PR has merge conflicts, call ALL of the following in the SAME turn:
 
 1. `add_comment(pull_request_number=<PR_NUMBER>)` — on the PR, explaining the merge conflict and that a human must rebase.
 2. `remove_labels(item_number=<LINKED_ISSUE>, labels=["in-review"])` — on the **LINKED ISSUE**.
