@@ -3,9 +3,16 @@ emoji: "✅"
 name: Agent Reviewer
 description: Review pull requests against linked issue DoD and decide approve/request changes.
 on:
+  # pull_request instead of pull_request_target: gh-aw disables the repository
+  # checkout under pull_request_target, leaving the agent without the PR code to
+  # build and test. Pull requests from forks get no secrets under pull_request,
+  # so they cannot be reviewed by this workflow.
   pull_request:
     types: [opened, reopened, synchronize, ready_for_review]
   bots: [graph-engineering-framework]
+  # gh-aw only checks out the PR branch for pull request events, so a manual run
+  # reviews the diff through the github tool but builds and tests the default
+  # branch, not the PR.
   workflow_dispatch:
     inputs:
       issue_number:
