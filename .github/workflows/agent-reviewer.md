@@ -3,7 +3,7 @@ emoji: "✅"
 name: Agent Reviewer
 description: Review pull requests against linked issue DoD and decide approve/request changes.
 on:
-  pull_request_target: # THIS IS UNSECURE. NEEDED ONLY TEMPORARILY UNTIL GITHUB FIXES THE ISSUE
+  pull_request:
     types: [opened, reopened, synchronize, ready_for_review]
   bots: [graph-engineering-framework]
   workflow_dispatch:
