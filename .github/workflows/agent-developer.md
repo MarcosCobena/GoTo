@@ -41,7 +41,7 @@ safe-outputs:
     max: 2
   add-labels:
     max: 2
-    allowed: [in-review]
+    allowed: [in-review, human-review]
   remove-labels:
     max: 2
     allowed: [ready, changes-requested]
@@ -68,15 +68,18 @@ Implement issue specs directly in the repository.
 4. Determine mode by checking for an open PR on branch `agents/issue-<N>`, or any open PR whose body contains `Closes #<N>`:
 - PR exists -> re-entry mode.
 - No PR exists -> fresh mode.
-5. Fresh mode:
+5. Protected files: gh-aw refuses to push changes to protected files and turns the PR into a review issue, so the work never reaches review. Protected files are anything under a top-level directory whose name starts with `.` (`.github/`, `.agents/`, `.vscode/`, ...), agent instruction files (`AGENTS.md`, `CLAUDE.md`, `GEMINI.md`), top-level `README.md`, `CONTRIBUTING.md`, `SECURITY.md` and `CODE_OF_CONDUCT.md`, `CODEOWNERS`, `DESIGN.md`, and dependency manifests and lockfiles (`package.json`, lockfiles, `go.mod`, `pyproject.toml`, `requirements.txt`, `Gemfile`, `pom.xml`, `build.gradle`, `global.json`, `NuGet.Config`, `Directory.Packages.props`, ...).
+- If the spec, or the feedback in re-entry mode, can only be satisfied by changing a protected file, do not implement it. In the same run, `add-comment` on the issue naming the protected files and why they are needed, `add-labels` `[human-review]` and `remove-labels` `[ready, changes-requested]`, then stop.
+- Otherwise, never modify protected files, even when it looks convenient.
+6. Fresh mode:
 - Read the parent issue spec and modify only the files required by that spec.
 - If the issue is already implemented in the repository, add a comment with evidence and call `noop` instead of opening an empty PR.
 - Validate before proposing changes. Take the environment setup, build, test and lint commands from the repository's own agent instructions (`AGENTS.md`, `.github/copilot-instructions.md`). If none exist, infer them from the README and the project manifests (`package.json`, `*.sln`, `*.csproj`, `pyproject.toml`, ...). If validation cannot run, say so in the PR body instead of skipping it silently.
 
-6. Fresh mode PR handling:
+7. Fresh mode PR handling:
 - New work: use `create-pull-request` from branch `agents/issue-<N>` and include `Closes #<N>` in the body.
 - When the PR is ready, in the same run call `add-labels` on the original issue number with labels `[in-review]` and `remove-labels` on the original issue number with labels `[ready, changes-requested]` to prevent redispatch loops.
-7. Re-entry mode (`changes-requested`):
+8. Re-entry mode (`changes-requested`):
 - Read the feedback context and fix only the requested changes.
 - Validate again with the same commands used in fresh mode.
 - Push fixes to the same PR branch with `push-to-pull-request-branch` (never open a second PR).

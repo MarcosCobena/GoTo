@@ -34,7 +34,6 @@ safe-outputs:
     private-key: ${{ secrets.APP_PRIVATE_KEY }}
   create-issue:
     max: 6
-    labels: [ready]
   link-sub-issue:
     max: 6
   remove-labels:
@@ -104,6 +103,11 @@ Plan and decompose issues without writing code.
 - **Definition of Done**: specific, verifiable criteria.
 - **Non-goals**: what is explicitly out of scope.
 - **Files to modify**: exact paths and what changes each needs.
+Label each sub-issue through the `labels` field of `create-issue`:
+- `["ready"]` when none of its files to modify are protected. The Developer picks it up.
+- `["human-review"]` when any of them is protected, and add a short note to the body naming the protected files. The Developer cannot deliver protected files: gh-aw refuses to push them, so a human has to implement or apply the change.
+Protected files are: anything under a top-level directory whose name starts with `.` (`.github/`, `.agents/`, `.vscode/`, ...); agent instruction files (`AGENTS.md`, `CLAUDE.md`, `GEMINI.md`); top-level `README.md`, `CONTRIBUTING.md`, `SECURITY.md` and `CODE_OF_CONDUCT.md`; `CODEOWNERS` and `DESIGN.md`; dependency manifests and lockfiles (`package.json`, `package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`, `go.mod`, `go.sum`, `pyproject.toml`, `requirements.txt`, `Gemfile`, `pom.xml`, `build.gradle`, `global.json`, `NuGet.Config`, `Directory.Packages.props`, ...).
+When only part of the work touches protected files, split that part into its own `human-review` sub-issue so the rest can stay `ready`.
 After creating each sub-issue, call `link-sub-issue` with the original issue as parent and the new issue as sub-issue. When a sub-issue depends on another one landing first, include a line `Depends on #N` in its body.
 9. Finalize: only once at least one `create-issue` call has succeeded, `add-labels` (`planned`) and `remove-labels` (`triaged` or `needs-info`, whichever is currently set) in the same run, plus one summary comment listing the created issue numbers. If no sub-issue could be created, leave labels untouched so the next run retries.
 
