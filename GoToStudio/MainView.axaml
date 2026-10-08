@@ -1,5 +1,6 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ae="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
              xmlns:local="clr-namespace:GoToStudio"
              x:Class="GoToStudio.MainView"
              x:DataType="local:IDEViewModel">
@@ -25,8 +26,8 @@
                        NavigateUri="https://github.com/MarcosCobena/GoTo/issues/new" />
     </Grid>
 
-    <TextBox Grid.Row="1" Grid.Column="0" FontFamily="monospace" AcceptsReturn="True"
-             Text="{Binding CurrentProgram}" />
+    <ae:TextEditor x:Name="ProgramEditor" Grid.Row="1" Grid.Column="0" FontFamily="monospace"
+                   ShowLineNumbers="True" />
 
     <StackPanel Grid.Row="1" Grid.Column="1" Spacing="8">
       <TextBox IsEnabled="False" PlaceholderText="Y" Text="{Binding Y}" />
