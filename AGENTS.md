@@ -30,6 +30,16 @@ dotnet test Tests/Tests.csproj --no-build
 
 There is no separate lint step; treat compiler warnings introduced by your change as issues to fix.
 
+## Run the app
+
+GoTo Studio (`GoToStudio/`) is a web app: an Avalonia Browser (WebAssembly) SPA with no backend. Run and check it whenever a change touches `GoToStudio/` or the `GoTo` library it uses.
+
+- Start it in the background with `dotnet run --project GoToStudio`. When it is ready it prints `App url: http://127.0.0.1:<port>/`; the port changes on every run, so read it from that line.
+- If the build asks for the `wasm-tools` workload, install it with `dotnet workload install wasm-tools`.
+- `GET /` must answer `200`. A `404` means `GoToStudio/wwwroot/` is missing `index.html` or `main.js`.
+- Wait a few seconds after the page loads for the .NET runtime to start, then take a screenshot. It must not be blank: a working page shows the "GoTo Studio" title, the Debug/Release switch, the Run button and a sample program.
+- Avalonia draws the whole UI on a canvas, so `playwright-cli snapshot` and the page text show almost nothing. Rely on screenshots, not on the DOM.
+
 Projects targeting .NET Framework (`net48`, `net461`) build on Linux through reference assemblies, but their tests cannot run there. Report that limitation instead of working around it.
 
 ## Conventions

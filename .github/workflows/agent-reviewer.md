@@ -25,6 +25,8 @@ permissions:
   copilot-requests: write
 engine:
   id: copilot
+imports:
+  - shared/app-verification.md
 network:
   allowed:
     - defaults
@@ -168,13 +170,16 @@ Never modify repository code in this workflow. Your only outputs are reviews, la
 6. Inspect the PR diff — this is your primary artifact. Judge the diff against the DoD; do not audit the entire repository. Use the `github` tool (toolsets `pull_requests` and `repos`) to read the diff and changed files. **Never use shell commands** (`base64`, `curl`, `git diff`, etc.) to read PR content — they are blocked by the sandbox. The `github` tool already provides everything you need.
 7. Validate with the environment setup, build, test and lint commands from the repository's own agent instructions (`AGENTS.md`, `.github/copilot-instructions.md`). If none exist, infer them from the README and the project manifests (`package.json`, `*.sln`, `*.csproj`, `pyproject.toml`, ...).
 
-Only use `bash` for those commands and supporting read-only commands (`cat`, `jq`). Do NOT explore the repository with shell commands (`ls`, `find`, `pwd`, `node -e`, `base64`, `curl`, `git`). `bash` is for setup, build, test and lint only.
+When the PR affects an app the repository's agent instructions describe how to run, also run and check it as described in "Running the app". Do not take the PR body's word for it.
+
+Only use `bash` for those commands, for running and checking the app (the app's own start command, `playwright-cli`, `Xvfb`, `xdotool`, `import`, `identify`, `compare`, and `curl` against `localhost`), and for supporting read-only commands (`cat`, `jq`). Do NOT explore the repository with shell commands (`ls`, `find`, `pwd`, `node -e`, `base64`, `git`, or `curl` against anything but `localhost`). `bash` is for setup, build, test, lint and app checks only.
 
 8. For each DoD criterion, verify the diff satisfies it. Check for:
    - **Code correctness:** does the logic match the spec?
    - **Security:** no injection, XSS, or secrets exposed.
    - **Scope:** no changes beyond what the spec requires. If the diff touches files the spec does not call for — dependency manifests, lock files, build configuration, unrelated components — request changes citing the unexpected files, unless the change is clearly required to satisfy the DoD.
    - **Conventions:** consistent with existing code patterns.
+   - **Runtime:** if a criterion depends on how the app behaves when it runs, the app checks must pass. A failing check (the app does not start, the URL does not answer `200`, a blank screenshot) is a missed criterion: take the **Request Changes Path**. If the app checks could not be run at all, take the **Unverifiable Runtime Path**.
 
 9. Deliver your verdict immediately once the DoD comparison is done and checks have run. Do not keep investigating after the verdict is clear.
 
@@ -199,6 +204,16 @@ If ANY DoD criterion is not met, call BOTH of the following in the SAME turn:
 
 **You NEVER approve work that does not meet the DoD. No exceptions.**
 
+## Unverifiable Runtime Path
+
+If every other criterion is met but a criterion that depends on runtime behaviour could not be checked, because the app could not be started or checked in this environment, do not approve. Call ALL of the following in the SAME turn:
+
+1. `add_comment(pull_request_number=<PR_NUMBER>)` — on the PR, listing the criteria you could not verify, the commands you tried and their errors, and where the screenshots are, if any.
+2. `remove_labels(item_number=<LINKED_ISSUE>, labels=["in-review"])` — on the **LINKED ISSUE**.
+3. `add_labels(item_number=<LINKED_ISSUE>, labels=["human-review"])` — on the **LINKED ISSUE**.
+
+Use `human-review`, not `changes-requested`: the code may be right, and the Developer cannot fix your environment.
+
 ## Merge Conflict Path
 
 If the PR has merge conflicts, call ALL of the following in the SAME turn:
@@ -218,7 +233,7 @@ Before calling `add_labels` / `remove_labels`, confirm the linked issue currentl
 - You NEVER write code. You only judge.
 - You NEVER approve work that does not meet the DoD. No exceptions.
 - Be specific: quote line numbers, reference functions, cite criteria.
-- If you cannot verify a criterion (e.g., requires manual visual testing), state that explicitly in your review.
+- If you cannot verify a criterion (e.g., requires manual visual testing), state that explicitly in your review. If it depends on runtime behaviour, take the **Unverifiable Runtime Path** instead of approving.
 - Deliver your verdict promptly: once you have compared the diff against every DoD criterion and run the checks, call your safe-outputs IMMEDIATELY. Do not keep investigating after the verdict is clear.
 - The linked issue number (`N` from `Closes #N`) is NOT the PR number. Labels are always operated on the **linked issue**, never on the PR.
 

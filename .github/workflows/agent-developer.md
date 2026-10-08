@@ -19,6 +19,8 @@ permissions:
   copilot-requests: write
 engine:
   id: copilot
+imports:
+  - shared/app-verification.md
 network:
   allowed:
     - defaults
@@ -75,13 +77,14 @@ Implement issue specs directly in the repository.
 - Read the parent issue spec and modify only the files required by that spec.
 - If the issue is already implemented in the repository, add a comment with evidence and call `noop` instead of opening an empty PR.
 - Validate before proposing changes. Take the environment setup, build, test and lint commands from the repository's own agent instructions (`AGENTS.md`, `.github/copilot-instructions.md`). If none exist, infer them from the README and the project manifests (`package.json`, `*.sln`, `*.csproj`, `pyproject.toml`, ...). If validation cannot run, say so in the PR body instead of skipping it silently.
+- When the change affects an app the repository's agent instructions describe how to run, also run and check it as described in "Running the app". A green build does not mean the app works. If the checks fail, fix the problem before proposing changes. List the checks you ran and their results in the PR body, and say explicitly if the app could not be checked.
 
 7. Fresh mode PR handling:
 - New work: use `create-pull-request` from branch `agents/issue-<N>` and include `Closes #<N>` in the body.
 - When the PR is ready, in the same run call `add-labels` on the original issue number with labels `[in-review]` and `remove-labels` on the original issue number with labels `[ready, changes-requested]` to prevent redispatch loops.
 8. Re-entry mode (`changes-requested`):
 - Read the feedback context and fix only the requested changes.
-- Validate again with the same commands used in fresh mode.
+- Validate again with the same commands and app checks used in fresh mode.
 - Push fixes to the same PR branch with `push-to-pull-request-branch` (never open a second PR).
 - In the same run call `add-labels` on the original issue number with labels `[in-review]` and `remove-labels` on the original issue number with labels `[changes-requested]` to return the issue to review.
 
